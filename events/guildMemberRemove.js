@@ -6,7 +6,10 @@ module.exports = async (client, member, guild) => {
     console.log(`${member.user.tag} has left.`)
     const userdb = userData.get(member.id)
     const count = serverCount.get(member.id)
-    if (!userdb) return console.log('User is not in the database.')
+    if (!userdb) {
+        console.log('User is not in the database.')
+        message.reply('🤵 User is not in the database.')
+    }
     if(userdb) {
         await axios({
             url: config.pterodactyl.host + "/api/application/users/" + userData.get(member.id).consoleID + "?include=servers",
@@ -23,7 +26,8 @@ module.exports = async (client, member, guild) => {
             client.channels.cache.get('942502078172000266').send({
                 embeds: [
                     new Discord.MessageEmbed()
-                    .setDescription(`${member.user.tag} has left with consoleid ${userdb.consoleID} with ${servers1.length} servers.`)
+                    .setColor('#0099ff')
+                    .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${userdb.consoleID} with ${servers1.length} servers.`)
                 ]
             })
             client.channels.cache.get('942502078172000266').send('deleting.....')
@@ -31,12 +35,17 @@ module.exports = async (client, member, guild) => {
                 await client.channels.cache.get('942502078172000266').send({
                     embeds: [
                         new Discord.MessageEmbed()
-                        .setTitle('Deleting servers . . .')
+                        .setColor('#0099ff')
+                        .setTitle('🦺 Deleting servers...')
                         .setColor(`RED`)
                     ]
                 })
                 await Promise.all(servers1.map(async server => {
-                    client.channels.cache.get('942502078172000266').send(`deleting ${server}`)
+                    client.channels.cache.get('942502078172000266').send({ embeds: [
+                        new Discord.MessageEmbed()
+                        .setColor('#0099ff')
+                        .setTitle(`🦺 Deleting server ${server}...`)
+                    ]})
                     await axios({
                         url: config.pterodactyl.host + "/api/application/servers/" + server + "/force",
                         method: 'DELETE',
@@ -69,7 +78,7 @@ module.exports = async (client, member, guild) => {
                 client.channels.cache.get('942502078172000266').send({
                     embeds: [
                         new Discord.MessageEmbed()
-                        .setTitle('Deleted user.')
+                        .setTitle('🦺 Deleted user.')
                         .setColor(`GREEN`)
                     ]
             })
@@ -77,5 +86,4 @@ module.exports = async (client, member, guild) => {
             )
         })
     }
-
 }
