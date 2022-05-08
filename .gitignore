@@ -1,0 +1,19 @@
+
+## installed modules
+node_modules
+
+
+## host-log
+host-bot
+
+
+### config file
+config.json
+
+
+## logs files
+logs
+
+
+## database
+json.sqlite
