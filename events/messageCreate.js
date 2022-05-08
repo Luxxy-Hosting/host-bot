@@ -53,6 +53,7 @@ module.exports = async (client, message) => {
             return
         }else if(cmd === 'music'){
             try{
+                if (!message.member.roles.cache.has(config.roleID.administrator)) return message.channel.send('music commands are in dev at the moment.')
                 if(!args[0]) return require('../commands/music/help.js')(client, message, args)
                 await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
                 require(`../commands/music/${args[0]}.js`)(client, message, args)
