@@ -1,4 +1,13 @@
 {
+  "name": "host-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "ci": "echo \"Error: no CI specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "axios": "^0.26.1",
     "chalk": "^2.4.2",
