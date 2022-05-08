@@ -40,9 +40,9 @@ module.exports = async (client, message, args) => {
         content: `${message.author}`,
         embeds:[
             new Discord.MessageEmbed()
-            .setTitle(`Welcome to Luxxy Hosting`)
+            .setTitle(`👋 Welcome to Luxxy Hosting`)
             .setColor(`#677bf9`)
-            .setDescription(`In order to continue, please read our terms of serverice and privacy policy that are located in the channel ${client.channels.cache.get(config.channelID.legal)}.\n\nYou are allowed to continue creating your account and use our servicies only if you accept our terms of service and privacy policy\n\nDo you accept our legal?`)
+            .setDescription(`📰 In order to continue, please read our terms of service and privacy policy that are located in the channel ${client.channels.cache.get(config.channelID.legal)}.\n\nYou are allowed to continue creating your account and use our servicies only if you accept our terms of service and privacy policy\n\nDo you accept our legal?`)
             .setFooter({text:`This message expires in 5 minutes`})
         ],
         components:[
@@ -222,7 +222,7 @@ module.exports = async (client, message, args) => {
                                 new Discord.MessageEmbed()
                                 .setTitle(`:x: Something happend :/`)
                                 .setColor(`RED`)
-                                .setDescription(`There was an error when creating your account\n\n${err.toString() === 'Error: Request failed with status code 422' ? `${err}\n\n> This error is caused of Unprocessable Entity, which can be caused because of many bugs. one of them is using special characters in your username. another example can be that someone already have used that email adress or username.`: err} \n\nerror id: ${Date.now()}`)
+                                .setDescription(`There was an error when creating your account\n\n${err.toString() === 'Error: Request failed with status code 422' ? `${err}\n\n> This error is caused of Unprocessable Entity, which can be caused because of many bugs. one of them is using special characters in your username. another example can be that someone already have used that email adress or username.`: err} \n\nerror id: ${Date.now()} \n please go to <#971131084718895175> and make a ticket with the error id 🦺`)
                             ]
                         })
                         channel.send(`This channel will be deleted in 10 seconds . . .`)
