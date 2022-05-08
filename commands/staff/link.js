@@ -3,6 +3,7 @@ const Discord = require('discord.js')
 const moment = require('moment')
 const config = require('../../config.json')
 module.exports = async (client, message, args) => {
+         /// disabled for now because issue with linking owners account
         if(!message.member.roles.cache.has(config.roleID.administrator)) return message.reply({
             embeds: [
                 new Discord.MessageEmbed()
@@ -37,6 +38,8 @@ module.exports = async (client, message, args) => {
                 .setDescription('You need to specify a console ID!')
             ]
         })
+
+        /// this needs to be fixed
         if (consoleid === 1) return message.reply({
             embeds: [
                 new Discord.MessageEmbed()

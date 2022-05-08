@@ -65,10 +65,7 @@ module.exports = async (client, member, guild) => {
                 }
             }).then(() => {
                 userData.delete(member.user.id)
-                serverCount.set(member.user.id, {
-                    used: 0,
-                    have: 0,
-                })
+                serverCount.delete(member.user.id)
                 client.channels.cache.get('942502078172000266').send({
                     embeds: [
                         new Discord.MessageEmbed()

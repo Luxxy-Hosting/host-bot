@@ -44,6 +44,7 @@ module.exports = async (client, message, args) => {
                     .setTitle(`${user.username}'s Info`)
                     .addField('Console ID', `\`\`\`\n${userData.get(user.id).consoleID}\`\`\``, true)
                     .addField('Email', `\`\`\`\n${res.data.attributes.email}\`\`\``, true)
+                    .addField('Username', `\`\`\`\n${res.data.attributes.username}\`\`\``, true)
                     .addField('Link Date', `\`\`\`\n${userData.get(user.id).linkDate}\`\`\``, true)
                     .addField('Link Time', `\`\`\`\n${userData.get(user.id).linkTime}\`\`\``, true)
                     .addField('Servers', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
