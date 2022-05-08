@@ -60,4 +60,6 @@ module.exports = async (client) => {
         if(g.id === config.settings.guildID) return
         g.leave().catch(console.error)
     })
+
+    client.manager.init(client.user.id);
 }

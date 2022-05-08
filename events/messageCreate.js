@@ -51,6 +51,13 @@ module.exports = async (client, message) => {
                 require(`../commands/staff/${args[0]}.js`)(client, message, args)
             }catch(err){console.log(err).toString()}
             return
+        }else if(cmd === 'music'){
+            try{
+                if(!args[0]) return require('../commands/music/help.js')(client, message, args)
+                await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
+                require(`../commands/music/${args[0]}.js`)(client, message, args)
+            }catch(err){console.log(err).toString()}
+            return
         }
 
 
