@@ -14,7 +14,16 @@ module.exports = (userID, serverName) => {
             "cpu": 0
         },
         "environment": {
-            "STARTUP_CMD": "bash"
+            "STARTUP_CMD": "bash",
+            "REQUIREMENTS_FILE": "requirements.txt",
+            "BOT_PY_FILE": "bot.py",
+            "AUTO_UPDATE": 0,
+            "USER_UPLOAD": 0,
+            "GIT_ADDRESS": null,
+            "BRANCH": null,
+            "PY_PACKAGES": null,
+            "USERNAME": null,
+            "ACCESS_TOKEN": null
         },
         "feature_limits": {
             "databases": 0,
