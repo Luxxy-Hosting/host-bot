@@ -41,6 +41,7 @@ module.exports = async (client, member, guild) => {
                     ]
                 })
                 await Promise.all(servers1.map(async server => {
+                    // await server1.filter(x => x.consolid).map(async server => {})
                     client.channels.cache.get('942502078172000266').send({ embeds: [
                         new Discord.MessageEmbed()
                         .setColor('#0099ff')
