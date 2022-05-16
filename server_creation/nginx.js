@@ -4,7 +4,7 @@ module.exports = (userID, serverName) => {
         "user": userID,
         "nest": 6,
         "egg": 25,
-        "docker_image": "registry.gitlab.com/tenten8401/pterodactyl-nginx",
+        "docker_image": "ghcr.io/luxxy-gf/nginx-egg:latest",
         "startup": `{{STARTUP_CMD}}`,
         "environment": {
             "STARTUP_CMD": "./start.sh"
