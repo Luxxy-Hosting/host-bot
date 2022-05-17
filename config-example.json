@@ -1,0 +1,66 @@
+{
+    "settings": {
+        "maintenance": false,
+        "nodeStatus": true,
+        "McScript": true,
+        "autoLeave": true,
+        "consoleSave": false
+
+        "nodeStatusDelay": 15,
+
+        "guildID": "",
+        "avoidServerPorts": [],
+
+        "statusOnMaintenance": "On Maintenance mode",
+    },
+
+    "channelID": {
+        "legal": "",
+        "errorLog": "",
+        "welcome": "",
+        "bye": "",
+        "abuse": "",
+        "ticketChannel": "",
+        "nodeStatus": "",
+        "suggestions": "",
+        "analyse": "",
+    },
+
+    "voiceID": {
+        "members": "",
+        "clients": "",
+        "servers": ""
+    },
+    "parentID": {
+        "createAccount": ""
+    },
+    "roleID": {
+        "support": "",
+        "member": "",
+        "admin": "",
+        "client": "",
+        "administrator": ""
+    },
+
+    "bot":{
+        "token": "Your bot token here",
+        "prefix": "prefix (with lowercase only)"
+    },
+
+    "pterodactyl": {
+        "host": "https://panel.luxxy.host",
+        "adminApiKey": "application api key",
+        "clientAPI":"client admin api key"
+    },
+    "nginxPM": {
+        "host": "https://NginxProxyManagerHost.com",
+        "email": "uremail",
+        "pass": "urpassword"
+    },
+    "lavalink": {
+        "host": "lavalink host",
+        "password": "password",
+        "secure": false,
+        "port": lavalinkport
+    }
+}
