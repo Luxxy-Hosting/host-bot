@@ -56,5 +56,11 @@
         "host": "https://NginxProxyManagerHost.com",
         "email": "uremail",
         "pass": "urpassword"
+    },
+    "lavalink": {
+        "host": "lavalink host",
+        "password": "password",
+        "secure": false,
+        "port": lavalinkport
     }
 }
