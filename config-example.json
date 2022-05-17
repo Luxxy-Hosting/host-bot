@@ -15,16 +15,15 @@
     },
 
     "channelID": {
-        "legal":"",
-        "errorLog":"",
-        "welcome":"",
-        "bye":"",
+        "legal": "",
+        "errorLog": "",
+        "welcome": "",
+        "bye": "",
         "abuse": "",
         "ticketChannel": "",
         "nodeStatus": "",
         "suggestions": "",
         "analyse": "",
-        "github": ""
     },
 
     "voiceID": {
