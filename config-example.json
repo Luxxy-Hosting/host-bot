@@ -4,14 +4,15 @@
         "nodeStatus": true,
         "McScript": true,
         "autoLeave": true,
-        "consoleSave": false
+        "consoleSave": false,
 
         "nodeStatusDelay": 15,
 
         "guildID": "",
+        "admin": [""],
         "avoidServerPorts": [],
 
-        "statusOnMaintenance": "On Maintenance mode",
+        "statusOnMaintenance": "On Maintenance mode"
     },
 
     "channelID": {
@@ -26,20 +27,31 @@
         "analyse": ""
     },
 
+    "logs":{
+        "dms": ""
+    },
+
     "voiceID": {
         "members": "",
         "clients": "",
         "servers": ""
     },
     "parentID": {
-        "createAccount": ""
+        "createAccount": "",
+        "ticketParent": "942993364171763762"
     },
     "roleID": {
+        "staff": "",
         "support": "",
         "member": "",
         "admin": "",
+        "administrator": "",
         "client": "",
-        "administrator": ""
+        "betatester": ""
+    },
+
+    "fastify": {
+        "port": 8069
     },
 
     "bot":{
@@ -48,6 +60,7 @@
     },
 
     "pterodactyl": {
+        "myIp": "",
         "host": "https://panel.luxxy.host",
         "adminApiKey": "application api key",
         "clientAPI":"client admin api key"
@@ -61,6 +74,7 @@
         "host": "lavalink host",
         "password": "password",
         "secure": false,
-        "port": lavalinkport
+        "port": 3000,
+        "retryDelay": 3000
     }
 }
