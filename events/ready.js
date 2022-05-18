@@ -20,7 +20,7 @@ module.exports = async (client) => {
     });
 
     setInterval(() => {
-        let guild = client.guilds.cache.get("941026456396509244");
+        let guild = client.guilds.cache.get(config.settings.guildID);
         let membercount3 = guild.members.cache.size.toLocaleString();
         client.channels.cache.get(config.voiceID.members).edit({ 
             name: `Total Members: ${membercount3}`
