@@ -5,10 +5,10 @@ const axios = require('axios')
 const stringTable = require('string-table')
 const ms = require('ms')
 module.exports = {
-    name: "analyse",
+    name: "analysenode1",
     aliases: [''], 
     async run(client, message, args){
-        if(!message.member.roles.cache.has(config.roleID.administrator) || message.channel.id !== config.channelID.analyse) return
+        if(!message.member.roles.cache.has(config.roleID.administrator)) return message.channel.send('You do not have the required permissions to use this command.')
         if(!args[0]) return message.channel.send(`you stupid... chose a number: !analyse <ammount to show> <obtional: ram/cpu/disk> `)
         let sortby
 
@@ -19,7 +19,7 @@ module.exports = {
         let msg
         let start = Date.now()
         await axios({
-            url: config.pterodactyl.host+"/api/application/nodes/" + "1" + "?include=servers,location,allocations",
+            url: config.pterodactyl.host+"/api/application/nodes/" + "2" + "?include=servers,location,allocations",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
@@ -54,7 +54,6 @@ module.exports = {
             }))).sort(function(a, b) {
                 return sortby === 'CPU' ? b?.resources?.cpu_absolute - a?.resources?.cpu_absolute : sortby === 'DISK' ? b?.resources?.disk_bytes - a?.resources?.disk_bytes : b?.resources?.memory_bytes - a?.resources?.memory_bytes 
             }).slice(0, args[0])
-
             msg.edit(`\`\`\`\n${stringTable.create(done)}\`\`\`\ntime taken: ${ms(Date.now() - start)}`).catch(err => {message.reply(`:x: Too Long Message!`)})
 
         }).catch(x => {msg.edit(`${x}.`)})
