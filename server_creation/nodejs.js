@@ -3,8 +3,8 @@ module.exports = (userID, serverName) => {
         "name": serverName,
         "user": userID,
         "nest": 5,
-        "egg": 33,
-        "docker_image": "quay.io/yajtpg/pterodactyl-images:nodejs-17",
+        "egg": 54,
+        "docker_image": "ghcr.io/luxxy-gf/nodejs_18",
         "startup": "/start.sh",
         "limits": {
             "memory": 1024,
