@@ -14,8 +14,8 @@ module.exports = (userID, serverName) => {
             "cpu": 0
         },
         "environment": {
-            "STARTUP_CMD": "npm install --save --production",
-            "SECOND_CMD": "node ."
+            "start_command1": "npm install --save --production",
+            "start_command2": "node ."
         },
         "feature_limits": {
             "databases": 0,
