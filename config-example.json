@@ -28,7 +28,8 @@
     },
 
     "logs":{
-        "dms": ""
+        "dms": "",
+        "createlog": ""
     },
 
     "voiceID": {
@@ -38,7 +39,7 @@
     },
     "parentID": {
         "createAccount": "",
-        "ticketParent": "942993364171763762"
+        "ticketParent": ""
     },
     "roleID": {
         "staff": "",

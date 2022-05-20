@@ -82,6 +82,13 @@ module.exports = async (client, message, args) => {
             ]
         })
 
+        const logchannel = client.channels.cache.get(config.logs.createlog)
+        if (!logchannel) {
+            console.log(`[${new Date().toLocaleString()}] [ERROR] [LOGS] Could not find the logs channel.`)
+            return;
+        }
+        
+        logchannel.send({ embeds: [ new Discord.MessageEmbed().addField(`Server Created`, `**User ID:** \`${userData.get(message.author.id).consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``).addField(`Server ID`, `\`${response.data.attributes.uuid}\``).setColor(`GREEN`).addField(`Server Status`, `\`${response.statusText}\``).setFooter(`User ID: ${userData.get(message.author.id).consoleID}`).setTimestamp() ] })
         serverCount.add(message.author.id + '.used', 1)
             
     }).catch(error => {
