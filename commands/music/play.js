@@ -1,4 +1,6 @@
+const { MessageEmbed } = require('discord.js');
 const Discord = require('discord.js');
+const { convertTime } = require('../../handlers/convert');
 
 module.exports = async (client, message, args) => {
     if (!message.guild.me.permissions.has([ Discord.Permissions.FLAGS.CONNECT, Discord.Permissions.FLAGS.SPEAK ])) {

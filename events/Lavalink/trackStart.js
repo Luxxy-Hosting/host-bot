@@ -1,5 +1,5 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
-const { convertTime } = require('../convert.js');
+const { convertTime } = require('../../handlers/convert');
 
 
 module.exports = async (client, player, track, payload) => {
