@@ -72,10 +72,14 @@
         "pass": "urpassword"
     },
     "lavalink": {
-        "host": "lavalink host",
-        "password": "password",
-        "secure": false,
-        "port": 3000,
-        "retryDelay": 3000
+        "nodes": [
+            {
+                "host": "",
+                "port": 8080,
+                "password": "",
+                "retryDelay": 3000,
+                "secure": false
+            }
+        ]
     }
 }
