@@ -4,15 +4,19 @@ module.exports = {
     aliases: [''], 
     async run(client, message, args){
         let created = message.createdTimestamp
-        message.channel.send(`pinging...`).then(x => {
-            let responce = x.createdTimestamp - created
-            x.edit({
+        message.channel.send(`pinging...`).then(msg => {
+            const ping = msg.createdAt - message.createdAt;
+            const api_ping = client.ws.ping;
+            msg.edit({
                 content: null,
                 embeds:[
                     new Discord.MessageEmbed()
-                    .setTitle(`🏓 | Bot ping`)
-                    .setColor(`${responce > 300 ? responce > 1000 ? "RED" : "YELLOW" : "GREEN"}`)
-                    .setDescription(`API ping: ${client.ws.ping}ms\nAnswered in: ${responce}ms`)
+                    .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL())
+                    .setColor(client.embedColor)
+                    .addField('Bot Ping', `\`\`\`ini\n[ ${ping}ms ]\n\`\`\``, true)
+                    .addField('Api Ping', `\`\`\`ini\n[ ${api_ping}ms ]\n\`\`\``, true)
+                    .setFooter(`Requested by ${message.author.tag}`, message.author.displayAvatarURL())
+                    .setTimestamp()
                 ]
             })
         })

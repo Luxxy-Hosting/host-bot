@@ -17,7 +17,6 @@ module.exports = async (client) => {
    readdirSync("./events/Lavalink/").forEach(file => {
     const event = require(`../events/Lavalink/${file}`);
     let eventName = file.split(".")[0];
-    console.log(`Loading Events Lavalink ${eventName}`);
     client.manager.on(eventName, event.bind(null, client));
 });
 }
