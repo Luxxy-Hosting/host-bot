@@ -1,3 +1,13 @@
+let randompass = () => {
+    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    let pass = "";
+    for (let x = 0; x < 10; x++) {
+        let i = Math.floor(Math.random() * chars.length);
+        pass += chars.charAt(i);
+    }
+    return pass;
+}
+
 module.exports = (userID, serverName) => {
     return {
         "name": serverName,
@@ -14,7 +24,8 @@ module.exports = (userID, serverName) => {
             "cpu": 0
         },
         "environment": {
-            "STARTUP_CMD": "bash"
+            "PASSWORD": randompass(),
+            "VERSION": "latest"
         },
         "feature_limits": {
             "databases": 0,
