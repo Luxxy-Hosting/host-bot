@@ -12,13 +12,21 @@ module.exports = async (client) => {
     console.log(`Minecraft Port Checker: ${config.settings.McScript ? chalk.green('true') : chalk.red('false')}`)
     console.log()
 
-    config.settings.maintenance ? client.user.setActivity(config.settings.statusOnMaintenance) : client.user.setActivity("!help | Luxxy Hosting", { type: "WATCHING" })
-
     const autorun = fs.readdirSync(`./autoRun`).filter(file => file.endsWith('.js'));
     autorun.forEach(file => {
         require(`../autoRun/${file}`)(client)
     });
 
+    const clientactivity = [
+        `!help | Luxxy Hosting`,
+        `i'm nothing but a bot`,
+        `i'm a bot`,
+        `what`,
+        `message.reply('help')`
+    ]
+    setInterval(() => {
+        client.user.setActivity(clientactivity[Math.floor(Math.random() * clientactivity.length)], { type: "WATCHING" })
+    }, 10000)
     setInterval(() => {
         let guild = client.guilds.cache.get(config.settings.guildID);
         let membercount3 = guild.members.cache.size.toLocaleString();
