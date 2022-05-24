@@ -1,5 +1,6 @@
 const { findProxy, deleteProxy } = require(`../../nginxPM/index`)
 module.exports = async (client, message, args) => {
+    message.delete()
     if(!args[1]) return message.reply(`:x: What domain should i unproxy? command usage: \`!unproxy <domain>\``)
     if(!domains.get(message.author.id)?.find(x => x.domain === args[1].toLowerCase())) return message.reply(`:x: I could not find this domain in ur domain list`)
 
