@@ -3,6 +3,7 @@ const config = require('../../config.json')
 const axios = require('axios')
 const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`)
 module.exports = async (client, message, args) => {
+    message.delete()
     let port
     let localdomain
     let serverid = args[1]
