@@ -5,6 +5,7 @@
         "McScript": true,
         "autoLeave": true,
         "consoleSave": false,
+        "updateFromGithub": false,
 
         "nodeStatusDelay": 15,
 
@@ -24,7 +25,8 @@
         "ticketChannel": "",
         "nodeStatus": "",
         "suggestions": "",
-        "analyse": ""
+        "analyse": "",
+        "github": ""
     },
 
     "logs":{
