@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const config = require(`./config.json`);
 const db = require('quick.db')
 
+// hi
+
 const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_VOICE_STATES', 'DIRECT_MESSAGES', 'GUILD_PRESENCES', 'GUILD_BANS'], partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
 console.log("index runing . . .")
