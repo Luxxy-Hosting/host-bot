@@ -20,7 +20,7 @@ module.exports = async (client) => {
 
     if(config.settings.updateFromGithub){
         setInterval(async () => {
-            await exec(`git pull origin main`, async (error, stdout) => {
+            await exec(`git pull origin master`, async (error, stdout) => {
                 let response = (error || stdout);
                 if (!error) {
                     if (!response.includes("Already up to date.")){
