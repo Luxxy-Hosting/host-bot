@@ -2,6 +2,8 @@ const chalk = require('chalk')
 const config = require('../config.json')
 const fs = require('fs')
 const { default: axios } = require('axios')
+const exec = require('child_process').exec;
+let idkwhatisthis = false
 module.exports = async (client) => {
     console.log(chalk.hex('#6b7dfb')(`Luxxy Hosting`))
     console.log(`Logged in as: ${chalk.underline(client.user.tag)}`)
