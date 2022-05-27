@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const axios = require('axios');
 module.exports = async (client, message, args) => {
     if(!userData.get(message.author.id)) return message.reply(":x: You dont have an account created. type `!user new` to create one")
-    if(!args[1]) return message.reply(`:x: What server should i delete? please provide you server id *(!server delete <server id>)*`)
+    if(!args[1]) return message.reply(`${error} What server should i delete? please provide you server id *(!server delete <server id>)*`)
     if (args[1].match(/[0-9a-z]+/i) == null)
         return message.channel.send("lol only use english characters.");
 
@@ -55,7 +55,7 @@ module.exports = async (client, message, args) => {
             Collector.stop()
             if(i.customId === "AcceptDelete") {
                 msg.edit({
-                    content: `Deleting, please wait . . .`,
+                    content: `Deleting Server \n Please wait . . .`,
                 })
 
                 axios({
@@ -69,7 +69,7 @@ module.exports = async (client, message, args) => {
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
                 }).then(() => {
-                    msg.edit('Server deleted!')
+                    msg.edit(`${success} Server deleted!`)
                     if(!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
                     serverCount.subtract(message.author.id + '.used', 1)
                 }).catch(err => {
@@ -79,7 +79,7 @@ module.exports = async (client, message, args) => {
             }
             if(i.customId === "RejectDelete") {
                 msg.edit({
-                    content: `Server deletion canceled`,
+                    content: `${success} Server deletion canceled`,
                 })
             }
         })

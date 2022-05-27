@@ -4,8 +4,8 @@ const axios = require('axios')
 module.exports = async (client, message, args) => {
     const userDB = userData.get(message.author.id)
     const count = serverCount.get(message.author.id)
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
-    if (message.author.id === '517107022399799331') return message.reply(":x: You can't delete your owners account")
+    if(!userDB) return message.reply(`${error}` + " You dont have an account created. type `!user new` to create one")
+    if (message.author.id === '517107022399799331') return message.reply(`${error} You can't delete your owners account`)
     await axios({
         url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
         method: 'GET',

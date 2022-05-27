@@ -15,7 +15,10 @@ global.invinfo = new db.table("InviteInfo")
 global.invitedBy = new db.table("InvitedByInfo")
 global.domains = new db.table("ProxiedDomains")
 global.dir = __dirname;
-client.embedColor = "#0099ff";
+client.embedColor = "#0099ff"
+
+global.error = "<:No:979776354486726726>"
+global.success = "<:yes:964979709945470977>"
 
 require("./handlers/music")(client);
 require(`./handlers/event_handler`)(client);

@@ -28,7 +28,7 @@ module.exports = async (client, message, args) => {
         .setFooter("Example: !server create NodeJS Testing Server")
 
         message.channel.send({
-            content: `> :x: What type of server you want me to create?`,
+            content: `> ${error} What type of server you want me to create?`,
             embeds: [noTypeListed],
             components: [row]
         })
@@ -48,11 +48,11 @@ module.exports = async (client, message, args) => {
     try{
         ServerData = require(`../../server_creation/${args[1]?.toLowerCase()}.js`)(userData.get(message.author.id).consoleID, srvname ? srvname : args[1])
     }catch(err){
-        message.reply(`:x: I could no find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`)
+        message.reply(`${error} I could no find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`)
         return
     }
 
-    let msg = await message.reply(`✅ Attemping to create you a server, please wait. . .`)
+    let msg = await message.reply(`${success} Attemping to create you a server, please wait. . .`)
 
     axios({
         url: config.pterodactyl.host + "/api/application/servers",
@@ -72,7 +72,7 @@ module.exports = async (client, message, args) => {
             embeds:[
                 new Discord.MessageEmbed()
                 .setColor(`GREEN`)
-                .setTitle(`✅ Server Created Successfully`)
+                .setTitle(`${success} Server Created Successfully`)
                 .setDescription(`
                 > **Status:** \`${response.statusText}\`
                 > **User ID:** \`${userData.get(message.author.id).consoleID}\`
@@ -98,7 +98,7 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.MessageEmbed()
                     .setColor('RED')
-                    .addField(`❌ Server creation failed`, `The node had ran out of allocations/ports!`)
+                    .addField(`${error} Server creation failed`, `The node had ran out of allocations/ports!`)
                 ]
             })
         }else if (error == "Error: Request failed with status code 504") {
@@ -107,7 +107,7 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.MessageEmbed()
                     .setColor('RED')
-                    .addField(`❌ Server creation failed`, `The node is currently offline or having issues`)
+                    .addField(`${error} Server creation failed`, `The node is currently offline or having issues`)
                 ]
             })
         }else if (error == "Error: Request failed with status code 429") {
@@ -116,7 +116,7 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.MessageEmbed()
                     .setColor('RED')
-                    .addField(`❌ Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
+                    .addField(`${error} Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
                     ]
             })
         }else if (error == "Error: Request failed with status code 429") {
@@ -125,7 +125,7 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.MessageEmbed()
                     .setColor('RED')
-                    .addField(`❌ Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
+                    .addField(`${error} Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
                     ]
             })
         }else {
@@ -134,7 +134,7 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.MessageEmbed()
                     .setColor('RED')
-                    .addField(`❌ Server creation failed`, `${error}.`)
+                    .addField(`${error} Server creation failed`, `${error}.`)
                 ]
             })
         }

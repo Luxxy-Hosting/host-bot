@@ -77,7 +77,7 @@ module.exports = async (client, message, args) => {
     let proxyinfo = await proxyDomain(domain, localdomain, port)
 
     if(!proxyinfo.error){
-        msg.edit(`Your domain had been succesufuly proxied. Proxy id: ${proxyinfo.data.id}`)
+        msg.edit(`${success} Your domain had been proxied. Proxy id: ${proxyinfo.data.id}`)
 
         let userDomains = domains.get(message.author.id) || []
 
