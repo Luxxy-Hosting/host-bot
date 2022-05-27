@@ -1,4 +1,4 @@
-module.exports = (userID, serverName) => {
+module.exports = (userID, serverName, location) => {
     return {
         "name": serverName,
         "user": userID,
@@ -31,7 +31,7 @@ module.exports = (userID, serverName) => {
             "backups": 0
         },
         "deploy": {
-            "locations": [ 1, 2 ],
+            "locations": location,
             "dedicated_ip": false,
             "port_range": []
         },

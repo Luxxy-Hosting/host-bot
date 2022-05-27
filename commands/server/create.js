@@ -46,7 +46,7 @@ module.exports = async (client, message, args) => {
     let srvname = args.slice(2).join(' ')
 
     try{
-        ServerData = require(`../../server_creation/${args[1]?.toLowerCase()}.js`)(userData.get(message.author.id).consoleID, srvname ? srvname : args[1])
+        ServerData = require(`../../server_creation/${args[1]?.toLowerCase()}.js`)(userData.get(message.author.id).consoleID, srvname ? srvname : args[1], config.pterodactyl.depolymentlocations)
     }catch(err){
         message.reply(`${error} I could no find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`)
         return
