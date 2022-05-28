@@ -1,10 +1,8 @@
 const Discord = require('discord.js');
 const axios = require('axios');
 const config = require('../../config.json');
-const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
-    const userDB = await userData.findOne({ ID: message.author.id });
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
+    if(!userData.get(message.author.id)) return message.reply(":x: You dont have an account created. type `!user new` to create one")
 
     const CAPSNUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     var getPassword = () => {
@@ -18,7 +16,7 @@ module.exports = async (client, message, args) => {
 
     let password = await getPassword();
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
+        url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID,
         method: 'GET',
         followRedirect: true,
         maxRedirects: 5,
@@ -36,7 +34,7 @@ module.exports = async (client, message, args) => {
             "password": password
         }
         axios({
-            url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
+            url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID,
             method: 'PATCH',
             followRedirect: true,
             maxRedirects: 5,

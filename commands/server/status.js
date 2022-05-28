@@ -3,10 +3,8 @@ const pretty = require('prettysize');
 const format = require('format-duration')
 const Discord = require('discord.js')
 const config = require('../../config.json')
-const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
-    const userDB = await userData.findOne({ ID: message.author.id })
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
+    if(!userData.get(message.author.id)) return message.reply(":x: You dont have an account created. type `!user new` to create one")
     args = args.slice(1)
             let server = args[0]?.split('-')[0]
 
@@ -19,7 +17,7 @@ module.exports = async (client, message, args) => {
 
                     message.channel.send('Checking server `' + server + '`\nPlease wait, it wont take more that 10 seconds').then((msg) => {
                         axios({
-                            url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+                            url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
                             method: 'GET',
                             followRedirect: true,
                             maxRedirects: 5,
@@ -37,7 +35,7 @@ module.exports = async (client, message, args) => {
                                     msg.edit(':x: | Sorry but i didnt find that server in your list!')
                                 } else {
         
-                                    if (output.attributes.user === userDB.consoleID) {
+                                    if (output.attributes.user === userData.get(message.author.id).consoleID) {
                                         axios({
                                             url: config.pterodactyl.host + '/api/client/servers/' + server ,
                                             method: 'GET',

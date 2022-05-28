@@ -2,7 +2,6 @@ const { default: axios } = require('axios')
 const Discord = require('discord.js')
 const moment = require('moment')
 const config = require('../../config.json')
-const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
          /// disabled for now because issue with linking owners account
         if(!message.member.roles.cache.has(config.roleID.administrator)) return message.reply({
@@ -59,14 +58,14 @@ module.exports = async (client, message, args) => {
                 'Accept': 'Application/vnd.pterodactyl.v1+json',
             },
         }).then(async user => {
-            userData({
-                ID: user1.id,
+            userData.set(user1.id, {
+                discordID: user1.id,
                 consoleID: consoleid,
                 email: user.data.attributes.email,
                 username: user.data.attributes.username,
                 linkTime: moment().format("HH:mm:ss"),
                 linkDate: moment().format("YYYY-MM-DD"),
-            }).save()
+            })
             message.reply({
                 embeds: [
                     new Discord.MessageEmbed()

@@ -13,7 +13,6 @@ module.exports = async (client) => {
     console.log(`Maintenance mode: ${config.settings.maintenance ? chalk.green('true ') : chalk.red('false')}`)
     console.log(`Auto Leave Guilds: ${config.settings.autoLeave ? chalk.green('true') : chalk.red('false')}`)
     console.log(`Minecraft Port Checker: ${config.settings.McScript ? chalk.green('true') : chalk.red('false')}`)
-    console.log(`Lavalink Stats: ${config.settings.lavalinkStatus ? chalk.green('true') : chalk.red('false')}`)
     console.log()
 
     const autorun = fs.readdirSync(`./autoRun`).filter(file => file.endsWith('.js'));
@@ -98,48 +97,6 @@ module.exports = async (client) => {
         if(g.id === config.settings.guildID) return
         g.leave().catch(console.error)
     })
-    
-    if(config.settings.lavalinkStatus){
-        const channel = await client.channels.fetch(config.channelID.lavalinkStats);
-        const embed = new Discord.MessageEmbed()
-          .setColor(Util.resolveColor("#2F3136"))
-          .setDescription("Fetching Stats From Lavalink");
-        channel.bulkDelete(1);
-        channel.send({ embeds: [embed] }).then((msg) => {
-            setInterval(() => {
-                let all = [];
-                
-                client.manager.nodes.forEach((node) => {
-                    let color;
-                    
-                    if (!node.connected) color = "-";
-                    else color = "+";
-                    
-                    let info = [];
-                    info.push(`${color} Node          :: ${node.options.identifier}`);
-                    info.push(`${color} Status        :: ${node.connected ? "Connected [🟢]" : "Disconnected [🔴]"}`);
-                    info.push(`${color} Player        :: ${node.stats.players}`);
-                    info.push(`${color} Used Player   :: ${node.stats.playingPlayers}`);
-                    info.push(`${color} Uptime        :: ${moment.duration(node.stats.uptime).format(" d [days], h [hours], m [minutes], s [seconds]")}`);
-                    info.push(`${color} Cores         :: ${node.stats.cpu.cores} Core(s)`);
-                    info.push(`${color} Memory Usage  :: ${prettyBytes(node.stats.memory.used)}/${prettyBytes(node.stats.memory.reservable)}`);
-                    info.push(`${color} System Load   :: ${(Math.round(node.stats.cpu.systemLoad * 100) / 100).toFixed(2)}%`);
-                    info.push(`${color} Lavalink Load :: ${(Math.round(node.stats.cpu.lavalinkLoad * 100) / 100).toFixed(2)}%`);
-                    all.push(info.join("\n"));});
-                
-                const rembed = new Discord.MessageEmbed()
-                  .setColor(Util.resolveColor("#2F3136"))
-                  .setAuthor({
-                      name: `Lavalink Status`,
-                      iconURL: client.user.displayAvatarURL({ forceStatic: false }),
-                  })
-                  .setDescription(`\`\`\`diff\n${all.join("\n\n")}\`\`\``)
-                  .setFooter({
-                text: "Last Update",
-            })
-            .setTimestamp(Date.now());
-                  }, 60000);
-                })};
-    
+
     client.manager.init(client.user.id);
 }

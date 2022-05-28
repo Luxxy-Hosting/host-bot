@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const axios = require('axios');
 const config = require('../../config.json');
-const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.support)) return message.channel.send('You do not have the required permissions to use this command.');
@@ -13,8 +12,7 @@ module.exports = async (client, message, args) => {
             .setColor(`RED`)
         ]
     })
-    const userDB = await userData.findOne({ ID: user.id });
-    if (!userDB) return message.reply({
+    if (!userData.get(user.id)) return message.reply({
         embeds: [
             new Discord.MessageEmbed()
             .setTitle(`:x: | ${user.username} doesn't have an account yet`)
@@ -22,7 +20,7 @@ module.exports = async (client, message, args) => {
         ]
     })
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/application/users/" + userData.get(user.id).consoleID + "?include=servers",
         method: 'GET',
         followRedirect: true,
         maxRedirects: 5,

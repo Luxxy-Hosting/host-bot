@@ -2,7 +2,6 @@ const { default: axios } = require('axios');
 const Discord = require('discord.js');
 const config = require('../../config.json');
 const moment = require('moment');
-const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
@@ -15,9 +14,8 @@ module.exports = async (client, message, args) => {
             .setColor(`RED`)
         ]
     })
-    const userDB = await userData.findOne({ ID: user.id });
 
-    if (!userDB) {
+    if (!userData.get(user.id)) {
         message.reply(`${user.username} is not in the database`)
         return;
     }
@@ -41,13 +39,13 @@ module.exports = async (client, message, args) => {
         message.reply(`Memory size must be less than 16432`)
     }
 
-    userData.findAndModify({
-        ID: user.id,
-        consoleID: userDB.consoleID,
-        email: userDB.email,
-        username: userDB.username,
-        linkTime: userDB.linkTime,
-        linkDate: userDB.linkDate,
+    userData.set(user.id, {
+        discordID: userData.get(user.id).discordID,
+        consoleID: userData.get(user.id).consoleID,
+        email: userData.get(user.id).email,
+        username: userData.get(user.id).username,
+        linkTime: userData.get(user.id).linkTime,
+        linkDate: userData.get(user.id).linkDate,
         partner: true,
     })
 
@@ -55,7 +53,7 @@ module.exports = async (client, message, args) => {
     message.reply(`Creating partner Server with ${memory} MB`).then(msg => {
         const data = ({
             "name": `${user.username}'s Partner Server`,
-            "user": userDB.consoleID,
+            "user": userData.get(user.id).consoleID,
             "nest": 1,
             "egg": 3,
             "docker_image": "ghcr.io/pterodactyl/yolks:java_17",

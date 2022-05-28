@@ -6,21 +6,17 @@
         "autoLeave": true,
         "consoleSave": false,
         "updateFromGithub": false,
-        "lavalinkStatus": true,
 
         "nodeStatusDelay": 15,
 
         "guildID": "",
         "admin": [""],
         "avoidServerPorts": [],
-        
-        "mongoDB": "",
 
         "statusOnMaintenance": "On Maintenance mode"
     },
 
     "channelID": {
-        "lavalinkStatus": "",
         "legal": "",
         "errorLog": "",
         "welcome": "",

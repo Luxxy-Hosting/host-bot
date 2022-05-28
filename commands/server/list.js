@@ -1,13 +1,11 @@
 const config = require('../../config.json')
 const Discord = require('discord.js');
 const axios = require('axios');
-const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
-    const userDB = await userData.findOne({ ID: message.author.id })
-    if(!userDB) return message.reply(`:x: You dont have an account yet, run \`!user new\` to create one`)
+    if(!userData.get(message.author.id)) return message.reply(`:x: You dont have an account yet, run \`!user new\` to create one`)
 
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
         method: 'GET',
         followRedirect: true,
         maxRedirects: 5,
