@@ -5,6 +5,7 @@
         "McScript": true,
         "autoLeave": true,
         "consoleSave": false,
+        "lavalinkStatus": true,
 
         "nodeStatusDelay": 15,
 
@@ -18,6 +19,7 @@
     },
 
     "channelID": {
+        "lavalinkStatus": "",
         "legal": "",
         "errorLog": "",
         "welcome": "",
