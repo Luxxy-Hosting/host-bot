@@ -4,8 +4,8 @@ const axios = require('axios')
 const userData = require('../../models/userData');
 const serverCount = require('../../models/FreeServerCount');
 module.exports = async (client, message, args) => {
-    const userDB = userData.get(message.author.id)
-    const count = serverCount.get(message.author.id)
+    const userDB = await userData.findOne({ ID: message.author.id })
+    const count = await serverCount.findOne({ ID: message.author.id })
     if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
     if (message.author.id === '517107022399799331') return message.reply(":x: You can't delete your owners account")
     await axios({
