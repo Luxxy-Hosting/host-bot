@@ -5,11 +5,13 @@ const wait = require('node:timers/promises').setTimeout;
 const validator = require('validator');
 const moment = require("moment");
 const fs = require('fs');
+const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
-
-    if (userData.get(message.author.id)) {
-        message.reply(`${error}` + " You already have a `panel account` linked to your discord account");
+	const userDB = await userData.findOne({ ID: message.author.id });
+	
+    if (userDB) {
+        message.reply(":x: You already have a `panel account` linked to your discord account");
         return;
     }
 
@@ -195,14 +197,14 @@ module.exports = async (client, message, args) => {
                     }).then(async user => {
                         
                         message.member.roles.add(message.guild.roles.cache.get(config.roleID.client))
-                        userData.set(`${message.author.id}`, {
-                            discordID: message.author.id,
+                        userData({
+                            ID: message.author.id,
                             consoleID: user.data.attributes.id,
                             email: user.data.attributes.email,
                             username: user.data.attributes.username,
                             linkTime: moment().format("HH:mm:ss"),
                             linkDate: moment().format("YYYY-MM-DD"),
-                        })
+                        }).save()
                         msg.edit({
                             content: `${message.author}`,
                             embeds: [

@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const config = require('../../config.json');
+const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.support)) return message.channel.send ('You do not have the required permissions to use this command.');
@@ -12,7 +13,8 @@ module.exports = async (client, message, args) => {
             .setColor(`RED`)
         ]
     })
-    if (!userData.get(user.id)) return message.reply({
+    const userDB = await userData.findOne({ ID: user.id });
+    if (!userDB) return message.reply({
         embeds: [
             new Discord.MessageEmbed()
             .setTitle(`:x: | ${user.username} doesn't have an account yet`)

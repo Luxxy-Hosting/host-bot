@@ -1,9 +1,11 @@
 const config = require('../../config.json')
 const Discord = require('discord.js');
 const axios = require('axios');
+const userData = require('../../models/userData');
 const emoji = '<:blue_arrow:964977636084416535>'
 module.exports = async (client, message, args) => {
-    if (!userData.get(message.author.id)) {
+    const userDB = await userData.findOne({ ID: message.author.id })
+    if (!userDB) {
         message.reply(":x: You dont have an account created. type `!user new` to create one");
         return;
     }
@@ -75,7 +77,7 @@ module.exports = async (client, message, args) => {
                 .setTitle(`${success} Server Created Successfully`)
                 .setDescription(`
                 > **Status:** \`${response.statusText}\`
-                > **User ID:** \`${userData.get(message.author.id).consoleID}\`
+                > **User ID:** \`${userDB.consoleID}\`
                 > **Server Name:** \`${srvname ? srvname : args[1]}\`
                 > **Server Type:** \`${args[1].toLowerCase()}\`
                 `)
@@ -88,7 +90,7 @@ module.exports = async (client, message, args) => {
             return;
         }
         
-        logchannel.send({ embeds: [ new Discord.MessageEmbed().addField(`Server Created`, `**User ID:** \`${userData.get(message.author.id).consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``).addField(`Server ID`, `\`${response.data.attributes.uuid}\``).setColor(`GREEN`).addField(`Server Status`, `\`${response.statusText}\``).setFooter(`User ID: ${userData.get(message.author.id).consoleID}`).setTimestamp() ] })
+        logchannel.send({ embeds: [ new Discord.MessageEmbed().addField(`Server Created`, `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``).addField(`Server ID`, `\`${response.data.attributes.uuid}\``).setColor(`GREEN`).addField(`Server Status`, `\`${response.statusText}\``).setFooter(`User ID: ${userDB.consoleID}`).setTimestamp() ] })
         serverCount.add(message.author.id + '.used', 1)
             
     }).catch(error => {
