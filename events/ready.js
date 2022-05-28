@@ -102,7 +102,7 @@ module.exports = async (client) => {
     if(config.settings.lavalinkStatus){
         const channel = await client.channels.fetch(config.channelID.lavalinkStats);
         const embed = new Discord.MessageEmbed()
-          .setColor(Util.resolveColor("#2F3136"))
+          .setColor("#2F3136")
           .setDescription("Fetching Stats From Lavalink");
         channel.bulkDelete(1);
         channel.send({ embeds: [embed] }).then((msg) => {
@@ -128,7 +128,7 @@ module.exports = async (client) => {
                     all.push(info.join("\n"));});
                 
                 const rembed = new Discord.MessageEmbed()
-                  .setColor(Util.resolveColor("#2F3136"))
+                  .setColor("#2F3136")
                   .setAuthor({
                       name: `Lavalink Status`,
                       iconURL: client.user.displayAvatarURL({ forceStatic: false }),
