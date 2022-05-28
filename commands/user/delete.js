@@ -149,9 +149,7 @@ module.exports = async (client, message, args) => {
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
                 }).then(() => {
-                    userData.findOneAndDelete({
-                        ID: message.author.id,
-                    }) // don't work
+                    userData.remove({ ID: message.author.id }).save()
                     serverCount.set(message.author.id, {
                         used: 0,
                         have: 3,
