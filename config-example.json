@@ -11,6 +11,8 @@
         "guildID": "",
         "admin": [""],
         "avoidServerPorts": [],
+        
+        "mongoDB": "",
 
         "statusOnMaintenance": "On Maintenance mode"
     },
