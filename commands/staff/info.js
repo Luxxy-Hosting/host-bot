@@ -48,7 +48,7 @@ module.exports = async (client, message, args) => {
                     .addField('Email', `\`\`\`\n${res.data.attributes.email}\`\`\``, true)
                     .addField('Username', `\`\`\`\n${res.data.attributes.username}\`\`\``, true)
                     .addField('Link Date', `\`\`\`\n${userDB.linkDate}\`\`\``, true)
-                    .addField('Link Time', `\`\`\`\n${userDB).linkTime}\`\`\``, true)
+                    .addField('Link Time', `\`\`\`\n${userDB.linkTime}\`\`\``, true)
                     .addField('Servers', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
                     .addField('Servers Name', `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
                     .addField('Server Count', `\`\`\`\n${serverCount.get(user.id).used} / ${serverCount.get(user.id).have}\`\`\``, true)
