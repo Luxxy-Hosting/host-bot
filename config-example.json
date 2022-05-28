@@ -5,6 +5,7 @@
         "McScript": true,
         "autoLeave": true,
         "consoleSave": false,
+        "updateFromGithub": false,
         "lavalinkStatus": true,
 
         "nodeStatusDelay": 15,
@@ -28,7 +29,8 @@
         "ticketChannel": "",
         "nodeStatus": "",
         "suggestions": "",
-        "analyse": ""
+        "analyse": "",
+        "github": ""
     },
 
     "logs":{
@@ -68,7 +70,8 @@
         "myIp": "",
         "host": "https://panel.luxxy.host",
         "adminApiKey": "application api key",
-        "clientAPI":"client admin api key"
+        "clientAPI":"client admin api key",
+        "depolymentlocations": [ 1, 2 ]
     },
     "nginxPM": {
         "host": "https://NginxProxyManagerHost.com",

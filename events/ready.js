@@ -1,7 +1,10 @@
+const Discord = require('discord.js');
 const chalk = require('chalk')
 const config = require('../config.json')
 const fs = require('fs')
 const { default: axios } = require('axios')
+const exec = require('child_process').exec;
+let idkwhatisthis = false
 module.exports = async (client) => {
     console.log(chalk.hex('#6b7dfb')(`Luxxy Hosting`))
     console.log(`Logged in as: ${chalk.underline(client.user.tag)}`)
@@ -17,6 +20,32 @@ module.exports = async (client) => {
     autorun.forEach(file => {
         require(`../autoRun/${file}`)(client)
     });
+
+
+    if(config.settings.updateFromGithub){
+        setInterval(async () => {
+            await exec(`git pull origin master`, async (error, stdout) => {
+                let response = (error || stdout);
+                if (!error) {
+                    if (!response.includes("Already up to date.")){
+                        console.log(`${chalk.red('[ GitHub ]')} Update found on github. downloading now!`);
+                        await client.channels.cache.get(config.channelID.github).send({content: "**RESTARTING . . .**", embeds:[
+                            new Discord.MessageEmbed()
+                            .setTitle(`**[PULL FROM GITHUB]** New update on GitHub. Pulling.`)
+                            .setColor(`BLUE`)
+                            .setDescription(`Logs:\n\`\`\`\n${response}\`\`\``)
+                        ]})
+                        console.log(`${chalk.red('[ GitHub ]')} the new version had been installed. Restarting now . . .`)
+                        process.exit()
+                    }else {
+                        if(!idkwhatisthis) {console.log(`${chalk.green('[ GitHub ]')} Bot is up to date\n`); idkwhatisthis = true}
+                    }
+                }else{
+                    console.log(`${chalk.red('[ GitHub ]')} Error: ${error}\n`)
+                }
+            })
+        }, 30000)
+    }
 
     const clientactivity = [
         `!help | Luxxy Hosting`,

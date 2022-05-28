@@ -8,7 +8,7 @@ module.exports = async (client, member, guild) => {
     const count = serverCount.get(member.id)
     if (!userdb) {
         console.log('User is not in the database.')
-        message.reply('🤵 User is not in the database.')
+        client.guilds.cache.get('942502078172000266').send('🤵 User is not in the database.')
     }
     if(userdb) {
         await axios({

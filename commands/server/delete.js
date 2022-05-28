@@ -57,7 +57,7 @@ module.exports = async (client, message, args) => {
             Collector.stop()
             if(i.customId === "AcceptDelete") {
                 msg.edit({
-                    content: `Deleting, please wait . . .`,
+                    content: `Deleting Server \n Please wait . . .`,
                 })
 
                 axios({
@@ -71,7 +71,7 @@ module.exports = async (client, message, args) => {
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
                 }).then(() => {
-                    msg.edit('Server deleted!')
+                    msg.edit(`${success} Server deleted!`)
                     if(!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
                     serverCount.subtract(message.author.id + '.used', 1)
                 }).catch(err => {
@@ -81,7 +81,7 @@ module.exports = async (client, message, args) => {
             }
             if(i.customId === "RejectDelete") {
                 msg.edit({
-                    content: `Server deletion canceled`,
+                    content: `${success} Server deletion canceled`,
                 })
             }
         })

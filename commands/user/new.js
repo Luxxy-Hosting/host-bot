@@ -8,7 +8,6 @@ const fs = require('fs');
 const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
-	
 	const userDB = await userData.findOne({ ID: message.author.id });
 	
     if (userDB) {
@@ -80,13 +79,13 @@ module.exports = async (client, message, args) => {
 
     legalCollector.on('end', async(a, reason) => {
         if(reason === 'time'){
-            channel.send(':x: Time had expired, i am closing this channel')
+            channel.send(`${error} Time had expired, i am closing this channel`)
             await wait(3000)
             try{ channel.delete() }catch(err){}
             return
         }
         if(reason === 'RejectLegal'){
-            channel.send(':x: Without accepting our legal, we will now allow you to create an account and use our servicies')
+            channel.send(`${error} Without accepting our legal, we will now allow you to create an account and use our servicies`)
             await wait(5000)
             try{ channel.delete() }catch(err){}
             return
@@ -132,7 +131,7 @@ module.exports = async (client, message, args) => {
                     }
                 }else if(!username){
                     if(m.content.trim().split(" ").length > 1) {
-                        let tempmsg = await channel.send(':x: The username must not have spaces or special characters, try sending again')
+                        let tempmsg = await channel.send(`${error} The username must not have spaces or special characters, try sending again`)
                         await wait(1500)
                         tempmsg.delete()
                         return
@@ -152,7 +151,7 @@ module.exports = async (client, message, args) => {
 
             collector.on('end', async (collected, reason) => {
                 if(reason === 'time'){
-                    channel.send(':x: Time had expired, i am closing this channel')
+                    channel.send(`${error} Time had expired, i am closing this channel`)
                     await wait(3000)
                     try{ channel.delete() }catch(err){}
                     return
@@ -168,7 +167,7 @@ module.exports = async (client, message, args) => {
                     if(!username || !email) return msg.edit({
                         embeds:[
                             new Discord.MessageEmbed()
-                            .setTitle(`:x: Something wierd happend...`)
+                            .setTitle(`${error} Something wierd happend...`)
                             .setColor(`RED`)
                             .setDescription(`Error: The email or username cache did not save any record!`)
                         ]
@@ -210,7 +209,7 @@ module.exports = async (client, message, args) => {
                             content: `${message.author}`,
                             embeds: [
                                 new Discord.MessageEmbed()
-                                .setTitle(`✅ Your account was successfully created`)
+                                .setTitle(`${success} Your account was successfully created`)
                                 .setColor(`#677bf9`)
                                 .setDescription(`Here are the account details:\n\n> panel link: ${config.pterodactyl.host}\n> email: \`${email}\`\n> username: \`${username}\`\n> password: || ${data.password} ||\n\nMake sure you will change your password *(after you login)* by accessing the top right account icon on the panel, from there you will have to type your curent password which is marked above and your new password.\n\n⚠️ *This channel will be deleted in 30 minues, make sure you saved your login data before the channel gets deleted*`)
                             ]
@@ -223,7 +222,7 @@ module.exports = async (client, message, args) => {
                         msg.edit({
                             embeds:[
                                 new Discord.MessageEmbed()
-                                .setTitle(`:x: Something happend :/`)
+                                .setTitle(`${error} Something happend :/`)
                                 .setColor(`RED`)
                                 .setDescription(`There was an error when creating your account\n\n${err.toString() === 'Error: Request failed with status code 422' ? `${err}\n\n> This error is caused of Unprocessable Entity, which can be caused because of many bugs. one of them is using special characters in your username. another example can be that someone already have used that email adress or username.`: err} \n\nerror id: ${Date.now()} \n please go to <#971131084718895175> and make a ticket with the error id 🦺`)
                             ]
