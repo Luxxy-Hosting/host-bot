@@ -1,13 +1,12 @@
 const Discord = require('discord.js');
 const config = require('../../config.json')
 const axios = require('axios')
-const userData = require('../../models/userData');
+const userData1 = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
-    const userDB = await userData.findOne({ ID: message.author.id })
-    const count = await serverCount.get(message.author.id)
+    const userDB = await userData1.findOne({ ID: message.author.id })
     if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
-    //if (message.author.id === '517107022399799331') return message.reply(":x: You can't delete your owners account")
+    if (message.author.id === '517107022399799331') return message.reply(":x: You can't delete your owners account")
     await axios({
         url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
         method: 'GET',
@@ -149,13 +148,11 @@ module.exports = async (client, message, args) => {
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
                 }).then(() => {
-                    userData.remove({ ID: message.author.id }).save()
+                    userData1.findOneAndDelete({ _id: message.author.id }).then(e => { console.log('deleted') })
                     serverCount.set(message.author.id, {
                         used: 0,
                         have: 3,
                     })
-
-
                     msg.edit({
                         embeds:[
                             new Discord.MessageEmbed()
