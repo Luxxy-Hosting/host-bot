@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const userData = require('../../models/userData');
-module.exports = (client, message, args) => {
+module.exports = async (client, message, args) => {
     //const userDB = userData.get(message.author.id)
     const userDataDB = await userData.findOne({ ID: message.author.id });
     if(!userDataDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
