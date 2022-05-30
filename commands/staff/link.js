@@ -41,7 +41,7 @@ module.exports = async (client, message, args) => {
         })
 
         /// this needs to be fixed
-        if (args[2] == 1) {
+        if (args[2] == 1 && message.author.id !== '517107022399799331') {
                  message.reply({
                           embed: [
                                    new Discord.MessageEmbed()
