@@ -1,4 +1,5 @@
 const { findProxy, deleteProxy } = require(`../../nginxPM/index`)
+const config = require('../../config.json')
 module.exports = async (client, message, args) => {
     message.delete()
     if(!args[1]) return message.reply(`${error} What domain should i unproxy? command usage: \`${config.bot.prefix}unproxy <domain>\``)
