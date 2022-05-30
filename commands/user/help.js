@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const config = require('../../config.json')
 module.exports = (client, message, args) => {
     message.channel.send({
         embeds:[
