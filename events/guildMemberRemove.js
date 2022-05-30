@@ -1,18 +1,19 @@
 const Discord = require("discord.js")
 const config = require("../config.json")
 const axios = require("axios")
+const userData = require('../models/userData');
 
 module.exports = async (client, member, guild) => {
     console.log(`${member.user.tag} has left.`)
-    const userdb = userData.get(member.id)
+    const userDB = await userData.findOne({ ID: member.id })
     const count = serverCount.get(member.id)
-    if (!userdb) {
+    if (!userDB) {
         console.log('User is not in the database.')
         client.guilds.cache.get('942502078172000266').send('🤵 User is not in the database.')
     }
-    if(userdb) {
+    if(userDB) {
         await axios({
-            url: config.pterodactyl.host + "/api/application/users/" + userData.get(member.id).consoleID + "?include=servers",
+            url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
@@ -27,7 +28,7 @@ module.exports = async (client, member, guild) => {
                 embeds: [
                     new Discord.MessageEmbed()
                     .setColor('#0099ff')
-                    .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${userdb.consoleID} with ${servers1.length} servers.`)
+                    .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${userDB.consoleID} with ${servers1.length} servers.`)
                 ]
             })
             client.channels.cache.get('942502078172000266').send('deleting.....')
@@ -64,7 +65,7 @@ module.exports = async (client, member, guild) => {
                 ))
             }
             await axios({
-                url: config.pterodactyl.host + "/api/application/users/" + userData.get(member.id).consoleID,
+                url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
                 method: 'DELETE',
                 followRedirect: true,
                 maxRedirects: 5,
@@ -74,7 +75,7 @@ module.exports = async (client, member, guild) => {
                     'Accept': 'Application/vnd.pterodactyl.v1+json',
                 }
             }).then(() => {
-                userData.delete(member.user.id)
+                userDB.deleteMany({ ID: member.user.id })
                 serverCount.delete(member.user.id)
                 client.channels.cache.get('942502078172000266').send({
                     embeds: [
