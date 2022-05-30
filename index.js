@@ -9,16 +9,6 @@ const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_
 
 console.log("index runing . . .")
 
-mongoose.connect(config.settings.mongoDB, {
-    useNewUrlParser: true,
-    keepAlive: true,
-    useUnifiedTopology: true
-}).then(()=>{
-    console.log('Connected to the Mongoose Database')
-}).catch((err) =>{
-    console.log(err)
-});
-
 client.snipes = new Discord.Collection();
 client.commands = new Discord.Collection();
 client.events = new Discord.Collection();
@@ -36,8 +26,8 @@ global.success = "<:yes:964979709945470977>"
 require("./handlers/music")(client);
 require(`./handlers/event_handler`)(client);
 require(`./handlers/command_handler`)(client);
+require(`./handlers/mongoose`)(client);
 require(`./handlers/anti_crash`)(process);
-
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 
 client.login(config.bot.token);
