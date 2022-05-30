@@ -6,14 +6,14 @@ const config = require('../../config.json')
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
+    if(!userDB) return message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
     args = args.slice(1)
             let server = args[0]?.split('-')[0]
 
                 if (!server) {
                     let embed = new Discord.MessageEmbed()
                         .setColor("GREEN")
-                        .addField("__**Server Status**__", "What server should i display? \nCommand Format: \`!server status <server id>\`")
+                        .addField("__**Server Status**__", `What server should i display? \nCommand Format: \`${config.bot.prefix}server status <server id>\``)
                     await message.channel.send({embeds:[embed]})
                 } else {
 
