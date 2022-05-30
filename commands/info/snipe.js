@@ -4,7 +4,7 @@ module.exports = {
     aliases: [''], 
     async run(client, message, args){
         let snipe = client.snipes.get(message.channel.id)
-        if (!snipe) return message.channel.send(`:x: There is nothing to snipe`)
+        if (!snipe) return message.channel.send(`${error} There is nothing to snipe`)
 
         snipe = [...snipe.values()]
         snipe.reverse();
