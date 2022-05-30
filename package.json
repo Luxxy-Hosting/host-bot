@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "while true; do npm i; node index.js; done"
   },
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
-    "@discordjs/voice": "github:discordjs/voice",
+    "@discordjs/voice": "^0.9.0",
     "axios": "^0.26.1",
     "chalk": "^2.4.2",
     "delay": "^5.0.0",
@@ -27,6 +27,7 @@
     "ms": "^2.1.3",
     "node-superfetch": "^0.2.3",
     "os": "^0.1.2",
+    "pretty-bytes": "^5.6.0",
     "prettysize": "^2.0.0",
     "quick.db": "^7.1.3",
     "string-table": "^0.1.5",
