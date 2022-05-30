@@ -4,8 +4,8 @@ const axios = require('axios');
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
-    if(!args[1]) return message.reply(`:x: What server should i delete? please provide you server id *(!server delete <server id>)*`)
+    if(!userDB) return message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
+    if(!args[1]) return message.reply(`${error} What server should i delete? please provide you server id *(${config.bot.prefix}server delete <server id>)*`)
     if (args[1].match(/[0-9a-z]+/i) == null)
         return message.channel.send("lol only use english characters.");
 
