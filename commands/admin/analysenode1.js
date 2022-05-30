@@ -9,7 +9,7 @@ module.exports = {
     aliases: [''], 
     async run(client, message, args){
         if(!message.member.roles.cache.has(config.roleID.administrator)) return message.channel.send('You do not have the required permissions to use this command.')
-        if(!args[0]) return message.channel.send(`you stupid... chose a number: !analyse <ammount to show> <obtional: ram/cpu/disk> `)
+        if(!args[0]) return message.channel.send(`you stupid... chose a number: ${config.bot.prefix}analyse <ammount to show> <obtional: ram/cpu/disk> `)
         let sortby
 
         if(args[1]) {
