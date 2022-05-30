@@ -14,7 +14,7 @@ module.exports = async (client, message, args) => {
         !serverid?.split('-')[0] ||
         !domain ||
         domain.split('.').length === 1
-    ) return message.channel.send(`:x: Incorrect command usage. Please run: \`!server proxy <server id> <your_domain.com>\``)
+    ) return message.channel.send(`:x: Incorrect command usage. Please run: \`${config.bot.prefix}server proxy <server id> <your_domain.com>\``)
 
     let preoutput = (await axios({
         url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
