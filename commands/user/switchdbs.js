@@ -9,9 +9,12 @@ const oldUserData = new db.table("userData");
 module.exports = async (client, message, args) => {
 	const oldUserDB = oldUserData.get(message.author.id)
 	const userDB = await userData.findOne({ ID: message.author.id });
-
+    if (!oldUserDB) {
+        message.reply(error + ' somehow you never had account on the old db \n you can create account by doing \n **!user new**')
+        return;
+    }
     if (userDB) {
-        message.reply(":x: You already have a `panel account` linked");
+        message.reply(error + " You already have a `panel account` linked");
         return;
     }
     
@@ -42,6 +45,6 @@ module.exports = async (client, message, args) => {
                     .setDescription('User linked successfully! \n Username: ' + user.data.attributes.username + '\n Email: ' + user.data.attributes.email + '\n Console ID: ' + oldUserDB.consoleid)
                     ]
                 })
-            })
+            }).catch(err => message.reply('this was not post to happen' + err))
     message.reply(`${success} Database succcessfully transfered to Mongodb database.`)
 }
