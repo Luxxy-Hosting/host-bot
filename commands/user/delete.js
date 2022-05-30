@@ -5,7 +5,7 @@ const userData1 = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
     const userDB = await userData1.findOne({ ID: message.author.id })
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
+    if(!userDB) return message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
     if (message.author.id === '517107022399799331') return message.reply(":x: You can't delete your owners account")
     await axios({
         url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
