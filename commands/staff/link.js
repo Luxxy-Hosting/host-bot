@@ -18,7 +18,7 @@ module.exports = async (client, message, args) => {
                 new Discord.MessageEmbed()
                 .setColor('#ff0000')
                 .setTitle('Error')
-                .setDescription('usage: !staff link @luxxy <consoleid>')
+                .setDescription(`usage: \`${config.bot.prefix}staff link @luxxy <consoleid>\``)
             ]
         })
         const user1 = message.mentions.users.first()
@@ -41,13 +41,16 @@ module.exports = async (client, message, args) => {
         })
 
         /// this needs to be fixed
-        if (consoleid === 1) return message.reply({
-            embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
-                .setDescription('You cannot link this user to this console!')
-            ]
-        })
+        if (args[2] == 1) {
+                 message.reply({
+                          embed: [
+                                   new Discord.MessageEmbed()
+                                   .setColor('#ff0000')
+                                   .setDescription('You cannot link this user to this console!')
+                          ]
+                 })
+                 return;
+        }
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + consoleid,
             method: 'get',
