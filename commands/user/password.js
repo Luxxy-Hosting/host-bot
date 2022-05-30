@@ -4,7 +4,7 @@ const config = require('../../config.json');
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id });
-    if(!userDB) return message.reply(":x: You dont have an account created. type `!user new` to create one")
+    if(!userDB) return message.reply(`:x: You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
 
     const CAPSNUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     var getPassword = () => {
