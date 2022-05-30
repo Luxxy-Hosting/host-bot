@@ -6,7 +6,7 @@ const emoji = '<:blue_arrow:964977636084416535>'
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
     if (!userDB) {
-        message.reply(":x: You dont have an account created. type `!user new` to create one");
+        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`);
         return;
     }
 
@@ -27,7 +27,7 @@ module.exports = async (client, message, args) => {
         .addField(`${emoji} __**Databases**__:`, `> MongoDB \n > Redis`, true)
         .addField(`${emoji} __**Web**__:`, `> Nginx`, true)
         .addField(`${emoji} __**Other**__:`, `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, true)
-        .setFooter("Example: !server create NodeJS Testing Server")
+        .setFooter(`Example: \`${config.bot.prefix}server create NodeJS Testing Server\``)
 
         message.channel.send({
             content: `> ${error} What type of server you want me to create?`,
@@ -42,7 +42,7 @@ module.exports = async (client, message, args) => {
             used: 0,
             have: 3
         })
-    }else if(serverCount.get(message.author.id).used >= serverCount.get(message.author.id).have) return message.reply(`:x: You already used your all server slots. For more info run: !server count`)
+    }else if(serverCount.get(message.author.id).used >= serverCount.get(message.author.id).have) return message.reply(`:x: You already used your all server slots. For more info run: ${config.bot.prefix}server count`)
 
     let ServerData
     let srvname = args.slice(2).join(' ')
@@ -50,7 +50,7 @@ module.exports = async (client, message, args) => {
     try{
         ServerData = require(`../../server_creation/${args[1]?.toLowerCase()}.js`)(userData.get(message.author.id).consoleID, srvname ? srvname : args[1], config.pterodactyl.depolymentlocations)
     }catch(err){
-        message.reply(`${error} I could no find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`)
+        message.reply(`${error} I could no find any server type with the name: \`${args[1]}\`\nType \`${config.bot.prefix}server create list\` for more info`)
         return
     }
 
