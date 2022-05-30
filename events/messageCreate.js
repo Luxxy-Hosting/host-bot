@@ -1,13 +1,13 @@
 const config = require("../config.json")
 const wait = require('node:timers/promises').setTimeout;
 module.exports = async (client, message) => {
-    if(message.author?.bot) return
-//    if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
-    /**if(!message.channel.id === config.channelID.botCommands) {
-        message.reply(error + ` Bot Commands can only be used in the commands channel.`)
-        return;
-    }*/
     if(config.settings.commandChannelOnly){
+        if(message.author?.bot) return
+        //if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
+        if(!message.channel.id === config.channelID.botCommands) {
+            message.reply(error + ` Bot Commands can only be used in the commands channel.`)
+            return;
+        }
         if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
         
         if(message.channel.id === config.channelID.suggestions && !message.content.startsWith('>')){
@@ -67,9 +67,19 @@ module.exports = async (client, message) => {
             
             if(!command) return
             await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
-            command.run(client, message, args);
+            command.run(client, message, args)
+            if(config.settings.messageLog){
+                const embed = new Discord.MessageEmbed()
+                embed.setTitle('🤖 Used Command')
+                embed.setColor(`BLUE`)
+                embed.addField(`Command Channel:`, `<#${message.channel.name}>`)
+                embed.addField(`Command User:`, `${message.author.tag} (${message.author.id})`)
+                embed.addField(`Command Used:`, `${message?.content}`)
+            };
         }catch(err){}
         } else {
+            if(message.author?.bot) return
+            //if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
             
             if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
             
@@ -130,7 +140,15 @@ module.exports = async (client, message) => {
 
         if(!command) return
         await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
-        command.run(client, message, args);
+        command.run(client, message, args)
+        if(config.settings.messageLog){
+            const embed = new Discord.MessageEmbed()
+            embed.setTitle('🤖 Used Command')
+            embed.setColor(`BLUE`)
+            embed.addField(`Command Channel:`, `<#${message.channel.name}>`)
+            embed.addField(`Command User:`, `${message.author.tag} (${message.author.id})`)
+            embed.addField(`Command Used:`, `${message?.content}`)
+        };
     }catch(err){}
     }
 }
