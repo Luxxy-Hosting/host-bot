@@ -39,17 +39,16 @@ module.exports = async (client, message, args) => {
                 .setDescription('You need to specify a console ID!')
             ]
         })
-
-        /// this needs to be fixed
         if (args[2] == 1 && message.author.id !== '517107022399799331') {
                  message.reply({
-                          embed: [
+                          embeds: [
                                    new Discord.MessageEmbed()
                                    .setColor('#ff0000')
-                                   .setDescription('You cannot link this user to this console!')
+                                   .setTitle('Error')
+                                   .setDescription(`${error} You cannot link this user to this consoleID!`)
                           ]
                  })
-                 return;
+            return;
         }
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + consoleid,
