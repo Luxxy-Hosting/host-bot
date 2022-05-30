@@ -4,6 +4,7 @@ const wait = require('node:timers/promises').setTimeout;
 const axios = require('axios')
 const chalk = require('chalk')
 const Discord = require('discord.js')
+const userData = require('../../models/userData');
 module.exports = async (client, member) => {
     if(!config.settings.McScript) return
 
