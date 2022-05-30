@@ -5,6 +5,10 @@ const fs = require('fs')
 const { default: axios } = require('axios')
 const exec = require('child_process').exec;
 let idkwhatisthis = false
+const moment = require("moment");
+require("moment-duration-format");
+const prettyBytes = require("pretty-bytes");
+
 module.exports = async (client) => {
     console.log(chalk.hex('#6b7dfb')(`Luxxy Hosting`))
     console.log(`Logged in as: ${chalk.underline(client.user.tag)}`)
@@ -48,7 +52,7 @@ module.exports = async (client) => {
     }
 
     const clientactivity = [
-        `!help | Luxxy Hosting`,
+        `${config.bot.prefix}help | Luxxy Hosting`,
         `i'm nothing but a bot`,
         `i'm a bot`,
         `what`,
@@ -104,6 +108,7 @@ module.exports = async (client) => {
         const embed = new Discord.MessageEmbed()
           .setColor("#2F3136")
           .setDescription("Fetching Stats From Lavalink");
+        
         channel.bulkDelete(1);
         channel.send({ embeds: [embed] }).then((msg) => {
             setInterval(() => {
@@ -128,7 +133,7 @@ module.exports = async (client) => {
                     all.push(info.join("\n"));});
                 
                 const rembed = new Discord.MessageEmbed()
-                  .setColor("#2F3136")
+                  .setColor(Util.resolveColor("#2F3136"))
                   .setAuthor({
                       name: `Lavalink Status`,
                       iconURL: client.user.displayAvatarURL({ forceStatic: false }),
@@ -138,6 +143,8 @@ module.exports = async (client) => {
                 text: "Last Update",
             })
             .setTimestamp(Date.now());
+                
+                msg.edit({ embeds: [rembed] });
                   }, 60000);
                 })};
     
