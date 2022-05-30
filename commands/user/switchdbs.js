@@ -10,7 +10,7 @@ module.exports = async (client, message, args) => {
 	const oldUserDB = oldUserData.get(message.author.id)
 	const userDB = await userData.findOne({ ID: message.author.id });
     if (!oldUserDB) {
-        message.reply(error + ' somehow you never had account on the old db \n you can create account by doing \n **!user new**')
+        message.reply(error + ` somehow you never had account on the old db \n you can create account by doing \n **${config.bot.prefix}user new**`)
         return;
     }
     if (userDB) {
