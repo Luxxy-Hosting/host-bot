@@ -31,7 +31,8 @@
         "nodeStatus": "",
         "suggestions": "",
         "analyse": "",
-        "github": ""
+        "github": "",
+        "messageLog": ""
     },
 
     "logs":{
