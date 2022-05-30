@@ -29,6 +29,6 @@ module.exports = (client, message) => {
         embed.setTimestamp()
         
         
-        client.channels.cache.get(config.channelID.messages_managering).send({content: content, embeds: [embed]}).catch(err => {})
+        client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
     }
 }
