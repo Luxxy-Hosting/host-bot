@@ -1,5 +1,6 @@
 {
     "settings": {
+        "commandChannelOnly": true,
         "messageLog": true,
         "maintenance": false,
         "nodeStatus": true,
