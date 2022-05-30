@@ -75,6 +75,10 @@ module.exports = async (client, message) => {
                 embed.addField(`Command Channel:`, `<#${message.channel.name}>`)
                 embed.addField(`Command User:`, `${message.author.tag} (${message.author.id})`)
                 embed.addField(`Command Used:`, `${message?.content}`)
+                embed.setTimestamp()
+                
+                
+                client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
             };
         }catch(err){}
         } else {
@@ -148,6 +152,10 @@ module.exports = async (client, message) => {
             embed.addField(`Command Channel:`, `<#${message.channel.name}>`)
             embed.addField(`Command User:`, `${message.author.tag} (${message.author.id})`)
             embed.addField(`Command Used:`, `${message?.content}`)
+            embed.setTimestamp()
+            
+            
+            client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
         };
     }catch(err){}
     }
