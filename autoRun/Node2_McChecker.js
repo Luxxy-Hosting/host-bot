@@ -4,7 +4,8 @@ const wait = require('node:timers/promises').setTimeout;
 const axios = require('axios')
 const chalk = require('chalk')
 const Discord = require('discord.js')
-module.exports = async (client) => {
+const userData = require('../../models/userData');
+module.exports = async (client, member) => {
     if(!config.settings.McScript) return
 
     async function runeverything () {
@@ -42,7 +43,7 @@ module.exports = async (client) => {
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
                 }).catch(err => {}))?.data
-                console.log(`${chalk.red('[ Security ]')} Minecraft server found on port ${chalk.bold(`${allocation.attributes.port}`)}, Server ID: ${chalk.bold(`${server.attributes.uuid?.split('-')[0]}`)}, Discord ID: ${chalk.bold(`${userData.all().find(x => JSON.parse(x.data).consoleID === user?.attributes.id)}`)}`)
+                console.log(`${chalk.red('[ Security ]')} Minecraft server found on port ${chalk.bold(`${allocation.attributes.port}`)}, Server ID: ${chalk.bold(`${server.attributes.uuid?.split('-')[0]}`)}, Discord ID: ${chalk.bold(`${userData.findOne({ ID: member.id })}`)}`)
                 await client.channels.cache.get(config.channelID.abuse).send({
                     embeds:[
                         new Discord.MessageEmbed()
@@ -66,7 +67,7 @@ module.exports = async (client) => {
                         + `User id: \`${user?.attributes.id}\`\n`
                         + `Username: \`${user?.attributes.username}\`\n`
                         + `Email: \`${user?.attributes.email}\`\n`
-                        + `Discord id: \`${userData.all().find(x => JSON.parse(x.data).consoleID === user?.attributes.id)}\``
+                        + `Discord id: \`${userData.findOne({ ID: member.id })}\``
                         )
                     ]
                 })
