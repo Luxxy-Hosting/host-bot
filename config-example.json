@@ -1,5 +1,6 @@
 {
     "settings": {
+        "messageLog": true,
         "maintenance": false,
         "nodeStatus": true,
         "McScript": true,
