@@ -4,7 +4,7 @@ const axios = require('axios');
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
-    if(!userDB) return message.reply(`:x: You dont have an account yet, run \`!user new\` to create one`)
+    if(!userDB) return message.reply(`:x: You dont have an account yet, run \`${config.bot.prefix}user new\` to create one`)
 
     axios({
         url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
