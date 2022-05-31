@@ -4,7 +4,7 @@ module.exports = async (client, message) => {
     if(config.settings.commandChannelOnly){
         if(message.author?.bot) return
         //if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
-        if(!message.channel.id === config.channelID.botCommands) {
+        if(message.channel.id !== config.channelID.botCommands) {
             message.reply(error + ` Bot Commands can only be used in the commands channel.`)
             return;
         }
