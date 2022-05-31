@@ -23,7 +23,7 @@
     },
 
     "channelID": {
-        "botCommands": [""],
+        "botCommands": "",
         "lavalinkStatus": "",
         "legal": "",
         "errorLog": "",
