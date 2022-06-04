@@ -222,7 +222,7 @@ module.exports = async (client, message, args) => {
                                 new Discord.MessageEmbed()
                                 .setTitle(`${error} Something happend :/`)
                                 .setColor(`RED`)
-                                .setDescription(`There was an error when creating your account\n\n${err.toString() === 'Error: Request failed with status code 422' ? `${err}\n\n> This error is caused of Unprocessable Entity, which can be caused because of many bugs. one of them is using special characters in your username. another example can be that someone already have used that email adress or username.`: err} \n\nerror id: ${Date.now()} \n please go to <#971131084718895175> and make a ticket with the error id 🦺`)
+                                .setDescription(`There was an error when creating your account\n\n${err.toString() === 'Error: Request failed with status code 422' ? `${err}\n\n> This error is caused of Unprocessable Entity, which can be caused because of many bugs. one of them is using special characters in your username. another example can be that someone already have used that email adress or username.`: err} \n\nerror id: ${Date.now()} \n please go to <#975100973007634482> and make a ticket with the error id 🦺`)
                             ]
                         })
                         channel.send(`This channel will be deleted in 10 seconds . . .`)
