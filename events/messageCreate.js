@@ -142,6 +142,11 @@ module.exports = async (client, message) => {
                 
                 
                 if(!command) return
+                if(command) {
+                    if(!botChannelId.includes(message.channel.id)){
+                            message.reply(`${message.author} You cannot use command here`)
+                            return;
+                } else {
                 await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
                 command.run(client, message, args)
                 if(config.settings.messageLog){
@@ -158,6 +163,8 @@ module.exports = async (client, message) => {
                     
                     client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
                 };
+              }
+             }
             }catch(err){}
         } else {
             if(message.author?.bot) return
