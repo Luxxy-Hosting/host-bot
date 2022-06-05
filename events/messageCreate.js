@@ -7,7 +7,6 @@ module.exports = async (client, message) => {
         
         if(message.author?.bot) return
         //if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
-        if(botChannelId.includes(message.channel.id)) {
             
             if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
             
@@ -30,11 +29,15 @@ module.exports = async (client, message) => {
             if(!message.content.toLowerCase().startsWith(config.bot.prefix) || message.author.bot) return;
             if(message.content.length <= config.bot.prefix.length) return 
             
-            const args = message.content.slice(config.bot.prefix.length).split(/ +/);
-            const cmd = args.shift().toLowerCase();
-            const command = client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd));
+        const args = message.content.slice(config.bot.prefix.length).split(/ +/);
+        const cmd = args.shift().toLowerCase();
+        const command = client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd));
             try{
                 if(cmd === 'user'){
+                        if(!botChannelId.includes(message.channel.id)){
+                            message.reply(`${message.author} You cannot use command here`)
+                            return;
+                        } else {
                     try{
                         if(!args[0]) return require('../commands/user/help.js')(client, message, args)
                         await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
@@ -54,8 +57,13 @@ module.exports = async (client, message) => {
                             client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
                         }
                     }catch(err){console.log(err).toString()}
+                    }
                     return
                 }else if(cmd === 'server'){
+                        if(!botChannelId.includes(message.channel.id)){
+                            message.reply(`${message.author} You cannot use command here`)
+                            return;
+                        } else {
                     try{
                         if(!args[0]) return require('../commands/server/help.js')(client, message, args)
                         await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
@@ -75,9 +83,14 @@ module.exports = async (client, message) => {
                             client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
                         }
                     }catch(err){console.log(err).toString()}
+                }
                     return
                 }else if(cmd === 'staff'){
                     if(!message.member.roles.cache.has(config.roleID.support)) return
+                        if(!botChannelId.includes(message.channel.id)){
+                            message.reply(`${message.author} You cannot use command here`)
+                            return;
+                        } else {
                     try{
                         if(!args[0]) return require('../commands/staff/help.js')(client, message, args)
                         await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
@@ -97,8 +110,13 @@ module.exports = async (client, message) => {
                             client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
                         }
                     }catch(err){console.log(err).toString()}
+                }
                     return
                 }else if(cmd === 'music'){
+                        if(!botChannelId.includes(message.channel.id)){
+                            message.reply(`${message.author} You cannot use command here`)
+                            return;
+                        } else {
                     try{
                         if(!args[0]) return require('../commands/music/help.js')(client, message, args)
                         await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
@@ -118,6 +136,7 @@ module.exports = async (client, message) => {
                             client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
                         }
                     }catch(err){console.log(err).toString()}
+                        }
                     return
                 }
                 
@@ -140,10 +159,6 @@ module.exports = async (client, message) => {
                     client.channels.cache.get(config.channelID.messageLog).send({content: content, embeds: [embed]}).catch(err => {})
                 };
             }catch(err){}
-            } else {
-                message.reply(error + ` Bot Commands can only be used in the commands channel.`)
-                return;
-            }
         } else {
             if(message.author?.bot) return
             //if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
@@ -214,8 +229,6 @@ module.exports = async (client, message) => {
             embed.setColor(`BLUE`)
             embed.addField(`Command Channel:`, `<#${message.channel.id}>`)
             embed.addField(`Command User:`, `${message.author.tag} (${message.author.id})`)
-            message.attachments?.size !== 0 ? embed.setImage(message.attachments?.first()?.proxyURL) : null
-            message.attachments?.size !== 0 ? content = message.attachments?.map(x => x?.proxyURL).join("\n") : content = null
             embed.addField(`Command Used:`, `${message?.content}`)
             embed.setTimestamp()
             
