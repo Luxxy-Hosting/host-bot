@@ -8,7 +8,7 @@
         "autoLeave": true,
         "consoleSave": false,
         "updateFromGithub": false,
-        "lavalinkStatus": true,
+        "LavalinkStats": true,
         "anitcrash": true,
 
         "nodeStatusDelay": 15,
@@ -24,7 +24,7 @@
 
     "channelID": {
         "botCommands": "",
-        "lavalinkStatus": "",
+        "LavalinkStats": "",
         "legal": "",
         "errorLog": "",
         "welcome": "",
