@@ -3,6 +3,7 @@ const config = require(`./config.json`);
 const db = require('quick.db')
 const userData = require('./models/userData');
 const mongoose = require('mongoose')
+const colors = require('colors')
 // const ServerCount = require('./models/FreeServerCount');
 
 const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_VOICE_STATES', 'DIRECT_MESSAGES', 'GUILD_PRESENCES', 'GUILD_BANS'], partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
@@ -31,3 +32,19 @@ require(`./handlers/anti_crash`)(process);
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 
 client.login(config.bot.token);
+
+/**
+ /* lavalink status
+ */
+const { readdirSync } = require("fs");
+if(config.settings.LavalinkStats) {
+    console.log(colors.green('[LavalinkStats]') + ' is active ')
+readdirSync("./events/LavalinkStats/").forEach((file) => {
+  const event = require(`./events/LavalinkStats/${file}`);
+  let eventName = file.split(".")[0];
+  console.log(colors.green(`[LavalinkStats] Loaded Lavalink Status events`));
+  client.on(eventName, event.bind(null, client));
+});
+} else {
+    console.log(colors.red('[LavalinkStats]') + ' is Disabled ');
+}
