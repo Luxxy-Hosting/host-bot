@@ -7,7 +7,7 @@ module.exports = async () => {
         keepAlive: true,
         useUnifiedTopology: true
     }).then(()=>{
-        console.log('Connected to the Mongoose Database')
+        console.log(`🏆 Loaded MONGO database`)
     }).catch((err) =>{
         console.log(err)
     });
