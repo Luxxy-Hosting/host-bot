@@ -6,31 +6,11 @@ const userData = new mongoose.Schema({
         require: true,
         unique: true
     },
-    consoleID: {
-        type: String,
-        require: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        require: true,
-        unique: true
-    },
-    username: {
-        type: String,
-        require: true,
-        unique: true
-    },
-    linkTime: {
-        type: String,
-        require: true,
-        unique: false
-    },
-    linkDate: {
-        type: String,
-        require: true,
-        unique: false
-    }
+    consoleID: String,
+    email: String,
+    username: String,
+    linkTime: String,
+    linkDate: String
 })
 
 module.exports = mongoose.model('userData', userData);
