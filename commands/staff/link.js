@@ -39,14 +39,17 @@ module.exports = async (client, message, args) => {
             ]
         })
 
-        /// this needs to be fixed
-        if (consoleid === 1) return message.reply({
-            embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
-                .setDescription('You cannot link this user to this console!')
-            ]
-        })
+        if (args[2] == 1 && message.author.id !== '517107022399799331') {
+                 message.reply({
+                          embeds: [
+                                   new Discord.MessageEmbed()
+                                   .setColor('#ff0000')
+                                   .setTitle('Error')
+                                   .setDescription(`${error} You cannot link this user to this consoleID!`)
+                          ]
+                 })
+            return;
+        }
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + consoleid,
             method: 'get',
