@@ -1,14 +1,15 @@
 const config = require('../../config.json');
 module.exports = async(client, message, args) => {
+    if (!userData.get(message.author.id)) {
+        message.reply(":x: You dont have an account created. type `!user new` to create one");
+        return;
+    }
     const user = message.author;
     
     const code = args[1]
     
     const oneoneone = (userid, amount) => {
-        serverCount.set(userid, {
-            used: serverCount.get(userid).used,
-            have: amount,
-        })
+        serverCount.add(userid + '.have', amount)
     }
     
     const oldbal = serverCount.get(user.id + '.have')
@@ -24,7 +25,7 @@ module.exports = async(client, message, args) => {
         return message.reply(`That code has been redeemed 💀`)
     }
     
-    oneoneone(user.id, oldbal + codes.get(code).balance)
+    oneoneone(user.id, codes.get(code).balance)
     
     message.reply(`You have redeemed ${codes.get(code).balance} servers! \n Check with \`${config.bot.prefix}server count\``)
     codes.delete(code)
