@@ -1,5 +1,6 @@
 const config = require("../config.json")
 const wait = require('node:timers/promises').setTimeout;
+const chalk = require('chalk');
 module.exports = async (client, message) => {
     if(message.author?.bot) return
 //    if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
@@ -32,14 +33,14 @@ module.exports = async (client, message) => {
         if(cmd === 'user'){
             try{
                 if(!args[0]) return require('../commands/user/help.js')(client, message, args)
-                await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
+                await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
                 require(`../commands/user/${args[0]}.js`)(client, message, args)
             }catch(err){console.log(err).toString()}
             return
         }else if(cmd === 'server'){
             try{
                 if(!args[0]) return require('../commands/server/help.js')(client, message, args)
-                await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
+                await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
                 require(`../commands/server/${args[0]}.js`)(client, message, args)
             }catch(err){console.log(err).toString()}
             return
@@ -47,14 +48,14 @@ module.exports = async (client, message) => {
             if(!message.member.roles.cache.has(config.roleID.support)) return
             try{
                 if(!args[0]) return require('../commands/staff/help.js')(client, message, args)
-                await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
+                await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
                 require(`../commands/staff/${args[0]}.js`)(client, message, args)
             }catch(err){console.log(err).toString()}
             return
         }else if(cmd === 'music'){
             try{
                 if(!args[0]) return require('../commands/music/help.js')(client, message, args)
-                await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
+                await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
                 require(`../commands/music/${args[0]}.js`)(client, message, args)
             }catch(err){console.log(err).toString()}
             return
@@ -62,7 +63,7 @@ module.exports = async (client, message) => {
 
 
         if(!command) return
-        await console.log(`[#${message.channel.name}]  ${message.author.tag} (${message.author.id}): ${message?.content}`)
+        await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
         command.run(client, message, args);
     }catch(err){}
 }

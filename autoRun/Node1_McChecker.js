@@ -27,7 +27,7 @@ module.exports = async (client) => {
         for(let server of servers){
             await wait(3000)
             let allocation = allocations.find(all => all.attributes.id === server.attributes.allocation)
-            console.log(`checking ${server.attributes.name}`)
+            console.log(chalk.red('[ Security ]')+` Checking ${server.attributes.name} on port ${allocation.attributes.port}`+ ` Node: 1`)
             let mc = await pinger.pingPromise('n1.luxxy.host', allocation.attributes.port).catch(()=>{})
             if(mc) {
 
