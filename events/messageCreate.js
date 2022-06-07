@@ -7,6 +7,20 @@ module.exports = async (client, message) => {
     
     if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
     
+    // Anti Invite
+    function deleteMessage() {
+        //console.log("deleted " + message.content + " from " + message.author.tag)
+        message.delete(1);
+        message.channel.send(`${message.author} You cannot advertise in here.`)
+    }
+    const invites = ["discord.gg/", "discord.com/invite/"];
+    if(message.content.includes("discord.gg/")) {
+        deleteMessage();
+    }
+    if(message.content.includes("discord.com/invite/")) {
+        deleteMessage();
+    }
+    
     if(message.channel.id === config.channelID.suggestions && !message.content.startsWith('>')){
         message.react('👍')
         await wait(500)
