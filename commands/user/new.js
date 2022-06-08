@@ -8,7 +8,7 @@ const fs = require('fs');
 const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
-	const userDB = await userData.findOne({ _id: message.author.id });
+	const userDB = await userData.findOne({ ID: message.author.id });
 	
     if (userDB) {
         message.reply(":x: You already have a `panel account` linked to your discord account");
@@ -198,7 +198,7 @@ module.exports = async (client, message, args) => {
                         
                         message.member.roles.add(message.guild.roles.cache.get(config.roleID.client))
                         userData({
-                            _id: message.author.id,
+                            ID: message.author.id,
                             consoleID: user.data.attributes.id,
                             email: user.data.attributes.email,
                             username: user.data.attributes.username,
