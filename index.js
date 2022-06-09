@@ -24,6 +24,7 @@ global.success = "<:yes:964979709945470977>"
 require("./handlers/music")(client);
 require(`./handlers/event_handler`)(client);
 require(`./handlers/command_handler`)(client);
+require(`./handlers/anti_crash`)(process);
 
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 
