@@ -26,4 +26,4 @@ module.exports = async (process) => {
         console.log(type, promise, reason);
         console.log(chalk.red('=== multiple Resolves ===\n\n\n\n\n'));
     });
-}}
+}
