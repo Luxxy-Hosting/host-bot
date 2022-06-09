@@ -1,6 +1,7 @@
 const config = require("../config.json")
 const wait = require('node:timers/promises').setTimeout;
 const chalk = require('chalk');
+const { Discord, MessageEmbed } = require('discord.js')
 module.exports = async (client, message) => {
     if(message.author?.bot) return
 //    if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
@@ -19,6 +20,31 @@ module.exports = async (client, message) => {
     }
     if(message.content.includes("discord.com/invite/")) {
         deleteMessage();
+    }
+
+    const array = require(`../scam.json`)
+    if (array.some(word => message.content.toLowerCase().includes(word))) {
+        try {
+        message.delete({ reason: 'AntiScam' });
+        message.guild.bans.create(message.author, { reason: 'AntiScam'})
+        const logEmbedDesc = 'Scam link blocked!'
+        .replace(/{MENTION}/g, message.author.tag)
+        .replace(/{ID}/g, message.author.id)
+        .replace(/{MESSAGE}/g, message.content)
+        .replace ("://", ": //");
+        const logChannel = client.channels.cache.get(config.channelID.logs)
+        const logEmbed = new MessageEmbed()
+        .setColor(`RED`)
+        .setAuthor(message.author.tag, message.author.displayAvatarURL())
+        .setDescription(logEmbedDesc)
+        .setTimestamp()
+        .addFields([{ name: 'Action', value: 'Ban' }]);
+        await logChannel.send({ embeds: [logEmbed] });
+       }
+      catch (error){
+        console.error(error);
+        await logChannel.send(error);
+      }
     }
     
     if(message.channel.id === config.channelID.suggestions && !message.content.startsWith('>')){
