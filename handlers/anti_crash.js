@@ -8,11 +8,6 @@ module.exports = async (process) => {
         console.log(reason.stack ? String(reason.stack) : String(reason));
         console.log('=== unhandled Rejection ===\n\n\n\n\n'.toUpperCase().red.dim);
     });
-    process.on("uncaughtException", (err, origin) => {
-        console.log(chalk.red(`\n\n\n\n\n\n[Anti-Crash] uncaught Exception`));
-        console.log(origin);
-        console.log(chalk.red('=== uncaught Exception ===\n\n\n\n\n'));
-    })
     process.on('uncaughtExceptionMonitor', (err, origin) => {
           console.log(chalk.red('[Anti-Crash] uncaught Exception Monitor'))
     });
