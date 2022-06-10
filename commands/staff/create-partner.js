@@ -77,7 +77,7 @@ module.exports = async (client, message, args) => {
                 "backups": 10
             },
             "deploy": {
-                "locations": [ 3 ],
+                "locations": [ 5 ],
                 "dedicated_ip": false,
                 "port_range": []
             },
