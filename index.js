@@ -15,6 +15,7 @@ global.invinfo = new db.table("InviteInfo")
 global.invitedBy = new db.table("InvitedByInfo")
 global.domains = new db.table("ProxiedDomains")
 global.codes = new db.table('Codes')
+global.blacklist = new db.table('Blacklist')
 global.dir = __dirname;
 client.embedColor = "#0099ff"
 

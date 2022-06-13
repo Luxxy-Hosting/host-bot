@@ -1,14 +1,15 @@
 const config = require("../config.json")
 const wait = require('node:timers/promises').setTimeout;
 const chalk = require('chalk');
-const { Discord, MessageEmbed } = require('discord.js')
+const { Discord, MessageEmbed } = require('discord.js');
 module.exports = async (client, message) => {
     if(message.author?.bot) return
 //    if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
     
     if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
     
-    // Anti Invite
+    if(blacklist.get(message.author.id) === message.author.id) return;
+
     function deleteMessage() {
         //console.log("deleted " + message.content + " from " + message.author.tag)
         message.delete(1);
