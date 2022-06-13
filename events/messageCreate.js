@@ -55,11 +55,13 @@ module.exports = async (client, message) => {
     }
 
     // suggested by astrexx
-    if(message.mentions.members.size > 4) 
-    {
-        message.delete();
-        message.guild.members.kick(message.author.id);
-        message.channel.send(`${message.author.tag} has been kicked for spamming mentions.`);
+    if (message.author.bot === false) {
+        if(message.mentions.members.size > 4) 
+        {
+            message.delete();
+            message.guild.members.kick(message.author.id);
+            message.channel.send(`${message.author.tag} has been kicked for spamming mentions.`);
+        }
     }
 
     if(config.settings.maintenance === true && !message.member.roles.cache.has(config.roleID.administrator)) return

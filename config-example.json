@@ -6,6 +6,7 @@
         "autoLeave": true,
         "consoleSave": false,
         "updateFromGithub": false,
+        "anticrash": false,
 
         "nodeStatusDelay": 15,
 
