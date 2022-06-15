@@ -9,7 +9,7 @@ module.exports = async (client, message) => {
     
     if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
     
-    if(message.author.id === blacklisted) return;
+    if(message.author.id == blacklisted) return;
 
     function deleteMessage() {
         //console.log("deleted " + message.content + " from " + message.author.tag)
