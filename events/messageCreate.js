@@ -3,7 +3,7 @@ const wait = require('node:timers/promises').setTimeout;
 const chalk = require('chalk');
 const { Discord, MessageEmbed } = require('discord.js');
 module.exports = async (client, message) => {
-    const blacklisted = blacklist.get(message.author.id);
+    const blacklisted = blacklist.get(message.author.id)
     if(message.author?.bot) return
 //    if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
     
