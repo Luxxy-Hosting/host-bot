@@ -14,12 +14,15 @@ module.exports = {
             if (user.id === message.author.id) return message.channel.send({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription('You can\'t blacklist yourself') ] });
             if (user.id === config.settings.owner) return message.channel.send({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription('You can\'t blacklist the owner') ] });
             if (user.bot) return message.channel.send({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription('You can\'t blacklist a bot') ] });
-
-            blacklist.set(user.id, {
-                status: true,
-            });
-
-            message.reply({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription(`${user.tag} has been blacklisted`) ] });
+            
+            let fetched = db.get(`blacklist_${user.id}`)
+            if(!fetched) {
+                db.set(`blacklist_${user.id}`, true)
+                message.reply({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription(`${user.tag} has been blacklisted`) ] });
+            } else {
+                return message.reply({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription(`${user.tag} is already blacklisted`) ] });
+            }
+            
 
         }
 
@@ -33,9 +36,13 @@ module.exports = {
             if (user.id === config.settings.owner) return message.channel.send({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription('You can\'t blacklist the owner') ] });
             if (user.bot) return message.channel.send({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription('You can\'t blacklist a bot') ] });
             
-            blacklist.delete(user.id);
-
-            message.reply({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription(`${user.tag} has been removed from the blacklist`) ] });
+            let fetched = db.get(`blacklist_${user.id}`)
+            if(!fetched) {
+                return message.reply({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription(`${user.tag} is not blacklisted`) ] });
+            }else{
+                db.delete(`blacklist_${user.id}`)
+                message.reply({ embeds: [ new Discord.MessageEmbed().setColor('#36393f').setDescription(`${user.tag} has been removed from the blacklist`) ] });
+            }
         }
     }
 }
