@@ -3,12 +3,13 @@ const wait = require('node:timers/promises').setTimeout;
 const chalk = require('chalk');
 const { Discord, MessageEmbed } = require('discord.js');
 module.exports = async (client, message) => {
+    const blacklisted = blacklist.get(message.author.id);
     if(message.author?.bot) return
 //    if(message.channel.type == "DM") return client.channels.cache.get(config.logs.dms).send(`${message.author.tag} (${message.author.id}): ${message.content}`)
     
     if(message.author.id === '517107022399799331' && message.content.toLowerCase().startsWith('eval')) return client.commands.get('eval').run(client, message, message.content.split(/ +/))
     
-    if(message.author.id === blacklist.get(message.author.id)) return;
+    if(message.author.id === blacklisted) return;
 
     function deleteMessage() {
         //console.log("deleted " + message.content + " from " + message.author.tag)
