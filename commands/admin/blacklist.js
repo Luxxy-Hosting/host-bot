@@ -6,7 +6,7 @@ module.exports = {
     category: "Owner",
     description: "Blacklist a user from the bot.",
     run: async (client, message, args) => {
-            if (message.author.id != config.settings.owner) return;
+            if (message.author.id !== config.settings.owner) return;
         if (args[0] === "add") {
     
             const user = message.mentions.users.first() || message.guild.members.cache.get(args[1]);
