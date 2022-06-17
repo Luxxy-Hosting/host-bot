@@ -2,10 +2,10 @@ module.exports = (userID, serverName, location) => {
     return {
         "name": serverName,
         "user": userID,
-        "nest": 5,
-        "egg": 17,
-        "docker_image": "ghcr.io/parkervcp/yolks:python_3.10",
-        "startup": "${STARTUP_CMD}",
+        "nest": 1,
+        "egg": 58,
+        "docker_image": "ghcr.io/luxxy-gf/python_3.10",
+        "startup": "/start.sh",
         "limits": {
             "memory": 1024,
             "swap": 0,
@@ -14,16 +14,8 @@ module.exports = (userID, serverName, location) => {
             "cpu": 0
         },
         "environment": {
-            "STARTUP_CMD": "bash",
-            "REQUIREMENTS_FILE": "requirements.txt",
-            "BOT_PY_FILE": "bot.py",
-            "AUTO_UPDATE": 0,
-            "USER_UPLOAD": 0,
-            "GIT_ADDRESS": null,
-            "BRANCH": null,
-            "PY_PACKAGES": null,
-            "USERNAME": null,
-            "ACCESS_TOKEN": null
+            "start_command1": "pip install -r requirements.txt",
+            "start_command2": "python bot.py",
         },
         "feature_limits": {
             "databases": 0,
