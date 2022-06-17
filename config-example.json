@@ -1,38 +1,40 @@
 {
     "settings": {
         "maintenance": false,
-        "nodeStatus": true,
-        "McScript": true,
-        "autoLeave": true,
+        "nodeStatus": false,
+        "McScript": false,
+        "autoLeave": false,
         "consoleSave": false,
         "updateFromGithub": false,
         "anticrash": false,
 
         "nodeStatusDelay": 15,
+        "vcUpdateInterval": 60,
 
         "guildID": "",
         "admin": [""],
-        "avoidServerPorts": [],
+        "owner": "",
 
-        "statusOnMaintenance": "On Maintenance mode"
+        "statusOnMaintenance": "On Maintenance mode",
+        "avoidServerPorts": []
+    },
+
+    "logs":{
+        "dms": "",
+        "createlog": ""
     },
 
     "channelID": {
-        "legal": "",
-        "errorLog": "",
-        "welcome": "",
-        "bye": "",
+        "legal":"",
+        "errorLog":"",
+        "welcome":"",
+        "bye":"",
         "abuse": "",
         "ticketChannel": "",
         "nodeStatus": "",
         "suggestions": "",
         "analyse": "",
         "github": ""
-    },
-
-    "logs":{
-        "dms": "",
-        "createlog": ""
     },
 
     "voiceID": {
@@ -57,29 +59,29 @@
     "fastify": {
         "port": 8069
     },
-
+    
     "bot":{
-        "token": "Your bot token here",
-        "prefix": "prefix (with lowercase only)"
+        "token": "",
+        "prefix": "!"
     },
 
     "pterodactyl": {
         "myIp": "",
-        "host": "https://panel.luxxy.host",
-        "adminApiKey": "application api key",
-        "clientAPI":"client admin api key",
+        "host": "",
+        "adminApiKey": "",
+        "clientAPI":"",
         "depolymentlocations": [ 1, 2 ]
     },
     "nginxPM": {
-        "host": "https://NginxProxyManagerHost.com",
-        "email": "uremail",
-        "pass": "urpassword"
+        "host": "",
+        "email": "",
+        "pass": ""
     },
     "lavalink": {
         "nodes": [
             {
                 "host": "",
-                "port": 8080,
+                "port": 1037,
                 "password": "",
                 "retryDelay": 3000,
                 "secure": false
