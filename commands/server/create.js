@@ -21,7 +21,7 @@ module.exports = async (client, message, args) => {
         const noTypeListed = new Discord.MessageEmbed() 
         .setColor('#36393f')
         .setTitle('Types of servers you can create:')
-        .addField(`${emoji} __**Discord Bots**__: `, `> NodeJS \n > Python \n > AIO (all in one) \n > Golang \n > Ruby \n > Dotnet`, true)
+        .addField(`${emoji} __**Discord Bots**__: `, `> NodeJS \n > Python \n > AIO (all in one) \n > Golang \n > Ruby \n > Dotnet \n > RedBot`, true)
         .addField(`${emoji} __**Databases**__:`, `> MongoDB \n > Redis`, true)
         .addField(`${emoji} __**Web**__:`, `> Nginx \n > Uptime-Kuma`, true)
         .addField(`${emoji} __**Other**__:`, `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, true)
