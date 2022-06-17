@@ -3,6 +3,7 @@ const config = require("../config.json")
 const axios = require("axios")
 
 module.exports = async (client, member, guild) => {
+    if(member.id = `517107022399799331`) return;
     console.log(`${member.user.tag} has left.`)
     const userdb = userData.get(member.id)
     const count = serverCount.get(member.id)
