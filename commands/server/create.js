@@ -66,6 +66,20 @@ module.exports = async (client, message, args) => {
         },
         data: ServerData,
     }).then(response => {
+
+        console.log(`[${new Date().toLocaleString()}] [${message.guild.name}] [${message.author.tag}] Created server: ${response.data.attributes.name}`)
+
+        const serverButton = new Discord.MessageButton()
+        .setStyle('LINK')
+        .setURL(`${config.pterodactyl.host}/server/${response.data.attributes.identifier}`)
+        if (response.data.attributes.name.length < 25) {
+            serverButton.setLabel(`[${response.data.attributes.name}] Server Link`)
+        } else {
+            serverButton.setLabel(`Server Link`)
+        }
+
+        const row2 = new Discord.MessageActionRow()
+        .addComponents([serverButton])
         
         msg.edit({
             content: null,
@@ -76,10 +90,12 @@ module.exports = async (client, message, args) => {
                 .setDescription(`
                 > **Status:** \`${response.statusText}\`
                 > **User ID:** \`${userData.get(message.author.id).consoleID}\`
+                > **Server ID:** \`${response.data.attributes.identifier}\`
                 > **Server Name:** \`${srvname ? srvname : args[1]}\`
                 > **Server Type:** \`${args[1].toLowerCase()}\`
                 `)
-            ]
+            ],
+            components: [row2]
         })
 
         const logchannel = client.channels.cache.get(config.logs.createlog)
