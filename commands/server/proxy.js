@@ -3,6 +3,7 @@ const config = require('../../config.json')
 const axios = require('axios')
 const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`)
 module.exports = async (client, message, args) => {
+    return message.reply('This command is currently under construction.')
     message.delete()
     let port
     let localdomain
