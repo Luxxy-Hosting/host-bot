@@ -52,6 +52,8 @@ module.exports = async (client, message, args) => {
                     .addField('Server Count', `\`\`\`\n${serverCount.get(user.id).used} / ${serverCount.get(user.id).have}\`\`\``, true)
                     .setColor(`GREEN`)
                 ]
+            }).then(wtfisthisbruhayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy => {
+                wtfisthisbruhayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.delete({ timeout: 10000 });
             })
         }).catch(err => {
             console.log(err);
