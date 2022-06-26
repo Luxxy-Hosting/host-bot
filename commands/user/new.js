@@ -175,7 +175,7 @@ module.exports = async (client, message, args) => {
                         "username": username.toLowerCase(),
                         "email": email.toLowerCase(),
                         "first_name": username,
-                        "last_name": "user",
+                        "last_name": message.author.id, // zach you changed it again 💀
                         "password": getPassword(),
                         "root_admin": false,
                         "language": "en"
