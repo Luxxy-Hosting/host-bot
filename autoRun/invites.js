@@ -28,7 +28,7 @@ module.exports = (client) => {
 
 
     client.on("guildMemberAdd", async (member) => {
-        member.roles.add(member.guild.roles.cache.get(config.roleID.member))
+        //member.roles.add(member.guild.roles.cache.get(config.roleID.member))
         member.guild.invites.fetch().then(async (newInvites) => {
             const oldInvites = invites.get(member.guild.id);
             const invite = newInvites.find(i => i.uses > oldInvites.get(i.code));
