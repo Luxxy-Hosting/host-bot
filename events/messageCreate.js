@@ -31,7 +31,7 @@ module.exports = async (client, message) => {
     if (array.some(word => message.content.toLowerCase().includes(word))) {
         try {
         message.delete({ reason: 'AntiScam' });
-        message.guild.bans.create(message.author, { reason: 'AntiScam'})
+        message.member.timeout(100 * 60 * 1000)
         const logEmbedDesc = 'Scam link blocked!'
         .replace(/{MENTION}/g, message.author.tag)
         .replace(/{ID}/g, message.author.id)
@@ -43,7 +43,7 @@ module.exports = async (client, message) => {
         .setAuthor(message.author.tag, message.author.displayAvatarURL())
         .setDescription(logEmbedDesc)
         .setTimestamp()
-        .addFields([{ name: 'Action', value: 'Timeout for 1 day' }]);
+        .addFields([{ name: 'Action', value: 'Timeout for 1 hour' }]);
         await logChannel.send({ embeds: [logEmbed] });
        }
       catch (error){
