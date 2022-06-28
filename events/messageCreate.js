@@ -43,7 +43,7 @@ module.exports = async (client, message) => {
         .setAuthor(message.author.tag, message.author.displayAvatarURL())
         .setDescription(logEmbedDesc)
         .setTimestamp()
-        .addFields([{ name: 'Action', value: 'Ban' }]);
+        .addFields([{ name: 'Action', value: 'Timeout for 1 day' }]);
         await logChannel.send({ embeds: [logEmbed] });
        }
       catch (error){
