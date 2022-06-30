@@ -96,7 +96,7 @@ module.exports = async (client, message, args) => {
             msg.edit({
                 embeds:[
                     new Discord.MessageEmbed()
-                    .setTitle(`❓ What is your email adress? (should be valid)`)
+                    .setTitle(`❓ What is your email address? (should be valid)`)
                     .setColor(`YELLOW`)
                     .setFooter({text:`Type "cancel" to stop the process of creating your account`})
                 ],
