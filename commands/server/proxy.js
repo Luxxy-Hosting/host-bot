@@ -3,7 +3,7 @@ const config = require('../../config.json')
 const axios = require('axios')
 const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`)
 module.exports = async (client, message, args) => {
-    return message.reply('This command is currently under construction.')
+    return message.reply(`:x: This command is not yet implemented.`)
     message.delete()
     let port
     let localdomain
@@ -15,7 +15,7 @@ module.exports = async (client, message, args) => {
         !serverid?.split('-')[0] ||
         !domain ||
         domain.split('.').length === 1
-    ) return message.channel.send(`:x: Incorrect command usage. Please run: \`!server proxy <server id> <your_domain.com>\``)
+    ) return message.channel.send(`:x: Incorrect command usage. Please run: \`${config.bot.prefix}server proxy <server id> <your_domain.com>\``)
 
     let preoutput = (await axios({
         url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",

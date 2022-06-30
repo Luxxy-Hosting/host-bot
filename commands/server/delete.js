@@ -1,18 +1,23 @@
 const config = require('../../config.json')
 const Discord = require('discord.js');
 const axios = require('axios');
+const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
-    if(!userData.get(message.author.id)) return message.reply(":x: You dont have an account created. type `!user new` to create one")
-    if(!args[1]) return message.reply(`${error} What server should i delete? please provide you server id *(!server delete <server id>)*`)
+    const userDB = await userData.findOne({ ID: message.author.id })
+    if (!userDB) {
+        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one \n Note: we moving account to different database what means you have to do \`${config.bot.prefix}user switchdbs\` to switch and get the bot working for you`);
+        return;
+    }
+    if(!args[1]) return message.reply(`${error} What server should i delete? please provide you server id *(${config.bot.prefix}server delete <server id>)*`)
     if (args[1].match(/[0-9a-z]+/i) == null)
         return message.channel.send("lol only use english characters.");
 
     args[1] = args[1].split('-')[0];
 
     let msg = await message.channel.send('Let me check if this is your server, please wait . . .')
-
+    console.log(userDB.consoleID)
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
         method: 'GET',
         followRedirect: true,
         maxRedirects: 5,
@@ -26,7 +31,7 @@ module.exports = async (client, message, args) => {
         const output = await preoutput.find(srv => srv.attributes ? srv.attributes.identifier == args[1] : false)
 
         if(!output) return msg.edit(`:x: I could not find that server`)
-        if (output.attributes.user !== userData.get(message.author.id).consoleID) return msg.edit(`:x: You are not the owner of this server`)
+        if (!output.attributes.user === userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
 
         msg.edit({
             content: `Are you sure you want to delete \`${output.attributes.name}\`? once you delete your server you will never be able to recover it and all data and files will be lost forever!`,

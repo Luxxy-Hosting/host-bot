@@ -3,21 +3,25 @@ const pretty = require('prettysize');
 const format = require('format-duration')
 const Discord = require('discord.js')
 const config = require('../../config.json')
+const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
-    if(!userData.get(message.author.id)) return message.reply(":x: You dont have an account created. type `!user new` to create one")
+    return message.reply(`:x: This command is currently under construction.`)
+    const userDB = await userData.findOne({ ID: message.author.id })
+    if(!userDB) return message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
+    console.log(userDB)
     args = args.slice(1)
             let server = args[0]?.split('-')[0]
 
                 if (!server) {
                     let embed = new Discord.MessageEmbed()
                         .setColor("GREEN")
-                        .addField("__**Server Status**__", "What server should i display? \nCommand Format: \`!server status <server id>\`")
+                        .addField("__**Server Status**__", `What server should i display? \nCommand Format: \`${config.bot.prefix}server status <server id>\``)
                     await message.channel.send({embeds:[embed]})
                 } else {
 
                     message.channel.send('Checking server `' + server + '`\nPlease wait, it wont take more that 10 seconds').then((msg) => {
                         axios({
-                            url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
+                            url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
                             method: 'GET',
                             followRedirect: true,
                             maxRedirects: 5,
@@ -35,7 +39,7 @@ module.exports = async (client, message, args) => {
                                     msg.edit(':x: | Sorry but i didnt find that server in your list!')
                                 } else {
         
-                                    if (output.attributes.user === userData.get(message.author.id).consoleID) {
+                                    if (output.attributes.user === userDB.consoleID) {
                                         axios({
                                             url: config.pterodactyl.host + '/api/client/servers/' + server ,
                                             method: 'GET',

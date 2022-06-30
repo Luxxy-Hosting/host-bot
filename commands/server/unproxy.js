@@ -1,7 +1,8 @@
 const { findProxy, deleteProxy } = require(`../../nginxPM/index`)
+const config = require('../../config.json')
 module.exports = async (client, message, args) => {
     message.delete()
-    if(!args[1]) return message.reply(`${error} What domain should i unproxy? command usage: \`!unproxy <domain>\``)
+    if(!args[1]) return message.reply(`${error} What domain should i unproxy? command usage: \`${config.bot.prefix}unproxy <domain>\``)
     if(!domains.get(message.author.id)?.find(x => x.domain === args[1].toLowerCase())) return message.reply(`:x: I could not find this domain in ur domain list`)
 
     let msg = await message.channel.send(`unproxying . . .`)

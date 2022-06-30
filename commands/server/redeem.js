@@ -1,5 +1,6 @@
 const config = require('../../config.json');
 module.exports = async(client, message, args) => {
+    return message.reply(`${error} This command is not yet implemented.`);
     if (!userData.get(message.author.id)) {
         message.reply(":x: You dont have an account created. type `!user new` to create one");
         return;
