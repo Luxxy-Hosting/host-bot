@@ -61,7 +61,7 @@ module.exports = async (client, message) => {
 
     // suggested by astrexx
     if (message.author.bot === false) {
-        if(message.mentions.members.size > 4) 
+        if(message.mentions.members.size > 4)
         {
             message.delete();
             message.guild.members.kick(message.author.id);
@@ -92,7 +92,7 @@ module.exports = async (client, message) => {
             }catch(err){console.log(err).toString()}
             return
         }else if(cmd === 'staff'){
-            if(!message.member.roles.cache.has(config.roleID.support)) return
+            if(!message.member.roles.cache.has(config.roleID.support || config.roleID.admin || '980035372505505862')) return
             try{
                 if(!args[0]) return require('../commands/staff/help.js')(client, message, args)
                 await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))

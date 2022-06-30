@@ -38,11 +38,20 @@ module.exports = (client) => {
             welcometext = [
                 `Welcome to Luxxy Hosting`
             ]
+            const welembed = new Discord.MessageEmbed()
+            .setTitle(`**[NEW MEMBER]** ${member.user.tag}`)
+            .setColor(`BLUE`)
+            .setDescription(`\`\`\n${welcometext}\`\`\``)
+            .setTimestamp()
+            .setImage('https://whatifgaming.com/wp-content/uploads/2022/03/Into-the-Spiderverse.png')
+            .setFooter(`ID: ${member.id}`, member.user.displayAvatarURL())
+            .setThumbnail(member.user.displayAvatarURL())
+            .addField(`**Invited by:**`, inviter ? `${inviter.tag}` : `None`)
 
             var wtl = Math.floor(Math.random() * welcometext.length);
 
             if(inviter){
-                logChannel.send(`Welcome <@${member.user.id}>, ${welcometext[wtl]}\n(invited by: \`${inviter.tag}\`)`)
+                logChannel.send({ embeds: [welembed] });
                 invitedBy.set(member.user.id, {
                     tag: inviter.tag,
                     id: inviter.id
