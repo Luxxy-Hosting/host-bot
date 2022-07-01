@@ -2,6 +2,7 @@ const { default: axios } = require('axios')
 const Discord = require('discord.js')
 const moment = require('moment')
 const config = require('../../config.json')
+const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
          /// disabled for now because issue with linking owners account
         if(!message.member.roles.cache.has(config.roleID.administrator)) return message.reply({
@@ -17,7 +18,7 @@ module.exports = async (client, message, args) => {
                 new Discord.MessageEmbed()
                 .setColor('#ff0000')
                 .setTitle('Error')
-                .setDescription('usage: !staff link @luxxy <consoleid>')
+                .setDescription(`usage: \`${config.bot.prefix}staff link @luxxy <consoleid>\``)
             ]
         })
         const user1 = message.mentions.users.first()
@@ -38,7 +39,6 @@ module.exports = async (client, message, args) => {
                 .setDescription('You need to specify a console ID!')
             ]
         })
-
         if (args[2] == 1 && message.author.id !== '517107022399799331') {
                  message.reply({
                           embeds: [
@@ -61,14 +61,14 @@ module.exports = async (client, message, args) => {
                 'Accept': 'Application/vnd.pterodactyl.v1+json',
             },
         }).then(async user => {
-            userData.set(user1.id, {
-                discordID: user1.id,
+            userData({
+                ID: user1.id,
                 consoleID: consoleid,
                 email: user.data.attributes.email,
                 username: user.data.attributes.username,
                 linkTime: moment().format("HH:mm:ss"),
                 linkDate: moment().format("YYYY-MM-DD"),
-            })
+            }).save()
             message.reply({
                 embeds: [
                     new Discord.MessageEmbed()
