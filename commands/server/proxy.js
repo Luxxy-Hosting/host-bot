@@ -3,7 +3,6 @@ const config = require('../../config.json')
 const axios = require('axios')
 const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`)
 module.exports = async (client, message, args) => {
-    return message.reply(`:x: This command is not yet implemented.`)
     message.delete()
     let port
     let localdomain
@@ -72,7 +71,7 @@ module.exports = async (client, message, args) => {
     let msg = await message.channel.send(`Proxying . . .`)
 
     domainIP = await getDomainIP(domain)
-    if(!domainIP || domainIP !== '157.90.69.225') return msg.edit(`The domain you gave doesnt have the right ip address. the ip should be: \`157.90.69.225\` *without cloudflare proxy turned on*`)
+    if(!domainIP || domainIP !== '88.99.51.179') return msg.edit(`The domain you gave doesnt have the right ip address. the ip should be: \`88.99.51.179\` *without cloudflare proxy turned on*`)
 
     msg.edit(`Creating LetsEncrypt certificate, this might take some time.`)
     let proxyinfo = await proxyDomain(domain, localdomain, port)
