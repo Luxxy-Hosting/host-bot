@@ -7,6 +7,7 @@
         "consoleSave": false,
         "updateFromGithub": false,
         "anticrash": false,
+        "mongoDB": "mongodb://localhost:27017/host-bot",
 
         "nodeStatusDelay": 15,
         "vcUpdateInterval": 60,
@@ -16,7 +17,12 @@
         "owner": "",
 
         "statusOnMaintenance": "On Maintenance mode",
-        "avoidServerPorts": []
+        "avoidServerPorts": [],
+
+        "webhook": {
+            "id": "",
+            "token": ""
+        }
     },
 
     "logs":{
