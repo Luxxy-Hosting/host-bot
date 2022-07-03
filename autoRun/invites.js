@@ -43,7 +43,7 @@ module.exports = (client) => {
             const welembed = new Discord.MessageEmbed()
             .setTitle(`**[NEW MEMBER]** ${member.user.tag}`)
             .setColor(`BLUE`)
-            .setDescription(`\`\`\n${welcometext}\`\`\``)
+            .setDescription(`\`\`\n${welcometext}\`\`\`)
             .setTimestamp()
             .setImage('https://whatifgaming.com/wp-content/uploads/2022/03/Into-the-Spiderverse.png')
             .setFooter(`ID: ${member.id}`, member.user.displayAvatarURL())
