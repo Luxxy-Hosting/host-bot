@@ -21,11 +21,11 @@ module.exports = async (client, message) => {
     }
     const invites = ["discord.gg/", "discord.com/invite/"];
     if(message.content.includes("discord.gg/")) {
-        if (!message.member.roles.cache.has(config.roleID.admin)) return;
+        if (message.member.roles.cache.has(config.roleID.admin)) return;
         deleteMessage();
     }
     if(message.content.includes("discord.com/invite/")) {
-        if (!message.member.roles.cache.has(config.roleID.admin)) return;
+        if (message.member.roles.cache.has(config.roleID.admin)) return;
         deleteMessage();
     }
 
