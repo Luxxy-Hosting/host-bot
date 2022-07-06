@@ -46,7 +46,7 @@ module.exports = async (client, message, args) => {
     message.reply({
         embeds: [
             new Discord.MessageEmbed()
-            .setTitle(`:white_check_mark: | ${user.username}'s count has been set to ${number}`)
+            .setAuthor(`${user.username}'s count has been set.` , user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }))
             .setColor(`GREEN`)
             .setDescription(`${user.username}'s count has been set to ${serverCount.get(user.id).used} / ${number}`)
         ]

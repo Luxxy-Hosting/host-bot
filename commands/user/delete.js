@@ -148,7 +148,7 @@ module.exports = async (client, message, args) => {
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
                 }).then(() => {
-                    userData1.deleteMany({ ID: message.author.id }, function (err) {
+                    userData1.deleteOne({ ID: message.author.id }, function (err) {
                         if(err) console.log(err);
                     });
                     serverCount.set(message.author.id, {
