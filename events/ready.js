@@ -61,9 +61,10 @@ module.exports = async (client) => {
         `message.reply('help')`,
         `${ramdomstring()}`
     ]
-    setInterval(() => {
-        client.user.setActivity(clientactivity[Math.floor(Math.random() * clientactivity.length)], { type: "WATCHING" })
-    }, 10000)
+    client.user.setPresence({ status: "idle" });
+    // setInterval(() => {
+    //     client.user.setActivity(clientactivity[Math.floor(Math.random() * clientactivity.length)], { type: "WATCHING" })
+    // }, 10000)
     setInterval(() => {
         let guild = client.guilds.cache.get(config.settings.guildID);
         let membercount3 = guild.members.cache.filter(member => !member.user.bot).size.toLocaleString();

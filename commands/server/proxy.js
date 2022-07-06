@@ -14,9 +14,10 @@ module.exports = async (client, message, args) => {
         !domain ||
         domain.split('.').length === 1
     ) return message.channel.send(`:x: Incorrect command usage. Please run: \`${config.bot.prefix}server proxy <server id> <your_domain.com>\``)
-
+    const userdata = require('../../models/userData')
+    const userdb = await userdata.findOne({ ID: message.author.id })
     let preoutput = (await axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userData.get(message.author.id).consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/application/users/" + userdb.consoleID + "?include=servers",
         method: 'GET',
         followRedirect: true,
         maxRedirects: 5,
