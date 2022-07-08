@@ -8,7 +8,7 @@ const Discord = require('discord.js')
 const userData = require('../models/userData');
 const oldUserData = new db.table("userData");
 module.exports = async (client) => {
-    console.log(`${chalk.blue('[ DataBase ]')}`+" Db Switcher Has Started :D")]
+    console.log(`${chalk.blue('[ DataBase ]')}`+" Db Switcher Has Started :D")
     async function runeverything () {
         client.guilds.fetch(config.settings.guildID).members.forEach(member => {
             const oldUserDB = oldUserData.get(member.user.id)
