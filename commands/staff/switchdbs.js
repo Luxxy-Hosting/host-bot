@@ -10,9 +10,16 @@ const oldUserData = new db.table("userData");
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
 message.guild.members.cache.forEach(member => {
+            setTimeout(() => {
             const oldUserDB = oldUserData.get(member.user.id)
             const userDB = userData.findOne({ ID: member.user.id });
             if (oldUserDB) {
+<<<<<<< HEAD
+=======
+                if (userDB) {
+                return;
+                }
+>>>>>>> 300e63f6c0c9236109be1f989f6064c462af75f6
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + oldUserDB.consoleID,
             method: 'get',
@@ -74,5 +81,6 @@ message.guild.members.cache.forEach(member => {
                 ]
             })
            }).catch(err => client.channels.cache.get('992171639750017024').send({content: `this was not post to happen ${err}`}))
+         }, 5000)
         })
 }
