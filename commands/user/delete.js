@@ -105,7 +105,7 @@ module.exports = async (client, message, args) => {
                 return
             }
             if(reason === 'DeleteTheAccount'){
-                
+                f
                 if(servers.length > 0){
                     await msg.edit({embeds:[
                         new Discord.MessageEmbed()
