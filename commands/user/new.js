@@ -205,6 +205,10 @@ module.exports = async (client, message, args) => {
                             linkTime: moment().format("HH:mm:ss"),
                             linkDate: moment().format("YYYY-MM-DD"),
                         }).save()
+			serverCount.set(user.id, {
+				used: 0,
+				have: 3
+			})
                         msg.edit({
                             content: `${message.author}`,
                             embeds: [
