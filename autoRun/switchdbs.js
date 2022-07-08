@@ -1,6 +1,5 @@
 const config = require('../config.json')
 const db = require('quick.db')
-const pinger = require('minecraft-pinger')
 const wait = require('node:timers/promises').setTimeout;
 const { default: axios } = require('axios')
 const chalk = require('chalk')
@@ -12,7 +11,7 @@ module.exports = async (client) => {
     async function runeverything () {
         client.guilds.fetch(config.settings.guildID).members.forEach(member => {
             const oldUserDB = oldUserData.get(member.user.id)
-            const userDB = await userData.findOne({ ID: member.user.id });
+            const userDB = userData.findOne({ ID: member.user.id });
             if (userDB) {
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + oldUserDB.consoleID,
