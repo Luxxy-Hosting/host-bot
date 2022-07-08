@@ -41,17 +41,50 @@ module.exports = async (client, message, args) => {
         message.reply(`Memory size must be less than 16432`)
     }
 
+    userData.findAndModify({
+        ID: user.id,
+        consoleID: userDB.consoleID,
+        email: userDB.email,
+        username: userDB.username,
+        linkTime: userDB.linkTime,
+        linkDate: userDB.linkDate,
+        partner: true,
+    })
+
     message.reply(`${user.username} is now a partner`)
     message.reply(`Creating partner Server with ${memory} MB`).then(msg => {
-        let ServerData
-        let srvname = `${user.username}'s partner server`
-        let location = [ 3 ]
-
-        try {
-            ServerData = require(`../../paid_creation/paper.js`)(userDB.consoleID, srvname, location, memory)
-        } catch (err) {
-            console.log(err)
-        }
+        const data = ({
+            "name": `${user.username}'s Partner Server`,
+            "user": userDB.consoleID,
+            "nest": 1,
+            "egg": 3,
+            "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
+            "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
+            "limits": {
+                "memory": memory,
+                "swap": 0,
+                "disk": 32240,
+                "io": 500,
+                "cpu": 0
+            },
+            "environment": {
+                "MINECRAFT_VERSION": "latest",
+                "SERVER_JARFILE": "server.jar",
+                "DL_PATH": "https://papermc.io/api/v2/projects/paper/versions/1.18.1/builds/214/downloads/paper-1.18.1-214.jar",
+                "BUILD_NUMBER": "latest"
+            },
+            "feature_limits": {
+                "databases": 2,
+                "allocations": 1,
+                "backups": 10
+            },
+            "deploy": {
+                "locations": [ 3 ],
+                "dedicated_ip": false,
+                "port_range": []
+            },
+            "start_on_completion": false
+        })
 
         axios({
             url: config.pterodactyl.host + "/api/application/servers",
@@ -63,7 +96,7 @@ module.exports = async (client, message, args) => {
                 'Content-Type': 'application/json',
                 'Accept': 'Application/vnd.pterodactyl.v1+json',
             },
-            data: ServerData,
+            data: data,
         }).then(res => {
             msg.edit(`${user.username}'s Partner Server has been created \n ${res.data.attributes.identifier} \n https://panel.luxxy.host/server/${res.data.attributes.identifier} `)
 
