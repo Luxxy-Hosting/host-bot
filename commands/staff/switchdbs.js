@@ -9,7 +9,7 @@ const chalk = require('chalk')
 const oldUserData = new db.table("userData");
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
-message.guild.members.forEach(member => {
+message.guild.members.cache.forEach(member => {
             const oldUserDB = oldUserData.get(member.user.id)
             const userDB = await userData.findOne({ ID: member.user.id });
             if (userDB) {
