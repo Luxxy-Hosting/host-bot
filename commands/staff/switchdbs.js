@@ -12,8 +12,11 @@ module.exports = async (client, message, args) => {
 message.guild.members.cache.forEach(member => {
             setTimeout(() => {
             const oldUserDB = oldUserData.get(member.user.id)
-            const userDB = await userData.findOne({ ID: member.user.id });
-            if (userDB) {
+            const userDB = userData.findOne({ ID: member.user.id });
+            if (oldUserDB) {
+                if (userDB) {
+                return;
+                }
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + oldUserDB.consoleID,
             method: 'get',
