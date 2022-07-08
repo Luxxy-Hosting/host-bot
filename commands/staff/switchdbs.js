@@ -73,6 +73,6 @@ message.guild.members.forEach(member => {
                     .setDescription('User linked successfully! \n Username: ' + user.data.attributes.username + '\n Email: ' + user.data.attributes.email + '\n Console ID: ' + oldUserDB.consoleID)
                 ]
             })
-           })
-        }).catch(err => client.channels.cache.get('992171639750017024').send({content: `this was not post to happen ${err}`}))
+           }).catch(err => client.channels.cache.get('992171639750017024').send({content: `this was not post to happen ${err}`}))
+        })
 }
