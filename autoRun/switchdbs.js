@@ -111,11 +111,6 @@ module.exports = async (client) => {
         process.on('uncaughtExceptionMonitor', (err, origin) => {
             console.log(chalk.red('[Anti-Crash] uncaught Exception Monitor'))
         });
-        process.on('exit', (code) => {
-        console.log(chalk.red('\n\n\n\n\n[Anti-Crash] exit'));
-        console.log(code);
-        console.log(chalk.red('=== exit ===\n\n\n\n\n'));
-    });
     process.on('multipleResolves', (type, promise, reason) => {
         console.log(chalk.red('\n\n\n\n\n[Anti-Crash] multiple Resolves'));
         console.log(type, promise, reason);
