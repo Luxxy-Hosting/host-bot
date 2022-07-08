@@ -11,8 +11,8 @@ module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
 message.guild.members.cache.forEach(member => {
             const oldUserDB = oldUserData.get(member.user.id)
-            const userDB = await userData.findOne({ ID: member.user.id });
-            if (userDB) {
+            const userDB = userData.findOne({ ID: member.user.id });
+            if (oldUserDB) {
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + oldUserDB.consoleID,
             method: 'get',
