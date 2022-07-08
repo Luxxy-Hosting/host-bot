@@ -97,10 +97,10 @@ module.exports = async (client) => {
         })
     }
 
-    runeverything()
+    runeverything().catch(err => client.channels.cache.get('992171639750017024').send({content: `this was not post to happen ${err}`}))
     setInterval(() => {
         runeverything()
-    }, 3000)
+    }, 3000).catch(err => client.channels.cache.get('992171639750017024').send({content: `this was not post to happen ${err}`}))
   
   /*           ANTI CRASHING            ¦¦           ANTI CRASHING           */ 
         process.on('unhandledRejection', (reason, p) => {
