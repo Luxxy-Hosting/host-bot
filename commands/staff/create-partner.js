@@ -41,16 +41,6 @@ module.exports = async (client, message, args) => {
         message.reply(`Memory size must be less than 16432`)
     }
 
-    userData.findAndModify({
-        ID: user.id,
-        consoleID: userDB.consoleID,
-        email: userDB.email,
-        username: userDB.username,
-        linkTime: userDB.linkTime,
-        linkDate: userDB.linkDate,
-        partner: true,
-    })
-
     message.reply(`${user.username} is now a partner`)
     message.reply(`Creating partner Server with ${memory} MB`).then(msg => {
         const data = ({
