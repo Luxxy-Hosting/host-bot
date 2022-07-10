@@ -6,6 +6,8 @@ const validator = require('validator');
 const moment = require("moment");
 const fs = require('fs');
 const userData = require('../../models/userData');
+const db = require('quick.db');
+const server1 = new db.table("FreeServerCount");
 
 module.exports = async (client, message, args) => {
 	const userDB = await userData.findOne({ ID: message.author.id });
@@ -205,11 +207,7 @@ module.exports = async (client, message, args) => {
                             linkTime: moment().format("HH:mm:ss"),
                             linkDate: moment().format("YYYY-MM-DD"),
                         }).save()
-                        const userservercount = serverCount.get(user.id)
-                        if (userservercount) {
-                            serverCount.delete(user.id)
-                        }
-                        serverCount.set(user.id, {
+                        server1.set(message.author.id, {
                             used: 0,
                             have: 3
                         })
