@@ -6,7 +6,7 @@ module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.support)) return message.channel.send('You do not have the required permissions to use this command.');
     const user = await message.mentions.users.first() || message.author;
     const userDB = await userData.findOne({ ID: user.id });
-
+    const servercount = serverCount.get(user.id);
     if (!userDB) return message.reply({
         embeds: [
             new Discord.MessageEmbed()
@@ -14,6 +14,11 @@ module.exports = async (client, message, args) => {
             .setColor(`RED`)
         ]
     })
+    if (!servercount) return message.reply({
+        embeds: [
+            new Discord.MessageEmbed()
+             .setTitle(`user don't have server count`)
+    ]})
     axios({
         url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
         method: 'GET',

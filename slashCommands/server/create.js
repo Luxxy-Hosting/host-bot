@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const config = require("../../config.json");
 const axios = require("axios");
+const UserDatadata = require("../../models/userData");
 
 module.exports = {
     name: "create",
@@ -84,7 +85,9 @@ module.exports = {
         const type = interaction.options.getString('type');
         const name = interaction.options.getString('name');
 
-        if (!userData.get(interaction.user.id)) {
+        const userData = await UserDatadata.findOne({ ID: interaction.user.id });
+
+        if (!userData) {
             interaction.reply(":x: You dont have an account created. type `!user new` to create one");
             return;
         }
@@ -99,7 +102,7 @@ module.exports = {
         let ServerData
 
         try{
-            ServerData = require(`../../server_creation/${type.toLowerCase()}.js`)(userData.get(interaction.user.id).consoleID, name ? name : type, config.pterodactyl.depolymentlocations)
+            ServerData = require(`../../server_creation/${type.toLowerCase()}.js`)(userData.consoleID, name ? name : type, config.pterodactyl.depolymentlocations)
         }catch(err){
             interaction.reply(`${error} I could no find any server type with the name: \`${type.toLowerCase()}\`\nType \`!server create list\` for more info`)
             return
@@ -138,7 +141,7 @@ module.exports = {
                     .setTitle(`${success} Server Created Successfully`)
                     .setDescription(`
                     > **Status:** \`${response.statusText}\`
-                    > **User ID:** \`${userData.get(interaction.user.id).consoleID}\`
+                    > **User ID:** \`${userData.consoleID}\`
                     > **Server ID:** \`${response.data.attributes.identifier}\`
                     > **Server Name:** \`${name ? type.toLowerCase() : type}\`
                     > **Server Type:** \`${args[1].toLowerCase()}\`
