@@ -10,6 +10,7 @@ const db = require('quick.db');
 const server1 = new db.table("FreeServerCount");
 
 module.exports = async (client, message, args) => {
+    return mesasge.reply('Luxxy Hosting is currently under maintenance. Please try again later.')
 	const userDB = await userData.findOne({ ID: message.author.id });
 	
     if (userDB) {
