@@ -24,6 +24,7 @@ module.exports = async (client, message, args) => {
         responce = response.data.attributes.relationships.servers.data
         let id = 1
         let id2 = 1
+        let id3 = 1
 
         if(responce.length <= 35){
             message.reply({
@@ -32,6 +33,7 @@ module.exports = async (client, message, args) => {
                     .setTitle(`${message.author.username}'s servers`)
                     .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
                     .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
+                    .addField('Server Node:', `\`\`\`\n${responce.map(x => `${id3++}. ${x.attributes.node}`).join('\n')}\`\`\``, true)
                     .setColor(`GREEN`)
                 ]
             }).catch(err => {
