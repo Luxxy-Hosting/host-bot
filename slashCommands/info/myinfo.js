@@ -11,10 +11,10 @@ module.exports = {
     run: async (client, interaction, args) => {
         const userDB = await userdata.findOne({ ID: interaction.user.id });
 
-        // if (!userDB) {
-        //     interaction.reply({ content: 'You Don\'t have an account created. type `!user new` to create one', ephemeral: true });
-        //     return;
-        // }
+        if (!userDB) {
+            interaction.reply({ content: 'You Don\'t have an account created. type `!user new` to create one', ephemeral: true });
+            return;
+        }
 
         axios({
             url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
@@ -31,9 +31,14 @@ module.exports = {
                 .setColor("#0099ff")
                 .setTitle("Your Account Info")
                 .setDescription(`Your Account Name: ${userDB.username}`)
-                .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
-                .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
-                .setTimestamp();
+                .addField("Email:", userDB.email)
+                .addField("Console ID:", userDB.consoleID)
+                .addField("link Time:", userDB.linkTime)
+                .addField("link Date:", userDB.linkDate)
+                .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, true)
+                .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, true)
+                .setTimestamp()
+                .setFooter("Powered by Pterodactyl");
             await interaction.reply({ embeds: [embed], ephemeral: true });
         }).catch(async err => {
            await interaction.reply({ content: `${err}`, ephemeral: true });
