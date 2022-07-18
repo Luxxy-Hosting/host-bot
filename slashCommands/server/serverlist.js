@@ -33,7 +33,7 @@ module.exports = {
                 interaction.reply({
                     embeds:[
                         new Discord.MessageEmbed()
-                        .setTitle(`${message.author.username}'s servers`)
+                        .setTitle(`${interaction.user.username}'s servers`)
                         .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
                         .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
                         .setColor(`GREEN`)
