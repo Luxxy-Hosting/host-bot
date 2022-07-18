@@ -73,7 +73,7 @@ module.exports = {
                                     'Accept': 'Application/vnd.pterodactyl.v1+json',
                                 }
                             }).then(async resources => {
-                                let getUptime = (originalTime) => {
+                                let getUptime = (originalUptime) => {
                                     let filanresult// = format(originalUptime)
                                     let array = format(originalUptime).split(':')
                                     let length = array.length
