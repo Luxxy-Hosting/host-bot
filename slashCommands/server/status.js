@@ -98,8 +98,145 @@ module.exports = {
                                                     + `**Net:** \`⬆️${pretty(resources.data.attributes.resources.network_tx_bytes)}/${pretty(resources.data.attributes.resources.network_rx_bytes)}⬇️\`\n`
                                                     + `**Node:** \`${response.data.attributes.node}\`\n`
                                                     + `**Full Id:** \`${response.data.attributes.uuid}\`\n`)
-                                    ]
+                                    ], components:[
+                                        new Discord.MessageActionRow()
+                                        .addComponents(
+                                            new Discord.MessageButton()
+                                            .setCustomId('start')
+                                            .setLabel('🟢 Start')
+                                            .setStyle('SUCCESS'),
+                                        )
+                                        .addComponents(
+                                            new Discord.MessageButton()
+                                            .setCustomId('restart')
+                                            .setLabel('🔄 Restart')
+                                            .setStyle('PRIMARY'),
+                                        )
+                                        .addComponents(
+                                            new Discord.MessageButton()
+                                            .setCustomId('stop')
+                                            .setLabel('🔴 Stop')
+                                            .setStyle('DANGER'),
+                                        )
+                                        .addComponents(
+                                            new Discord.MessageButton()
+                                            .setLabel('🔗 Link')
+                                            .setURL(`${config.pterodactyl.host}/server/${server}`)
+                                            .setStyle('LINK'),
+                                        )
+                                        ]
                                 })
+                                const filter = m => m.user.id === interaction.user.id;
+                                const collector = interaction.channel.createMessageCollector(filter, { time: 60000 });
+                                collector.on('collect', m => {
+                                    if (m.customs.get('start')) {
+                                        axios({
+                                            url: config.pterodactyl.host + '/api/client/servers/' + serverid + '/start',
+                                            method: 'POST',
+                                            followRedirect: true,
+                                            maxRedirects: 5,
+                                            headers: {
+                                                'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                                            }
+                                        }).then(async response => {
+                                            interaction.channel.send({
+                                                embeds: [
+                                                    new Discord.MessageEmbed()
+                                                    .setTitle(`:white_check_mark: | Server started`)
+                                                    .setDescription(`The server with the id ${serverid} has been started`)
+                                                    .setColor(`GREEN`)
+                                                ]
+                                            })
+                                        }).catch(async error => {
+                                            interaction.channel.send({
+                                                embeds: [
+                                                    new Discord.MessageEmbed()
+                                                    .setTitle(`:x: | Error`)
+                                                    .setDescription(`The server with the id ${serverid} could not be started`)
+                                                    .setColor(`RED`)
+                                                ]
+                                            })
+                                        })
+                                    } else if (m.customs.get('restart')) {
+                                        axios({
+                                            url: config.pterodactyl.host + '/api/client/servers/' + serverid + '/restart',
+                                            method: 'POST',
+                                            followRedirect: true,
+                                            maxRedirects: 5,
+                                            headers: {
+                                                'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                                            }
+                                        }).then(async response => {
+                                            interaction.channel.send({
+                                                embeds: [
+                                                    new Discord.MessageEmbed()
+                                                    .setTitle(`:white_check_mark: | Server restarted`)
+                                                    .setDescription(`The server with the id ${serverid} has been restarted`)
+                                                    .setColor(`GREEN`)
+                                                ]
+                                            })
+                                        }
+                                        ).catch(async error => {
+                                            interaction.channel.send({
+                                                embeds: [
+                                                    new Discord.MessageEmbed()
+                                                    .setTitle(`:x: | Error`)
+                                                    .setDescription(`The server with the id ${serverid} could not be restarted`)
+                                                    .setColor(`RED`)
+                                                ]
+                                            })
+                                        }
+                                        )
+                                    } else if (m.customs.get('stop')) {
+                                        axios({
+                                            url: config.pterodactyl.host + '/api/client/servers/' + serverid + '/stop',
+                                            method: 'POST',
+                                            followRedirect: true,
+                                            maxRedirects: 5,
+                                            headers: {
+                                                'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                                            }
+                                        }).then(async response => {
+                                            interaction.channel.send({
+                                                embeds: [
+                                                    new Discord.MessageEmbed()
+                                                    .setTitle(`:white_check_mark: | Server stopped`)
+                                                    .setDescription(`The server with the id ${serverid} has been stopped`)
+                                                    .setColor(`GREEN`)
+                                                ]
+                                            })
+                                        }
+                                        ).catch(async error => {
+                                            interaction.channel.send({
+                                                embeds: [
+                                                    new Discord.MessageEmbed()
+                                                    .setTitle(`:x: | Error`)
+                                                    .setDescription(`The server with the id ${serverid} could not be stopped`)
+                                                    .setColor(`RED`)
+                                                ]
+                                            })
+                                        }
+                                        )
+                                    }
+                                }
+                                )
+                                collector.on('end', collected => {
+                                    interaction.channel.send({
+                                        embeds: [
+                                            new Discord.MessageEmbed()
+                                            .setTitle(`:x: | Error`)
+                                            .setDescription(`The server with the id ${serverid} could not be started`)
+                                            .setColor(`RED`)
+                                        ]
+                                    })
+                                }
+                                )
                             })
                         })
                     }
