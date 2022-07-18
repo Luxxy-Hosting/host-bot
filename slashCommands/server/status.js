@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const axios = require("axios");
 const config = require("../../config.json");
 const userdata = require("../../models/userData");
+const pretty = require('prettysize');
+const format = require('format-duration')
 
 module.exports = {
     name: "status",
