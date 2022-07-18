@@ -35,7 +35,7 @@ module.exports = {
             }
         }).then(async response => {
             const preoutput = response.data.attributes.relationships.servers.data
-            const output = preoutput.find(srv => srv.attributes ? srv.attributes.identifier == server : false)
+            const output = preoutput.find(srv => srv.attributes ? srv.attributes.identifier == serverid : false)
 
             setTimeout(async () => {
                 if (!output) {
