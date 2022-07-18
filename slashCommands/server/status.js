@@ -121,7 +121,7 @@ module.exports = {
                                         .addComponents(
                                             new Discord.MessageButton()
                                             .setLabel('🔗 Link')
-                                            .setURL(`${config.pterodactyl.host}/server/${server}`)
+                                            .setURL(`${config.pterodactyl.host}/server/${serverid}`)
                                             .setStyle('LINK'),
                                         )
                                         ]
