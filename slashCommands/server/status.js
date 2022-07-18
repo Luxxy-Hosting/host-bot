@@ -50,7 +50,7 @@ module.exports = {
                 } else {
                     if (output.attributes.user = userDB.consoleID) {
                         axios({
-                            url: config.pterodactyl.host + '/api/client/servers/' + server ,
+                            url: config.pterodactyl.host + '/api/client/servers/' + serverid ,
                             method: 'GET',
                             followRedirect: true,
                             maxRedirects: 5,
@@ -61,7 +61,7 @@ module.exports = {
                             }
                         }).then(async response => {
                             axios({
-                                url: config.pterodactyl.host + '/api/client/servers/' + server + "/resources",
+                                url: config.pterodactyl.host + '/api/client/servers/' + serverid + "/resources",
                                 method: 'GET',
                                 followRedirect: true,
                                 maxRedirects: 5,
