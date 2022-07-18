@@ -33,7 +33,7 @@ module.exports = {
                 'Content-Type': 'application/json',
                 'Accept': 'Application/vnd.pterodactyl.v1+json',
             }
-        }).then(async res => {
+        }).then(async response => {
             const preoutput = response.data.attributes.relationships.servers.data
             const output = preoutput.find(srv => srv.attributes ? srv.attributes.identifier == server : false)
 
