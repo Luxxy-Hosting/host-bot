@@ -2,10 +2,9 @@ const Discord = require("discord.js");
 
 module.exports = {
     name: "resetcount",
-    category: "Owner",
-    description: "Execute a command",
+    description: "Reset the count of a server",
     run: async (client, message, args) => {
-        if (message.author.id === "517107022399799331") {
+        if (message.author.id === "517107022399799331" || message.author.id === "787693578775298089") {
             const user = message.mentions.users.first() || message.guild.members.cache.get(args[0]);
 
             if (!user) {
