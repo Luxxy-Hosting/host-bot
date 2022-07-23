@@ -48,9 +48,8 @@ module.exports = (client) => {
             .setThumbnail(member.user.displayAvatarURL())
             .setImage('https://media.discordapp.net/attachments/941026457075994698/1000302292857270312/welcome_new_.png')
             .setTimestamp()
-            .setFooter({ text: `ID: ${member.id}`, iconURL: member.user.displayAvatarURL()})t
+            .setFooter({ text: `ID: ${member.id}`, iconURL: member.user.displayAvatarURL()})
 
-            var wtl = Math.floor(Math.random() * welcometext.length);
 
             if(inviter){
                 logChannel.send({ embeds: [welembed] });
