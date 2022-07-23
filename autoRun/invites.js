@@ -46,7 +46,7 @@ module.exports = (client) => {
             .addField(`**Invited by:**`, inviter ? `${inviter.tag}` : `Inviter not found`)
             .setColor('#530A8B')
             .setThumbnail(member.user.displayAvatarURL())
-            .setImage('https://media.discordapp.net/attachments/941026457075994698/1000169290395299850/welcome.png')
+            .setImage('https://media.discordapp.net/attachments/941026457075994698/1000302292857270312/welcome_new_.png')
             .setTimestamp()
             .setFooter({ text: `ID: ${member.id}`, iconURL: member.user.displayAvatarURL()})t
 
