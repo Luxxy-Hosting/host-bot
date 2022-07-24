@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 
 module.exports = async (client, message, args) => {
-            const user = message.mentions.users.first() || message.guild.members.cache.get(args[0]);
+            const user = message.mentions.users.first() || message.guild.members.cache.get(args[1]);
 
             if (!user) {
                 return message.channel.send("Please mention a user or provide a user ID. <a:whatisthis:951132055134162954>");
@@ -13,7 +13,7 @@ module.exports = async (client, message, args) => {
                 return message.channel.send("This user has never been counted. <a:whatisthis:951132055134162954>");
             }
 
-            const number = args[1]
+            const number = args[2]
 
             if (!number) {
                 return message.channel.send("Please provide a number. <a:whatisthis:951132055134162954>");
