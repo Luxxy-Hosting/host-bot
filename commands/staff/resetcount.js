@@ -1,9 +1,6 @@
 const Discord = require("discord.js");
 
-module.exports = {
-    name: "resetcount",
-    description: "Reset the count of a server",
-    run: async (client, message, args) => {
+module.exports = async (client, message, args) => {
             const user = message.mentions.users.first() || message.guild.members.cache.get(args[0]);
 
             if (!user) {
@@ -64,4 +61,3 @@ module.exports = {
                 msg.edit({components:[]})
             })
     }
-}
