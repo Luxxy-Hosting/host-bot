@@ -38,19 +38,18 @@ module.exports = (client) => {
             const logChannel = member.guild.channels.cache.find(c => c.id === config.channelID.welcome);
 
             welcometext = [
-                `Welcome to Luxxy Hosting`
-            ]
-            const welembed = new Discord.MessageEmbed()
-            .setTitle(`**[NEW MEMBER]** ${member.user.tag}`)
-            .setColor(`BLUE`)
-            .setDescription(`\`\`\n${welcometext}\`\`\``)
-            .setTimestamp()
-            .setImage('https://whatifgaming.com/wp-content/uploads/2022/03/Into-the-Spiderverse.png')
-            .setFooter(`ID: ${member.id}`, member.user.displayAvatarURL())
+    `Welcome to Luxxy Hosting, a place where you can create coding servers for free. Luxxy Hosting includes 24/7 Hosting and a powerful panel with a lot of features.`,
+]
+    const welembed = new Discord.MessageEmbed()
+            .setTitle(`Welcome ${member.user.tag}`)
+            .setDescription(`${welcometext}`)
+            .addField(`**Invited by:**`, inviter ? `${inviter.tag}` : `Inviter not found`)
+            .setColor('#530A8B')
             .setThumbnail(member.user.displayAvatarURL())
-            .addField(`**Invited by:**`, inviter ? `${inviter.tag}` : `None`)
+            .setImage('https://media.discordapp.net/attachments/941026457075994698/1000302292857270312/welcome_new_.png')
+            .setTimestamp()
+            .setFooter({ text: `ID: ${member.id}`, iconURL: member.user.displayAvatarURL()})
 
-            var wtl = Math.floor(Math.random() * welcometext.length);
 
             if(inviter){
                 logChannel.send({ embeds: [welembed] });
