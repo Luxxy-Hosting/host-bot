@@ -4,7 +4,6 @@ module.exports = {
     name: "resetcount",
     description: "Reset the count of a server",
     run: async (client, message, args) => {
-        if (message.author.id === "517107022399799331" || message.author.id === "787693578775298089") {
             const user = message.mentions.users.first() || message.guild.members.cache.get(args[0]);
 
             if (!user) {
@@ -64,8 +63,5 @@ module.exports = {
             Collector.on('end',() => {
                 msg.edit({components:[]})
             })
-        } else {
-            message.reply('<a:whatisthis:951132055134162954>')
-        }
     }
 }
