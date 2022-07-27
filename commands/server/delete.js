@@ -5,7 +5,7 @@ const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
     if (!userDB) {
-        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one \n Note: we moving account to different database what means you have to do \`${config.bot.prefix}user switchdbs\` to switch and get the bot working for you`);
+        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`);
         return;
     }
     if(!args[1]) return message.reply(`${error} What server should i delete? please provide you server id *(${config.bot.prefix}server delete <server id>)*`)

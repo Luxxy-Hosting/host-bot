@@ -6,7 +6,7 @@ const emoji = '<:blue_arrow:964977636084416535>'
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
     if (!userDB) {
-        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one \n Note: we moving account to different database what means you have to do \`${config.bot.prefix}user switchdbs\` to switch and get the bot working for you`);
+        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`);
         return;
     }
 

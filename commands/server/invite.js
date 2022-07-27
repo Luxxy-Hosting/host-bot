@@ -6,7 +6,7 @@ const config = require('../../config.json');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
     if (!userDB) {
-        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one \n Note: we moving account to different database what means you have to do \`${config.bot.prefix}user switchdbs\` to switch and get the bot working for you`);
+        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`);
         return;
     }
     const user = message.mentions.users.first() || client.users.cache.get(args[1]) || message.author;
@@ -16,7 +16,7 @@ module.exports = async (client, message, args) => {
 
     const inviteuserdb = await userData.findOne({ ID: user.id })
     if (!inviteuserdb) {
-        message.reply(`${error} That user does not have an account created. type \`${config.bot.prefix}user new\` to create one \n Note: we moving account to different database what means you have to do \`${config.bot.prefix}user switchdbs\` to switch and get the bot working for you`);
+        message.reply(`${error} That user does not have an account created. type \`${config.bot.prefix}user new\` to create one`);
         return;
     }
 
