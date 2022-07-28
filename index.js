@@ -72,14 +72,14 @@ client.on('guildMemberRemove', async member => {
                     embeds: [
                         new Discord.MessageEmbed()
                         .setColor('#0099ff')
-                        .setTitle('🦺 Deleting servers...')
+                        .setTitle('🔨 Deleting servers...')
                     ]
                 })
                 await Promise.all(servers1.map(async server => {
                     client.channels.cache.get('942502078172000266').send({ embeds: [
                         new Discord.MessageEmbed()
                         .setColor('#0099ff')
-                        .setTitle(`🦺 Deleting server ${server}...`)
+                        .setTitle(`🔨 Deleting server ${server}...`)
                     ]})
                     await axios({
                         url: config.pterodactyl.host + "/api/application/servers/" + server + "/force",
@@ -95,7 +95,7 @@ client.on('guildMemberRemove', async member => {
                         client.channels.cache.get('942502078172000266').send({ embeds: [
                             new Discord.MessageEmbed()
                             .setColor('#0099ff')
-                            .setTitle(`🦺 Server ${server} deleted.`)
+                            .setTitle(`🔨 Server ${server} deleted.`)
                         ]})
                     }
                     ).catch(err => {
@@ -123,7 +123,7 @@ client.on('guildMemberRemove', async member => {
                 client.channels.cache.get('942502078172000266').send({ embeds: [
                     new Discord.MessageEmbed()
                     .setColor('#0099ff')
-                    .setTitle(`🦺 User ${UserDB.consoleID} deleted.`)
+                    .setTitle(`📢 User ${UserDB.consoleID} deleted.`)
                 ]})
             })
         })
