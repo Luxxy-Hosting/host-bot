@@ -29,30 +29,30 @@ module.exports = async (client, message) => {
         deleteMessage();
     }
 
-    const array = require(`../scam.json`)
-    if (array.some(word => message.content.toLowerCase().includes(word))) {
-        try {
-        message.delete({ reason: 'AntiScam' });
-        message.member.timeout(100 * 60 * 1000)
-        const logEmbedDesc = 'Scam link blocked!'
-        .replace(/{MENTION}/g, message.author.tag)
-        .replace(/{ID}/g, message.author.id)
-        .replace(/{MESSAGE}/g, message.content)
-        .replace ("://", ": //");
-        const logChannel = client.channels.cache.get(config.channelID.logs)
-        const logEmbed = new MessageEmbed()
-        .setColor(`RED`)
-        .setAuthor(message.author.tag, message.author.displayAvatarURL())
-        .setDescription(logEmbedDesc)
-        .setTimestamp()
-        .addFields([{ name: 'Action', value: 'Timeout for 1 hour' }]);
-        await logChannel.send({ embeds: [logEmbed] });
-       }
-      catch (error){
-        console.error(error);
-        await logChannel.send(error);
-      }
-    }
+    // const array = require(`../scam.json`)
+    // if (array.some(word => message.content.toLowerCase().includes(word))) {
+    //     try {
+    //     message.delete({ reason: 'AntiScam' });
+    //     message.member.timeout(100 * 60 * 1000)
+    //     const logEmbedDesc = 'Scam link blocked!'
+    //     .replace(/{MENTION}/g, message.author.tag)
+    //     .replace(/{ID}/g, message.author.id)
+    //     .replace(/{MESSAGE}/g, message.content)
+    //     .replace ("://", ": //");
+    //     const logChannel = client.channels.cache.get(config.channelID.logs)
+    //     const logEmbed = new MessageEmbed()
+    //     .setColor(`RED`)
+    //     .setAuthor(message.author.tag, message.author.displayAvatarURL())
+    //     .setDescription(logEmbedDesc)
+    //     .setTimestamp()
+    //     .addFields([{ name: 'Action', value: 'Timeout for 1 hour' }]);
+    //     await logChannel.send({ embeds: [logEmbed] });
+    //    }
+    //   catch (error){
+    //     console.error(error);
+    //     await logChannel.send(error);
+    //   }
+    // }
     
     if(message.channel.id === config.channelID.suggestions && !message.content.startsWith('>')){
         message.react('👍')

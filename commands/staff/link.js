@@ -4,19 +4,18 @@ const moment = require('moment')
 const config = require('../../config.json')
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
-         /// disabled for now because issue with linking owners account
         if(!message.member.roles.cache.has(config.roleID.administrator)) return message.reply({
             embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
+                new Discord.EmbedBuilder()
+                .setColor(0xff0000)
                 .setTitle('Error')
                 .setDescription('You do not have the required permissions to use this command!')
             ]
         })
         if (!args[1]) return message.reply({
             embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
+                new Discord.EmbedBuilder()
+                .setColor(0xff0000)
                 .setTitle('Error')
                 .setDescription(`usage: \`${config.bot.prefix}staff link @luxxy <consoleid>\``)
             ]
@@ -24,8 +23,8 @@ module.exports = async (client, message, args) => {
         const user1 = message.mentions.users.first()
         if(!user1) return message.reply({
             embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
+                new Discord.EmbedBuilder()
+                .setColor(0xff0000)
                 .setTitle('Error')
                 .setDescription('You need to specify a user to link!')
             ]
@@ -33,8 +32,8 @@ module.exports = async (client, message, args) => {
         const consoleid = args[2]
         if(!consoleid) return message.reply({
             embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
+                new Discord.EmbedBuilder()
+                .setColor(0xff0000)
                 .setTitle('Error')
                 .setDescription('You need to specify a console ID!')
             ]
@@ -42,8 +41,8 @@ module.exports = async (client, message, args) => {
         if (args[2] == 1 && message.author.id !== '517107022399799331') {
                  message.reply({
                           embeds: [
-                                   new Discord.MessageEmbed()
-                                   .setColor('#ff0000')
+                                   new Discord.EmbedBuilder()
+                                   .setColor(0xff0000)
                                    .setTitle('Error')
                                    .setDescription(`${error} You cannot link this user to this consoleID!`)
                           ]
@@ -71,8 +70,8 @@ module.exports = async (client, message, args) => {
             }).save()
             message.reply({
                 embeds: [
-                    new Discord.MessageEmbed()
-                    .setColor('#00ff00')
+                    new Discord.EmbedBuilder()
+                    .setColor(0x00ff00)
                     .setTitle('Success')
                     .setDescription('User linked successfully! \n Username: ' + user.data.attributes.username + '\n Email: ' + user.data.attributes.email + '\n Console ID: ' + consoleid)
                     ]

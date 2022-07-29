@@ -13,7 +13,7 @@ module.exports = {
     options: [{
         name: "serverid",
         description: "The id of the server you want to control",
-        type: "STRING",
+        type: Discord.ApplicationCommandOptionType.String,
         required: true,
     }],
     run: async (client, interaction, args) => {
@@ -43,10 +43,10 @@ module.exports = {
                 if (!output) {
                     interaction.reply({
                         embeds: [
-                            new Discord.MessageEmbed()
+                            new Discord.EmbedBuilder()
                             .setTitle(`:x: | Server not found`)
                             .setDescription(`The server with the id ${serverid} was not found`)
-                            .setColor(`RED`)
+                            .setColor(Discord.Colors.Red)
                         ]
                     })
                 } else {
@@ -86,9 +86,9 @@ module.exports = {
 
                                 interaction.reply({
                                     embeds: [
-                                        new Discord.MessageEmbed()
+                                        new Discord.EmbedBuilder()
                                         .setTitle(`Your Server Status`)
-                                                    .setColor(`${resources.data.attributes.current_state == 'running' ? 'GREEN' : resources.data.attributes.current_state == 'offline' ? 'RED' : "YELLOW"}`)
+                                                    //.setColor(`${resources.data.attributes.current_state == 'running' ? `${Discord.Colors.Green}` : resources.data.attributes.current_state == 'offline' ? `${Discord.Colors.Red}` : `${Discord.Colors.Yellow}`}`)
                                                     .setDescription(`**Status:** \`${resources.data.attributes.current_state == 'running' ? '🟢 Running' : resources.data.attributes.current_state == 'offline' ? '🔴 Offline' : "🔄" + resources.data.attributes.current_state}\`\n`
                                                     + `**Name:** \`${srvname}\`\n`
                                                     + `**Uptime:** \`${getUptime(resources.data.attributes.resources.uptime)}\`\n`
@@ -99,37 +99,37 @@ module.exports = {
                                                     + `**Node:** \`${response.data.attributes.node}\`\n`
                                                     + `**Full Id:** \`${response.data.attributes.uuid}\`\n`)
                                     ], components:[
-                                        new Discord.MessageActionRow()
+                                        new Discord.ActionRowBuilder()
                                         .addComponents(
-                                            new Discord.MessageButton()
+                                            new Discord.ButtonBuilder()
                                             .setCustomId('start')
                                             .setLabel('🟢 Start')
-                                            .setStyle('SUCCESS'),
+                                            .setStyle('Success'),
                                         )
                                         .addComponents(
-                                            new Discord.MessageButton()
+                                            new Discord.ButtonBuilder()
                                             .setCustomId('restart')
                                             .setLabel('🔄 Restart')
-                                            .setStyle('PRIMARY'),
+                                            .setStyle('Primary'),
                                         )
                                         .addComponents(
-                                            new Discord.MessageButton()
+                                            new Discord.ButtonBuilder()
                                             .setCustomId('stop')
                                             .setLabel('🔴 Stop')
-                                            .setStyle('DANGER'),
+                                            .setStyle('Danger'),
                                         )
                                         .addComponents(
-                                            new Discord.MessageButton()
+                                            new Discord.ButtonBuilder()
                                             .setLabel('🔗 Link')
                                             .setURL(`${config.pterodactyl.host}/server/${serverid}`)
-                                            .setStyle('LINK'),
+                                            .setStyle('Link'),
                                         )
                                         ]
                                 })
                                 const filter = m => m.user.id === interaction.user.id;
                                 const collector = interaction.channel.createMessageCollector(filter, { time: 60000 });
                                 collector.on('collect', m => {
-                                    if (m.customs.get('start')) {
+                                    if (m.customId ==='start') {
                                         axios({
                                             url: config.pterodactyl.host + '/api/client/servers/' + serverid + '/start',
                                             method: 'POST',
@@ -159,7 +159,7 @@ module.exports = {
                                                 ]
                                             })
                                         })
-                                    } else if (m.customs.get('restart')) {
+                                    } else if (m.customId ==='restart') {
                                         axios({
                                             url: config.pterodactyl.host + '/api/client/servers/' + serverid + '/restart',
                                             method: 'POST',
@@ -191,7 +191,7 @@ module.exports = {
                                             })
                                         }
                                         )
-                                    } else if (m.customs.get('stop')) {
+                                    } else if (m.customId ==='stop') {
                                         axios({
                                             url: config.pterodactyl.host + '/api/client/servers/' + serverid + '/stop',
                                             method: 'POST',

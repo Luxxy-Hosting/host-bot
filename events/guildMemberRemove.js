@@ -25,8 +25,8 @@ module.exports = async (client, member, guild) => {
             const servers1 = res.data.attributes.relationships.servers.data.map(x => x.attributes.id)
             client.channels.cache.get('942502078172000266').send({
                 embeds: [
-                    new Discord.MessageEmbed()
-                    .setColor('#0099ff')
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
                     .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${userdb.consoleID} with ${servers1.length} servers.`)
                 ]
             })
@@ -34,17 +34,16 @@ module.exports = async (client, member, guild) => {
             if (servers1.length > 0) {
                 await client.channels.cache.get('942502078172000266').send({
                     embeds: [
-                        new Discord.MessageEmbed()
-                        .setColor('#0099ff')
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
                         .setTitle('🦺 Deleting servers...')
-                        .setColor(`RED`)
                     ]
                 })
                 await Promise.all(servers1.map(async server => {
                     // await server1.filter(x => x.consolid).map(async server => {})
                     client.channels.cache.get('942502078172000266').send({ embeds: [
-                        new Discord.MessageEmbed()
-                        .setColor('#0099ff')
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
                         .setTitle(`🦺 Deleting server ${server}...`)
                     ]})
                     await axios({
@@ -78,9 +77,9 @@ module.exports = async (client, member, guild) => {
                 serverCount.delete(member.user.id)
                 client.channels.cache.get('942502078172000266').send({
                     embeds: [
-                        new Discord.MessageEmbed()
+                        new Discord.EmbedBuilder()
                         .setTitle('🦺 Deleted user.')
-                        .setColor(`GREEN`)
+                        .setColor(Discord.Colors.Green)
                     ]
             })
             }

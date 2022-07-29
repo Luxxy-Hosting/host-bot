@@ -21,13 +21,13 @@ module.exports = {
 
         message.channel.send({
             embeds: [
-                new Discord.MessageEmbed()
+                new Discord.EmbedBuilder()
                 .setTitle(`Message ${snipedMessage.action} by ${snipedMessage.member.user.tag}`)
                 .setDescription(snipedMessage.message ? "`" + snipedMessage.message + "`" : "ㅤ")
                 .setImage(snipedMessage.image)
                 .setFooter({text: `${number + 1}/${snipe.length}  -  Edited at`})
                 .setTimestamp(snipedMessage.timestamp)
-                .setColor("BLUE")
+                .setColor(Discord.Colors.Blue)
             ]
         });
     } 

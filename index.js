@@ -1,11 +1,29 @@
 const Discord = require('discord.js');
+const { GatewayIntentBits, Partials } = require('discord.js');
 const config = require(`./config.json`);
 const db = require('quick.db')
 const handler = require("./handlers/loadslash");
 
 // dont mind this
 
-const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_VOICE_STATES', 'DIRECT_MESSAGES', 'GUILD_PRESENCES', 'GUILD_BANS', 'GUILD_MESSAGE_REACTIONS'], partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
+const client = new Discord.Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.DirectMessageTyping,
+    ],
+    partials: [ Partials.Message, Partials.Channel, Partials.Reaction, Partials.User ],
+})
+
+//const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_VOICE_STATES', 'DIRECT_MESSAGES', 'GUILD_PRESENCES', 'GUILD_BANS', 'GUILD_MESSAGE_REACTIONS'], partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
 console.log("index runing . . .")
 
@@ -21,7 +39,7 @@ global.domains = new db.table("ProxiedDomains")
 global.codes = new db.table('Codes')
 global.blacklist = new db.table('Blacklist')
 global.dir = __dirname;
-client.embedColor = "#0099ff"
+client.embedColor = 0x0099ff;
 
 global.error = "<:No:979776354486726726>"
 global.success = "<:yes:964979709945470977>"
@@ -61,8 +79,8 @@ client.on('guildMemberRemove', async member => {
             const servers1 = res.data.attributes.relationships.servers.data.map(e => e.attributes.id)
             client.channels.cache.get('942502078172000266').send({
                 embeds: [
-                    new Discord.MessageEmbed()
-                    .setColor('#0099ff')
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
                     .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${UserDB.consoleID} with ${servers1.length} servers.`)
                 ]
             })
@@ -70,15 +88,15 @@ client.on('guildMemberRemove', async member => {
             if (servers1.length > 0) {
                 await client.channels.cache.get('942502078172000266').send({
                     embeds: [
-                        new Discord.MessageEmbed()
-                        .setColor('#0099ff')
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
                         .setTitle('🦺 Deleting servers...')
                     ]
                 })
                 await Promise.all(servers1.map(async server => {
                     client.channels.cache.get('942502078172000266').send({ embeds: [
-                        new Discord.MessageEmbed()
-                        .setColor('#0099ff')
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
                         .setTitle(`🦺 Deleting server ${server}...`)
                     ]})
                     await axios({
@@ -93,15 +111,15 @@ client.on('guildMemberRemove', async member => {
                         }
                     }).then(async res => {
                         client.channels.cache.get('942502078172000266').send({ embeds: [
-                            new Discord.MessageEmbed()
-                            .setColor('#0099ff')
+                            new Discord.EmbedBuilder()
+                            .setColor(Discord.Colors.Red)
                             .setTitle(`🦺 Server ${server} deleted.`)
                         ]})
                     }
                     ).catch(err => {
                         client.channels.cache.get('942502078172000266').send({ embeds: [
-                            new Discord.MessageEmbed()
-                            .setColor('#0099ff')
+                            new Discord.EmbedBuilder()
+                            .setColor(Discord.Colors.Red)
                             .setTitle(`🦺 Error deleting server ${server}`)
                         ]})
                     }
@@ -121,8 +139,8 @@ client.on('guildMemberRemove', async member => {
                 }
             }).then(async res => {
                 client.channels.cache.get('942502078172000266').send({ embeds: [
-                    new Discord.MessageEmbed()
-                    .setColor('#0099ff')
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
                     .setTitle(`🦺 User ${UserDB.consoleID} deleted.`)
                 ]})
             })

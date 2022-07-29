@@ -7,6 +7,7 @@ module.exports = {
     name: "serverlist",
     category: "info",
     description: "lists the servers you got in your account",
+    type: Discord.ApplicationCommandType.ChatInput,
     ownerOnly: false,
     run: async (client, interaction, args) => {
         const userDB = await userdata.findOne({ ID: interaction.user.id });
@@ -32,19 +33,19 @@ module.exports = {
             if(responce.length <= 35){
                 interaction.reply({
                     embeds:[
-                        new Discord.MessageEmbed()
+                        new Discord.EmbedBuilder()
                         .setTitle(`${interaction.user.username}'s servers`)
-                        .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
-                        .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
-                        .setColor(`GREEN`)
+                        .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
+                        .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
+                        .setColor(Discord.Colors.Green)
                     ]
                 }).catch(err => {
                     interaction.reply({
                         embeds:[
-                            new Discord.MessageEmbed()
+                            new Discord.EmbedBuilder()
                             .setTitle(`:x: | HOW MANY SERVERS DO U HAVE???`)
                             .setDescription(`${err}`)
-                            .setColor(`RED`)
+                            .setColor(Discord.Colors.Red)
                         ]
                     })
                 })

@@ -8,24 +8,24 @@ module.exports = async (client, message, args) => {
 
     if (!user) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`:x: | You need to mention a user`)
-            .setColor(`RED`)
+            .setColor(Discord.Colors.Red)
         ]
     })
     const userDB = await userData.findOne({ ID: user.id });
     if (!userDB) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`:x: | ${user.username} doesn't have an account yet`)
-            .setColor(`RED`)
+            .setColor(Discord.Colors.Red)
         ]
     })
     if (!serverCount.get(user.id)) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`:x: | ${user.username} doesn't have a count yet`)
-            .setColor(`RED`)
+            .setColor(Discord.Colors.Red)
         ]
     })
     const used1 = serverCount.get(user.id).used;
@@ -33,9 +33,9 @@ module.exports = async (client, message, args) => {
 
     if (!number) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`:x: | You need to specify a number`)
-            .setColor(`RED`)
+            .setColor(Discord.Colors.Red)
         ]
     })
 
@@ -45,9 +45,9 @@ module.exports = async (client, message, args) => {
     })
     message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setAuthor(`${user.username}'s count has been set.` , user.displayAvatarURL({ format: 'png', dynamic: true, size: 1024 }))
-            .setColor(`GREEN`)
+            .setColor(Discord.Colors.Green)
             .setDescription(`${user.username}'s count has been set to ${serverCount.get(user.id).used} / ${number}`)
         ]
     })
