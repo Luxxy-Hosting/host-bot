@@ -20,18 +20,18 @@ module.exports = async (client, message, args) => {
             }
 
             const msg = await message.channel.send({ content: `Are you sure you want to reset ${user.tag}'s count to ${number}? <a:whatisthis:951132055134162954>`, components: [ 
-                new Discord.MessageActionRow()
+                new Discord.ActionRowBuilder()
                 .addComponents(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setCustomId('AcceptDelete')
                         .setLabel('Yes')
-                        .setStyle('SUCCESS'),
+                        .setStyle('Success'),
                 )
                 .addComponents(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setCustomId('RejectDelete')
                         .setLabel('No')
-                        .setStyle('DANGER'),
+                        .setStyle('Danger'),
                 )
             ]});
             

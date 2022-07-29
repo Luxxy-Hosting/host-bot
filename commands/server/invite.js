@@ -42,18 +42,18 @@ module.exports = async (client, message, args) => {
         msg.edit({
             content: `Are you sure you want to invite \`${user.username}\` to \`${output.attributes.name}\`?`,
             components:[
-                new Discord.MessageActionRow()
+                new Discord.ActionRowBuilder()
                 .addComponents(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setCustomId('AcceptInvite')
                         .setLabel('Yes')
-                        .setStyle('SUCCESS'),
+                        .setStyle('Success'),
                 )
                 .addComponents(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setCustomId('RejectInvite')
                         .setLabel('No')
-                        .setStyle('DANGER'),
+                        .setStyle('Danger'),
                 )
             ]
         })

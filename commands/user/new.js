@@ -28,14 +28,16 @@ module.exports = async (client, message, args) => {
 
 
     let category = message.guild.channels.cache.find(c => c.id === config.parentID.createAccount);
-    let channel = await message.guild.channels.create(message.author.tag, {
+    let channel = await message.guild.channels.create({
+        name: `${message.author.username}-${message.author.discriminator}`,
         parent: category.id,
+        type: Discord.ChannelType.GuildText,
         permissionOverwrites: [{
             id: message.author.id,
-            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
+            allow: ["ViewChannel", "SendMessages", "ReadMessageHistory"],
         }, {
             id: message.guild.id,
-            deny: ['VIEW_CHANNEL']
+            deny: ["ViewChannel", "SendMessages"],
         }]
     })
     message.reply(`Please check ${channel} to create your account!`)
@@ -43,25 +45,25 @@ module.exports = async (client, message, args) => {
     let msg = await channel.send({
         content: `${message.author}`,
         embeds:[
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`👋 Welcome to Luxxy Hosting`)
-            .setColor(`#677bf9`)
+            .setColor(0x677bf9)
             .setDescription(`📰 In order to continue, please read our terms of service and privacy policy that are located in the channel ${client.channels.cache.get(config.channelID.legal)}.\n\nYou are allowed to continue creating your account and use our servicies only if you accept our terms of service and privacy policy\n\nDo you accept our legal?`)
             .setFooter({text:`This message expires in 5 minutes`})
         ],
         components:[
-            new Discord.MessageActionRow()
+            new Discord.ActionRowBuilder()
             .addComponents(
-				new Discord.MessageButton()
+				new Discord.ButtonBuilder()
 					.setCustomId('AcceptLegal')
 					.setLabel('Yes')
-					.setStyle('SUCCESS'),
+					.setStyle('Success'),
 			)
             .addComponents(
-				new Discord.MessageButton()
+				new Discord.ButtonBuilder()
 					.setCustomId('RejectLegal')
 					.setLabel('No')
-					.setStyle('DANGER'),
+					.setStyle('Danger'),
 			)
         ]
     })
@@ -99,9 +101,9 @@ module.exports = async (client, message, args) => {
 
             msg.edit({
                 embeds:[
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                     .setTitle(`❓ What is your email address? (should be valid)`)
-                    .setColor(`YELLOW`)
+                    .setColor(Discord.Colors.Yellow)
                     .setFooter({text:`Type "cancel" to stop the process of creating your account`})
                 ],
                 components: []
@@ -122,9 +124,9 @@ module.exports = async (client, message, args) => {
                     }else{
                         msg.edit({
                             embeds:[
-                                new Discord.MessageEmbed()
+                                new Discord.EmbedBuilder()
                                 .setTitle(`❓ What your username should be (do not use spaces or special charaters)`)
-                                .setColor(`YELLOW`)
+                                .setColor(Discord.Colors.Yellow)
                                 .setFooter({text:`Type "cancel" to stop the process of creating your account`})
                             ],
                             components: []
@@ -140,9 +142,9 @@ module.exports = async (client, message, args) => {
                     }else{
                         msg.edit({
                             embeds:[
-                                new Discord.MessageEmbed()
+                                new Discord.EmbedBuilder()
                                 .setTitle(`⌛ Processing creating your account`)
-                                .setColor(`YELLOW`)
+                                .setColor(Discord.Colors.Yellow)
                             ]
                         })
                         username = m.content.toLowerCase().trim()
@@ -168,9 +170,9 @@ module.exports = async (client, message, args) => {
                 if(reason === 'FinishedCreation'){
                     if(!username || !email) return msg.edit({
                         embeds:[
-                            new Discord.MessageEmbed()
+                            new Discord.EmbedBuilder()
                             .setTitle(`${error} Something wierd happend...`)
-                            .setColor(`RED`)
+                            .setColor(Discord.Colors.Red)
                             .setDescription(`Error: The email or username cache did not save any record!`)
                         ]
                     })
@@ -214,9 +216,9 @@ module.exports = async (client, message, args) => {
                         msg.edit({
                             content: `${message.author}`,
                             embeds: [
-                                new Discord.MessageEmbed()
+                                new Discord.EmbedBuilder()
                                 .setTitle(`${success} Your account was successfully created`)
-                                .setColor(`#677bf9`)
+                                .setColor(0x677bf9)
                                 .setDescription(`Here are the account details:\n\n> panel link: ${config.pterodactyl.host}\n> email: \`${email}\`\n> username: \`${username}\`\n> password: || ${data.password} ||\n\nMake sure you will change your password *(after you login)* by accessing the top right account icon on the panel, from there you will have to type your curent password which is marked above and your new password.\n\n⚠️ *This channel will be deleted in 30 minues, make sure you saved your login data before the channel gets deleted*`)
                             ]
                         })
@@ -227,9 +229,9 @@ module.exports = async (client, message, args) => {
                         console.log(err)
                         msg.edit({
                             embeds:[
-                                new Discord.MessageEmbed()
+                                new Discord.EmbedBuilder()
                                 .setTitle(`${error} Something happend :/`)
-                                .setColor(`RED`)
+                                .setColor(Discord.Colors.Red)
                                 .setDescription(`There was an error when creating your account\n\n${err.toString() === 'Error: Request failed with status code 422' ? `${err}\n\n> This error is caused of Unprocessable Entity, which can be caused because of many bugs. one of them is using special characters in your username. another example can be that someone already have used that email address or username.`: err} \n\nerror id: ${Date.now()} \n please go to <#971131084718895175> and make a ticket with the error id 🦺`)
                             ]
                         })

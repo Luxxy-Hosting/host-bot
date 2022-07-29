@@ -2,10 +2,11 @@ const Discord = require('discord.js');
 const config = require('../../config.json');
 const {
   MessageEmbed,
-  Permissions
+  Permissions,
 } = require(`discord.js`);
 
 module.exports = async (client, message, args) => {
+    return message.reply('This command is currently disabled.');
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
     const user = message.mentions.members.filter(member=>member.guild.id==message.guild.id).first() || message.guild.members.cache.get(args[0] ? args[0] : ``) || await message.guild.members.fetch(args[0] ? args[0] : ``).catch(() => {}) || false;
     if (!user) return message.reply({

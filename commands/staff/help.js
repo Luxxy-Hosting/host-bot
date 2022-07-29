@@ -7,9 +7,9 @@ module.exports = async (client, message, args) => {
     const commandNames = commands.map(file => file.split('.')[0]);
     message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setDescription(`**__Staff Commands__**\n\n${commandNames.join(', \n')}`)
-            .setColor(`GREEN`)
+            .setColor(Discord.Colors.Green)
         ]
     })
 }

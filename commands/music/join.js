@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder, Colors } = require("discord.js");
 
 module.exports = async (client, message, args) => {
     const { channel } = message.member.voice;
@@ -15,15 +15,15 @@ module.exports = async (client, message, args) => {
 
             player.connect();
 
-            let thing = new MessageEmbed()
+            let thing = new EmbedBuilder()
                 .setColor(client.embedcolor)
                 .setDescription(`**Join the voice channel**\nJoined <#${channel.id}> and bound to <#${message.channel.id}>`)
              return message.channel.send({embeds: [thing]});
 
         } else if (message.guild.me.voice.channel !== channel) {
 
-            let thing = new MessageEmbed()
-                .setColor("RED")
+            let thing = new EmbedBuilder()
+                .setColor(Colors.Red)
                 .setDescription(`You must be in the same channel as ${message.client.user}`);
             return message.channel.send({embeds: [thing]});
         }

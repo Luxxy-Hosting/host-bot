@@ -7,10 +7,10 @@ module.exports = async (client, message, args) => {
         let command = commands[i].split('.')[0];
         push.push(command);
     }
-    const embed = new Discord.MessageEmbed()
+    const embed = new Discord.EmbedBuilder()
         .setColor(client.embedcolor)
         .setTitle('Music Help')
         .setDescription(`**${push.join(', ')}**`)
-        .setFooter(client.user.tag, client.user.displayAvatarURL({ dynamic: true }));
+        .setFooter({ text: `Requested by ${message.author.tag}`, icon: message.author.avatarURL() });
     return message.channel.send({ embeds: [embed] });
 }

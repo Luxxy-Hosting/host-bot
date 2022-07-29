@@ -9,14 +9,14 @@ module.exports = async (client, message, args) => {
     const servercount = serverCount.get(user.id);
     if (!userDB) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`:x: | ${user.username} doesn't have an account yet`)
-            .setColor(`RED`)
+            .setColor(Discord.Colors.Red)
         ]
     })
     if (!servercount) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
              .setTitle(`user don't have server count`)
     ]})
     axios({
@@ -47,17 +47,17 @@ module.exports = async (client, message, args) => {
         }).then(async res => {
             message.reply({
                 embeds: [
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                     .setTitle(`${user.username}'s Info`)
-                    .addField('Console ID', `\`\`\`\n${userDB.consoleID}\`\`\``, true)
-                    .addField('Email', `\`\`\`\n${res.data.attributes.email}\`\`\``, true)
-                    .addField('Username', `\`\`\`\n${res.data.attributes.username}\`\`\``, true)
-                    .addField('Link Date', `\`\`\`\n${userDB.linkDate}\`\`\``, true)
-                    .addField('Link Time', `\`\`\`\n${userDB.linkTime}\`\`\``, true)
-                    .addField('Servers', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
-                    .addField('Servers Name', `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
-                    .addField('Server Count', `\`\`\`\n${serverCount.get(user.id).used} / ${serverCount.get(user.id).have}\`\`\``, true)
-                    .setColor(`GREEN`)
+                    .addFields({ name: 'Console ID', value: `\`\`\`\n${userDB.consoleID}\`\`\``, inline: true })
+                    .addFields({ name: 'Email', value:  `\`\`\`\n${res.data.attributes.email}\`\`\``, inline: true })
+                    .addFields({ name: 'Username', value:  `\`\`\`\n${res.data.attributes.username}\`\`\``, inline: true })
+                    .addFields({ name: 'Link Date', value:  `\`\`\`\n${userDB.linkDate}\`\`\``, inline: true})
+                    .addFields({ name:'Link Time', value: `\`\`\`\n${userDB.linkTime}\`\`\``, inline: true})
+                    .addFields({ name: 'Servers', value:  `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, inline: true})
+                    .addFields({ name: 'Servers Name', value:  `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, inline: true})
+                    .addFields({ name: 'Server Count', value: `\`\`\`\n${serverCount.get(user.id).used} / ${serverCount.get(user.id).have}\`\`\``, inline: true})
+                    .setColor(Discord.Colors.Green)
                 ]
             })
         }).catch(err => {

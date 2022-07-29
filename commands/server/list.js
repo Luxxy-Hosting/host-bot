@@ -28,19 +28,19 @@ module.exports = async (client, message, args) => {
         if(responce.length <= 35){
             message.reply({
                 embeds:[
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                     .setTitle(`${message.author.username}'s servers`)
-                    .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, true)
-                    .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, true)
-                    .setColor(`GREEN`)
+                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
+                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
+                    .setColor(Discord.Colors.Green)
                 ]
             }).catch(err => {
                 message.reply({
                     embeds:[
-                        new Discord.MessageEmbed()
+                        new Discord.EmbedBuilder()
                         .setTitle(`:x: | HOW MANY SERVERS DO U HAVE???`)
                         .setDescription(`${err}`)
-                        .setColor(`RED`)
+                        .setColor(Discord.Colors.Red)
                     ]
                 })
             })

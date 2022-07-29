@@ -5,6 +5,7 @@ const moment = require('moment');
 const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
+    return message.reply('This command is currently disabled.');
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
     const user = await message.mentions.users.first()
 

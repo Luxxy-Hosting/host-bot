@@ -10,7 +10,7 @@ module.exports = {
     options: [{
         name: "type",
         description: "The type of server to create",
-        type: "STRING",
+        type: Discord.ApplicationCommandOptionType.String,
         required: true,
         choices: [
             {
@@ -77,7 +77,7 @@ module.exports = {
     },{
         name: "name",
         description: "The name of the server",
-        type: "STRING",
+        type: Discord.ApplicationCommandOptionType.String,
         required: true,
     }],
     ownerOnly: false,
@@ -121,8 +121,8 @@ module.exports = {
         }).then(response => {
             console.log(`[${new Date().toLocaleString()}] [${interaction.user.tag}] Created server: ${response.data.attributes.name}`)
 
-            const serverButton = new Discord.MessageButton()
-            .setStyle('LINK')
+            const serverButton = new Discord.ButtonBuilder()
+            .setStyle('Link')
             .setURL(`${config.pterodactyl.host}/server/${response.data.attributes.identifier}`)
             if (response.data.attributes.name.length < 25) {
                 serverButton.setLabel(`[${response.data.attributes.name}] Server Link`)
@@ -130,14 +130,14 @@ module.exports = {
                 serverButton.setLabel(`Server Link`)
             }
 
-            const row2 = new Discord.MessageActionRow()
+            const row2 = new Discord.ActionRowBuilder()
             .addComponents([serverButton])
 
             interaction.reply({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setColor(`GREEN`)
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Green)
                     .setTitle(`${success} Server Created Successfully`)
                     .setDescription(`
                     > **Status:** \`${response.statusText}\`
@@ -156,36 +156,36 @@ module.exports = {
                 interaction.reply({
                     content: null,
                     embeds:[
-                        new Discord.MessageEmbed()
-                        .setColor('RED')
-                        .addField(`${error} Server creation failed`, `The node had ran out of allocations/ports!`)
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
+                        .addFields({ name: `${error} Server creation failed`, value: `The node had ran out of allocations/ports!`, inline: false })
                     ]
                 })
             } else if (error == "Error: Request failed with status code 504") {
                 interaction.reply({
                     content: null,
                     embeds:[
-                        new Discord.MessageEmbed()
-                        .setColor('RED')
-                        .addField(`${error} Server creation failed`, `The node is currently offline or having issues`)
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
+                        .addFields({ name: `${error} Server creation failed`, value: `The node is currently offline or having issues`, inline: false})
                     ]
                 })
             } else if (error == "Error: Request failed with status code 429") {
                 interaction.reply({
                     content: null,
                     embeds:[
-                        new Discord.MessageEmbed()
-                        .setColor('RED')
-                        .addField(`${error} Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
+                        .addFields({ name: `${error} Server creation failed`, value: `Uh oh, This shouldn\'t happen, Try again in a minute or two.`, inline: false})
                         ]
                 })
             } else {
                 interaction.reply({
                     content: null,
                     embeds:[
-                        new Discord.MessageEmbed()
-                        .setColor('RED')
-                        .addField(`${error} Server creation failed`, `${error}.`)
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Red)
+                        .addFields({ name: `${error} Server creation failed`, value: `idk the error 💀.`})
                     ]
                 }) 
             }

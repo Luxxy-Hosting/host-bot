@@ -52,9 +52,9 @@ module.exports = async (client, message, args) => {
         let i = 1
         message.reply({
             embeds:[
-                new Discord.MessageEmbed()
+                new Discord.EmbedBuilder()
                 .addField(`Apparently you have more than one port`, `The ports you have are:\n\`\`\`\n${serverdata.relationships.allocations.data.map(x => i++ +". "+ x.attributes.port).join('\n')}\`\`\`\nPlease send a new message with the port you want to proxy`)
-                .setColor(`RED`)
+                .setColor(Discord.Colors.Orange)
             ]
         })
         const filter = m => m.author.id === message.author.id

@@ -20,18 +20,18 @@ module.exports = async (client, message, args) => {
         let servers = response.data.attributes.relationships.servers.data.map(x => x.attributes.id)
 
         let msg = await message.reply({content: `You are going to delete your account with username: \`${userDB.username}\`. Once you click the yes button all your ${servers.length > 1 ? '\`'+ servers.length + '\` servers' : 'servers'} will be deleted.\n\n⚠️ *This acction is not reversable. once you deleted your account all your data will be lost forever*`, components:[
-            new Discord.MessageActionRow()
+            new Discord.ActionRowBuilder()
             .addComponents(
-				new Discord.MessageButton()
+				new Discord.ButtonBuilder()
 					.setCustomId('DeleteTheAccount')
 					.setLabel('Yes')
-					.setStyle('SUCCESS'),
+					.setStyle('Success'),
 			)
             .addComponents(
-				new Discord.MessageButton()
+				new Discord.ButtonBuilder()
 					.setCustomId('CancelAccountDeletion')
 					.setLabel('No')
-					.setStyle('DANGER'),
+					.setStyle('Danger'),
 			)
         ]}
         )
@@ -49,19 +49,19 @@ module.exports = async (client, message, args) => {
 
             msg.edit({
                 components:[
-                    new Discord.MessageActionRow()
+                    new Discord.ActionRowBuilder()
                     .addComponents(
-                        new Discord.MessageButton()
+                        new Discord.ButtonBuilder()
                             .setCustomId('DeleteTheAccount')
                             .setLabel('Yes')
-                            .setStyle('SUCCESS')
+                            .setStyle('Success')
                             .setDisabled(true)
                     )
                     .addComponents(
-                        new Discord.MessageButton()
+                        new Discord.ButtonBuilder()
                             .setCustomId('CancelAccountDeletion')
                             .setLabel('No')
-                            .setStyle('DANGER')
+                            .setStyle('Danger')
                             .setDisabled(true)
                     )
                 ]
@@ -71,19 +71,19 @@ module.exports = async (client, message, args) => {
             if(reason === 'time'){
                 msg.edit({
                     components:[
-                        new Discord.MessageActionRow()
+                        new Discord.ActionRowBuilder()
                         .addComponents(
-                            new Discord.MessageButton()
+                            new Discord.ButtonBuilder()
                                 .setCustomId('DeleteTheAccount')
                                 .setLabel('Yes')
-                                .setStyle('SUCCESS')
+                                .setStyle('Success')
                                 .setDisabled(true)
                         )
                         .addComponents(
-                            new Discord.MessageButton()
+                            new Discord.ButtonBuilder()
                                 .setCustomId('CancelAccountDeletion')
                                 .setLabel('No')
-                                .setStyle('DANGER')
+                                .setStyle('Danger')
                                 .setDisabled(true)
                         )
                     ]
@@ -92,9 +92,9 @@ module.exports = async (client, message, args) => {
             }
             if(reason === 'CancelAccountDeletion'){
                 msg.edit({embeds:[
-                    new Discord.MessageEmbed()
+                    new Discord.EmbedBuilder()
                     .setTitle(':x: Account Deletion canceled')
-                    .setColor(`RED`)
+                    .setColor(Discord.Colors.Red)
                 ]})
                 return
             }

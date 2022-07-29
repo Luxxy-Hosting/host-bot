@@ -10,12 +10,11 @@ module.exports = {
             msg.edit({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setAuthor(`${message.author.tag}`, message.author.displayAvatarURL())
+                    new Discord.EmbedBuilder()
                     .setColor(client.embedColor)
-                    .addField('Bot Ping', `\`\`\`ini\n[ ${ping}ms ]\n\`\`\``, true)
-                    .addField('Api Ping', `\`\`\`ini\n[ ${api_ping}ms ]\n\`\`\``, true)
-                    .setFooter(`Requested by ${message.author.tag}`, message.author.displayAvatarURL())
+                    .addFields({ name: 'Bot Ping', value: `\`\`\`ini\n[ ${ping}ms ]\n\`\`\``, inline: true })
+                    .addFields({ name: 'Api Ping', value: `\`\`\`ini\n[ ${api_ping}ms ]\n\`\`\``, inline: true })
+                    .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
                     .setTimestamp()
                 ]
             })

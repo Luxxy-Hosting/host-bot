@@ -16,8 +16,8 @@ module.exports = async (client, message, args) => {
         `\nSystem Load: ${(Math.round(node.stats.cpu.systemLoad * 100) / 100).toFixed(2)}%` +
         `\nLavalink Load: ${(Math.round(node.stats.cpu.lavalinkLoad * 100) / 100).toFixed(2)}%`
     ).join('\n\n----------------------------\n');
-    const embed = new Discord.MessageEmbed()
+    const embed = new Discord.EmbedBuilder()
         .setDescription(`\`\`\`${all}\`\`\``)
-        .setColor('#0099ff')
+        .setColor(0x0099ff)
     message.reply({embeds: [embed]})
 }

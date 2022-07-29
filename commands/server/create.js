@@ -12,22 +12,22 @@ module.exports = async (client, message, args) => {
 
     if(!args[1] || args[1]?.toLowerCase() === 'list'){  
         
-        const panelButton = new Discord.MessageButton()
-        .setStyle('LINK')
+        const panelButton = new Discord.ButtonBuilder()
+        .setStyle('Link')
         .setURL('https://panel.luxxy.host')
         .setLabel("Panel")
         
-        const row = new Discord.MessageActionRow()
+        const row = new Discord.ActionRowBuilder()
         .addComponents([panelButton])
         
-        const noTypeListed = new Discord.MessageEmbed() 
-        .setColor('#36393f')
+        const noTypeListed = new Discord.EmbedBuilder() 
+        .setColor(0x36393f)
         .setTitle('Types of servers you can create:')
-        .addField(`${emoji} __**Discord Bots**__: `, `> NodeJS \n > Python \n > AIO (all in one) \n > Golang \n > Ruby \n > Dotnet \n > RedBot`, true)
-        .addField(`${emoji} __**Databases**__:`, `> MongoDB \n > Redis`, true)
-        .addField(`${emoji} __**Web**__:`, `> Nginx \n > Uptime-Kuma`, true)
-        .addField(`${emoji} __**Other**__:`, `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, true)
-        .setFooter("Example: !server create NodeJS Testing Server")
+        .addFields({ name: `${emoji} __**Discord Bots**__: `, value: `> NodeJS \n > Python \n > AIO (all in one) \n > Golang \n > Ruby \n > Dotnet \n > RedBot`, inline: true })
+        .addFields({ name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true })
+        .addFields({ name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true })
+        .addFields({ name: `${emoji} __**Other**__:`, value: `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, inline: true })
+        .setFooter({ text: `Example: ${config.bot.prefix}server create discord nodejs` })
 
         message.channel.send({
             content: `> ${error} What type of server you want me to create?`,
@@ -72,8 +72,8 @@ module.exports = async (client, message, args) => {
 
         console.log(`[${new Date().toLocaleString()}] [${message.guild.name}] [${message.author.tag}] Created server: ${response.data.attributes.name}`)
 
-        const serverButton = new Discord.MessageButton()
-        .setStyle('LINK')
+        const serverButton = new Discord.ButtonBuilder()
+        .setStyle('Link')
         .setURL(`${config.pterodactyl.host}/server/${response.data.attributes.identifier}`)
         if (response.data.attributes.name.length < 25) {
             serverButton.setLabel(`[${response.data.attributes.name}] Server Link`)
@@ -81,14 +81,14 @@ module.exports = async (client, message, args) => {
             serverButton.setLabel(`Server Link`)
         }
 
-        const row2 = new Discord.MessageActionRow()
+        const row2 = new Discord.ActionRowBuilder()
         .addComponents([serverButton])
         
         msg.edit({
             content: null,
             embeds:[
-                new Discord.MessageEmbed()
-                .setColor(`GREEN`)
+                new Discord.EmbedBuilder()
+                .setColor(Discord.Colors.Green)
                 .setTitle(`${success} Server Created Successfully`)
                 .setDescription(`
                 > **Status:** \`${response.statusText}\`
@@ -107,7 +107,7 @@ module.exports = async (client, message, args) => {
             return;
         }
         
-        logchannel.send({ embeds: [ new Discord.MessageEmbed().addField(`Server Created`, `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``).addField(`Server ID`, `\`${response.data.attributes.uuid}\``).setColor(`GREEN`).addField(`Server Status`, `\`${response.statusText}\``).setFooter(`User ID: ${userDB.consoleID}`).setTimestamp() ] })
+        logchannel.send({ embeds: [ new Discord.EmbedBuilder().addFields({ name: `Server Created`, value: `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``}).addFields({ name: `Server ID`, value: `\`${response.data.attributes.uuid}\``}).setColor(Discord.Colors.Red).addFields({ name: `Server Status`, value: `\`${response.statusText}\``}).setFooter({ text: `User ID: ${userDB.consoleID}`}).setTimestamp() ] })
         serverCount.add(message.author.id + '.used', 1)
             
     }).catch(error => {
@@ -115,45 +115,45 @@ module.exports = async (client, message, args) => {
             msg.edit({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setColor('RED')
-                    .addField(`${error} Server creation failed`, `The node had ran out of allocations/ports!`)
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
+                    .addField({ name: `${error} Server creation failed`, value: `The node had ran out of allocations/ports!`})
                 ]
             })
         }else if (error == "Error: Request failed with status code 504") {
             msg.edit({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setColor('RED')
-                    .addField(`${error} Server creation failed`, `The node is currently offline or having issues`)
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
+                    .addFields({ name: `${error} Server creation failed`, value: `The node is currently offline or having issues`})
                 ]
             })
         }else if (error == "Error: Request failed with status code 429") {
             msg.edit({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setColor('RED')
-                    .addField(`${error} Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
+                    .addFields({ name: `${error} Server creation failed`, value: `Uh oh, This shouldn\'t happen, Try again in a minute or two.`})
                     ]
             })
         }else if (error == "Error: Request failed with status code 429") {
             msg.edit({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setColor('RED')
-                    .addField(`${error} Server creation failed`, `Uh oh, This shouldn\'t happen, Try again in a minute or two.`)
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
+                    .addFields({ name: `${error} Server creation failed`, value: `Uh oh, This shouldn\'t happen, Try again in a minute or two.`})
                     ]
             })
         }else {
             msg.edit({
                 content: null,
                 embeds:[
-                    new Discord.MessageEmbed()
-                    .setColor('RED')
-                    .addField(`${error} Server creation failed`, `${error}.`)
+                    new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
+                    .addFields({ name: `${error} Server creation failed`, value: `${error}.`})
                 ]
             })
         }

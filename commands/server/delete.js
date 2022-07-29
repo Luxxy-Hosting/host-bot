@@ -15,7 +15,6 @@ module.exports = async (client, message, args) => {
     args[1] = args[1].split('-')[0];
 
     let msg = await message.channel.send('Let me check if this is your server, please wait . . .')
-    console.log(userDB.consoleID)
     axios({
         url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
         method: 'GET',
@@ -36,18 +35,18 @@ module.exports = async (client, message, args) => {
         msg.edit({
             content: `Are you sure you want to delete \`${output.attributes.name}\`? once you delete your server you will never be able to recover it and all data and files will be lost forever!`,
             components:[
-                new Discord.MessageActionRow()
+                new Discord.ActionRowBuilder()
                 .addComponents(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setCustomId('AcceptDelete')
                         .setLabel('Yes')
-                        .setStyle('SUCCESS'),
+                        .setStyle('Success'),
                 )
                 .addComponents(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setCustomId('RejectDelete')
                         .setLabel('No')
-                        .setStyle('DANGER'),
+                        .setStyle('Danger'),
                 )
             ]
         })

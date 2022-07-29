@@ -11,8 +11,8 @@ module.exports = {
 
         message.reply({
             embeds: [
-                new Discord.MessageEmbed()
-                .setColor('#ff0000')
+                new Discord.EmbedBuilder()
+                .setColor(0xff0000)
                 .setTitle(`${user.username}'s avatar`)
                 .setDescription(`🖼 [Link to avatar](${avatar})`)
                 .setImage(avatar)
