@@ -11,7 +11,7 @@ module.exports = {
     run: async (client, interaction, args) => {
         const userDB = await userdata.findOne({ ID: interaction.user.id });
         if (!userDB) {
-            interaction.reply({ content: 'You Don\'t have an account created. type `!user new` to create one' });
+            interaction.reply({ content: 'You don\'t have an account created. type `!user new` to create one' });
             return;
         }
 
