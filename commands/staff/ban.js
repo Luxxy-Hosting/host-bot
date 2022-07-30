@@ -31,7 +31,7 @@ module.exports = async (client, message, args) => {
                                        ]});
     let reason = args.slice(2).join(` `);
     if (!reason) {
-        reason = `NO REASON`;
+        reason = `No reason given.`;
     }
     
     message.guild.members.cache.get(user.id).ban({ reason: reason }).then(e => {
