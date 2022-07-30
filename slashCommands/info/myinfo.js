@@ -12,7 +12,7 @@ module.exports = {
         const userDB = await userdata.findOne({ ID: interaction.user.id });
 
         if (!userDB) {
-            interaction.reply({ content: 'You Don\'t have an account created. type `!user new` to create one', ephemeral: true });
+            interaction.reply({ content: 'You don\'t have an account created. type `!user new` to create one', ephemeral: true });
             return;
         }
 
@@ -38,7 +38,7 @@ module.exports = {
                 .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, true)
                 .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, true)
                 .setTimestamp()
-                .setFooter("Powered by Pterodactyl");
+                .setFooter({ text: "Powered by Luxxy Hosting" });
             await interaction.reply({ embeds: [embed], ephemeral: true });
         }).catch(async err => {
            await interaction.reply({ content: `${err}`, ephemeral: true });
