@@ -8,7 +8,7 @@ module.exports = async (client, message, args) => {
         message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`);
         return;
     }
-    if(!args[1]) return message.reply(`${error} What server should i delete? please provide you server id *(${config.bot.prefix}server delete <server id>)*`)
+    if(!args[1]) return message.reply(`${error} Which server should I delete? Please provide your server id *(${config.bot.prefix}server delete <server id>)*`)
     if (args[1].match(/[0-9a-z]+/i) == null)
         return message.channel.send("lol only use english characters.");
 
