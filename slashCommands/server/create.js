@@ -104,7 +104,7 @@ module.exports = {
         try{
             ServerData = require(`../../server_creation/${type.toLowerCase()}.js`)(userData.consoleID, name ? name : type, config.pterodactyl.depolymentlocations)
         }catch(err){
-            interaction.reply(`${error} I could no find any server type with the name: \`${type.toLowerCase()}\`\nType \`!server create list\` for more info`)
+            interaction.reply(`${error} I could not find any server type with the name: \`${type.toLowerCase()}\`\nType \`!server create list\` for more info`)
             return
         }
         axios({
