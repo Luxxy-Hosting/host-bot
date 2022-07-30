@@ -72,7 +72,7 @@ module.exports = (client) => {
                     invinfo.add(`${inviter.id}.regular`, 1)
                 }
             }else{
-                logChannel.send(`Welcome <@${member.user.id}>, i couldnt find who invited you :(`);
+                logChannel.send(`Welcome <@${member.user.id}>, I could not find who invited you sadly :(`);
             }
         });
         client.guilds.cache.forEach(async (guild) => {
@@ -91,7 +91,7 @@ module.exports = (client) => {
             await invitedBy.delete(member.user.id)
 
         }else{
-            logChannel.send(`**${member.user.tag}** left us  ... \ni couldnt find who invited him/her`)
+            logChannel.send(`**${member.user.tag}** left us  ... \nI couldnt find who invited him/her`)
         }
         client.guilds.cache.forEach(async (guild) => {
             const firstInvites = await guild.invites.fetch();
