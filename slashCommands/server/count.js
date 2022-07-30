@@ -19,7 +19,7 @@ module.exports = {
                 new Discord.MessageEmbed()
                 .setTitle(`${success} ${user.username}'s Server Count`)
                 .setColor(`#677bf9`)
-                .setDescription(`**${user.username}** have used \`${serverCount.get(user.id).used}/${serverCount.get(user.id).have}\` servers`)
+                .setDescription(`**${user.username}** has used \`${serverCount.get(user.id).used}/${serverCount.get(user.id).have}\` servers`)
             ]
         })
     }
