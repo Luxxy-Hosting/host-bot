@@ -3,7 +3,7 @@ module.exports = (userID, serverName, location) => {
         "name": serverName,
         "user": userID,
         "nest": 5,
-        "egg": 26,
+        "egg": 40,
         "docker_image": "quay.io/cyanidedev/aio",
         "startup": "${STARTUP_CMD}",
         "limits": {
