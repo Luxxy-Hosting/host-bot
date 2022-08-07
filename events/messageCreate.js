@@ -102,6 +102,7 @@ module.exports = async (client, message) => {
             }catch(err){console.log(err).toString()}
             return
         }else if(cmd === 'music'){
+            return message.reply('music is disabled please use <#1005945154919731320> with <@!936618923804229663>')
             try{
                 if(!args[0]) return require('../commands/music/help.js')(client, message, args)
                 await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
