@@ -10,9 +10,9 @@ module.exports = async (client, message, args) => {
 
     message.channel.send({
         embeds:[
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`${success} ${user.username}'s Server Count`)
-            .setColor(`#677bf9`)
+            .setColor(0x677bf9)
             .setDescription(`**${user.username}** have used \`${serverCount.get(user.id).used}/${serverCount.get(user.id).have}\` servers`)
         ]
     })

@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { post } = require("node-superfetch");
 
 module.exports = {
@@ -8,8 +8,8 @@ module.exports = {
     run: async (client, message, args) => {
         if (message.author.id === "517107022399799331") {
             
-            const embed = new MessageEmbed()
-                .addField("Input", "```js\n" + args.join(" ") + "```");
+            const embed = new EmbedBuilder()
+                .addFields({ name: "Input", value: "```js\n" + args.join(" ") + "```"});
     
             try {
                 const code = args.join(" ");
@@ -28,10 +28,10 @@ module.exports = {
                 if (output.length > 1024) {
                    
                     const { body } = await post("https://hastebin.com/documents").send(output);
-                    embed.addField("Output", `https://hastebin.com/${body.key}.js`).setColor("#FF0000");
+                    embed.addField("Output", `https://hastebin.com/${body.key}.js`).setColor(0xFF0000);
                   
                 } else {
-                    embed.addField("Output", "```js\n" + output + "```").setColor("#FF0000");
+                    embed.addFields({ name: "Output", value: "```js\n" + output + "```" }).setColor(0xFF0000);
                 }
     
                 message.channel.send({embeds: [embed]});
@@ -41,9 +41,9 @@ module.exports = {
                 if (err.length > 1024) {
                    
                     const { body } = await post("https://hastebin.com/documents").send(err);
-                    embed.addField("Output", `https://hastebin.com/${body.key}.js`).setColor("RED");
+                    embed.addFields({ name: "Output", value: `https://hastebin.com/${body.key}.js`}).setColor(0xFF0000);
                 } else {
-                    embed.addField("Output", "```js\n" + err + "```").setColor("RED");
+                    embed.addFields({ name: "Output", value: "```js\n" + err + "```"}).setColor(0xFF0000);
                 }
     
                 message.channel.send({embeds: [embed]});
@@ -51,10 +51,10 @@ module.exports = {
         } else {
             message.channel.send({
                 embeds: [
-                    new MessageEmbed()
+                    new EmbedBuilder()
                         .setTitle("Error")
                         .setDescription("You are not the owner of this bot.")
-                        .setColor("RED")
+                        .setColor(0xFF0000)
                         .setFooter("sus", client.user.displayAvatarURL({
                             format: "png",
                             dynamic: true,

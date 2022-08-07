@@ -7,6 +7,7 @@ module.exports = {
     name: "myinfo",
     category: "info",
     description: "Shows your Hosting Account Info",
+    type: Discord.ApplicationCommandType.ChatInput,
     ownerOnly: false,
     run: async (client, interaction, args) => {
         const userDB = await userdata.findOne({ ID: interaction.user.id });
@@ -27,18 +28,18 @@ module.exports = {
             responce = res.data.attributes.relationships.servers.data
             let id = 1
             let id2 = 1
-            const embed = new Discord.MessageEmbed()
-                .setColor("#0099ff")
+            const embed = new Discord.EmbedBuilder()
+                .setColor(0x0099ff)
                 .setTitle("Your Account Info")
                 .setDescription(`Your Account Name: ${userDB.username}`)
-                .addField("Email:", userDB.email)
-                .addField("Console ID:", userDB.consoleID)
-                .addField("link Time:", userDB.linkTime)
-                .addField("link Date:", userDB.linkDate)
-                .addField('Server Id:', `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, true)
-                .addField('Server Name:',`\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, true)
+                .addFields({ name: 'Email:', value: `${userDB.email}`})
+                .addFields({ name: 'Console ID:', value: `${userDB.consoleID}`})
+                .addFields({ name: 'Link Time:', value: `${userDB.linkTime}`})
+                .addFields({ name: 'Link Date:', value: `${userDB.linkDate}`})
+                .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
+                .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
                 .setTimestamp()
-                .setFooter("Powered by Pterodactyl");
+                .setFooter({ text: 'Hello', iconURL: 'https://i.imgur.com/wSTFkRM.png' });
             await interaction.reply({ embeds: [embed], ephemeral: true });
         }).catch(async err => {
            await interaction.reply({ content: `${err}`, ephemeral: true });

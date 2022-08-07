@@ -60,7 +60,7 @@ module.exports = async (client, interaction) => {
     //     await wait(1000)
     //     client.channels.cache.get(interaction.message.channelId)?.delete().catch(() => {})
     // }
-    if (!interaction.isCommand()) return;
+	if (!interaction.isChatInputCommand()) return;
     if (interaction.channel.id === '950030827167817798') return interaction.reply({ content: 'You can\'t use this command in this channel',  ephemeral: true });
         
         const command = client.slash.get(interaction.commandName);

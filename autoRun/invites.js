@@ -40,10 +40,10 @@ module.exports = (client) => {
             welcometext = [
     `Welcome to Luxxy Hosting, a place where you can create coding servers for free. Luxxy Hosting includes 24/7 Hosting and a powerful panel with a lot of features.`,
 ]
-    const welembed = new Discord.MessageEmbed()
+    const welembed = new Discord.EmbedBuilder()
             .setTitle(`Welcome ${member.user.tag}`)
             .setDescription(`${welcometext}`)
-            .addField(`**Invited by:**`, inviter ? `${inviter.tag}` : `Inviter not found`)
+            .addFields({ name: `**Invited by:**`, value: inviter ? `${inviter.tag}` : `Inviter not found`})
             .setColor('#530A8B')
             .setThumbnail(member.user.displayAvatarURL())
             .setImage('https://media.discordapp.net/attachments/941026457075994698/1000302292857270312/welcome_new_.png')

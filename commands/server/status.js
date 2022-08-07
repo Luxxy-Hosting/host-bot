@@ -5,6 +5,7 @@ const Discord = require('discord.js')
 const config = require('../../config.json')
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
+    return message.reply('This command is currently disabled due to a bug')
     const userDB = await userData.findOne({ ID: message.author.id })
     if(!userDB) return message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
 

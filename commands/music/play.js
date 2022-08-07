@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const Discord = require('discord.js');
 const { convertTime } = require('../../handlers/convert');
 
@@ -23,7 +23,7 @@ module.exports = async (client, message, args) => {
     try {
         res = await player.search(search, message.author);
         if (!player)
-          return message.channel.send({ embeds: [new MessageEmbed().setColor(client.embedColor).setTimestamp().setDescription("Nothing is playing right now...")] });
+          return message.channel.send({ embeds: [new EmbedBuilder().setColor(client.embedColor).setTimestamp().setDescription("Nothing is playing right now...")] });
         if (res.loadType === 'LOAD_FAILED') {
           if (!player.queue.current) player.destroy();
           throw res.exception;
@@ -34,14 +34,14 @@ module.exports = async (client, message, args) => {
       switch (res.loadType) {
         case 'NO_MATCHES':
           if (!player.queue.current) player.destroy();
-          return message.channel.send({ embeds: [new MessageEmbed()].setColor(client.embedColor).setTimestamp().setDescription(`No matches found for - ${search}`) });
+          return message.channel.send({ embeds: [new EmbedBuilder()].setColor(client.embedColor).setTimestamp().setDescription(`No matches found for - ${search}`) });
         case 'TRACK_LOADED':
           var track = res.tracks[0];
           player.queue.add(track);
           if (!player.playing && !player.paused && !player.queue.size) {
             return player.play();
           } else {
-            const thing = new MessageEmbed()
+            const thing = new EmbedBuilder()
               .setColor(client.embedColor)
               .setTimestamp()
               .setThumbnail(track.displayThumbnail("hqdefault"))
@@ -51,7 +51,7 @@ module.exports = async (client, message, args) => {
         case 'PLAYLIST_LOADED':
           player.queue.add(res.tracks);
           if (!player.playing && !player.paused && player.queue.totalSize === res.tracks.length) player.play();
-          const thing = new MessageEmbed()
+          const thing = new EmbedBuilder()
             .setColor(client.embedColor)
             .setTimestamp()
             .setDescription(`**Added playlist to queue**\n${res.tracks.length} Songs [${res.playlist.name}](${search}) - \`[${convertTime(res.playlist.duration)}]\``)
@@ -62,7 +62,7 @@ module.exports = async (client, message, args) => {
           if (!player.playing && !player.paused && !player.queue.size) {
             return player.play();
           } else {
-            const thing = new MessageEmbed()
+            const thing = new EmbedBuilder()
               .setColor(client.embedColor)
               .setTimestamp()
               .setThumbnail(track.displayThumbnail("hqdefault"))

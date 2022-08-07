@@ -7,8 +7,8 @@ module.exports = async (client, message, args) => {
     if(!userDataDB) return message.reply(`:x: You dont have an account created. type \`${config.bot.prefix}user new\` to create one`)
     
     message.channel.send({embeds:[
-        new Discord.MessageEmbed()
-        .setColor(`GREEN`)
+        new Discord.EmbedBuilder()
+        .setColor(0x00ff00)
         .addField(`Username:`, `${userDataDB.username}`)
         .addField(`Link Date:`, `${userDataDB.linkDate}`)
         .addField(`Link Time:`, `${userDataDB.linkTime}`)
