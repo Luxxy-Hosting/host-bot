@@ -7,6 +7,7 @@
         "consoleSave": false,
         "updateFromGithub": false,
         "anticrash": false,
+        "lavalinkStatus": false,
         "mongoDB": "mongodb://localhost:27017/host-bot",
 
         "nodeStatusDelay": 15,

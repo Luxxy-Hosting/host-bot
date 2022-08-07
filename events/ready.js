@@ -13,8 +13,10 @@ module.exports = async (client) => {
     console.log(`Maintenance mode: ${config.settings.maintenance ? chalk.green('true ') : chalk.red('false')}`)
     console.log(`Auto Leave Guilds: ${config.settings.autoLeave ? chalk.green('true') : chalk.red('false')}`)
     console.log(`Minecraft Port Checker: ${config.settings.McScript ? chalk.green('true') : chalk.red('false')}`)
+    console.log(`Lavalink Status: ${config.settings.lavalinkStatus ? chalk.green('true') : chalk.red('false')}`)
     console.log()
 
+    client.manager.init(client.user.id);
     const autorun = fs.readdirSync(`./autoRun`).filter(file => file.endsWith('.js'));
     autorun.forEach(file => {
         require(`../autoRun/${file}`)(client)
@@ -106,6 +108,4 @@ module.exports = async (client) => {
         if(g.id === config.settings.guildID) return
         g.leave().catch(console.error)
     })
-
-    client.manager.init(client.user.id);
 }
