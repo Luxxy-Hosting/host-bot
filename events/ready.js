@@ -29,7 +29,7 @@ module.exports = async (client) => {
                     if (!response.includes("Already up to date.")){
                         console.log(`${chalk.red('[ GitHub ]')} Update found on github. downloading now!`);
                         await client.channels.cache.get(config.channelID.github).send({content: "**RESTARTING . . .**", embeds:[
-                            new Discord.MessageEmbed()
+                            new Discord.EmbedBuilder()
                             .setTitle(`**[PULL FROM GITHUB]** New update on GitHub. Pulling.`)
                             .setColor(`BLUE`)
                             .setDescription(`Logs:\n\`\`\`\n${response}\`\`\``)
