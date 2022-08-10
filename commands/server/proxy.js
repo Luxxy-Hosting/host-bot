@@ -53,7 +53,7 @@ module.exports = async (client, message, args) => {
         message.reply({
             embeds:[
                 new Discord.EmbedBuilder()
-                .addField(`Apparently you have more than one port`, `The ports you have are:\n\`\`\`\n${serverdata.relationships.allocations.data.map(x => i++ +". "+ x.attributes.port).join('\n')}\`\`\`\nPlease send a new message with the port you want to proxy`)
+                .addFields({ name: `Apparently you have more than one port`, value: `The ports you have are:\n\`\`\`\n${serverdata.relationships.allocations.data.map(x => i++ +". "+ x.attributes.port).join('\n')}\`\`\`\nPlease send a new message with the port you want to proxy` } )
                 .setColor(Discord.Colors.Orange)
             ]
         })
