@@ -50,7 +50,7 @@ module.exports = async (client, message, args) => {
             client.users.cache.get(message.author.id).send({embeds:[
                 new Discord.EmbedBuilder()
                 .setColor(Discord.Colors.Blue)
-                .addFields({ name: 'Reset Password', value: 'New password for Luxxy Hosting: ||**${data.password}**||' })
+                .addFields({ name: 'Reset Password', value: `New password for Luxxy Hosting: ||**${data.password}**||` })
                 .setFooter({text:`This message will autodestruct in 10 minutes`})
             ]}).then(x => {
                 message.channel.send({embeds:[
