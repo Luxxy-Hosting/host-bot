@@ -3,19 +3,20 @@ module.exports = (userID, serverName, location) => {
         "name": serverName,
         "user": userID,
         "nest": 1,
-        "egg": 58,
-        "docker_image": "ghcr.io/luxxy-gf/python_3.10",
-        "startup": "/start.sh",
+        "egg": 28,
+        "docker_image": "ghcr.io/luxxy-gf/java_17",
+        "startup": "java --add-modules=jdk.incubator.vector -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
         "limits": {
-            "memory": 1024,
+            "memory": 4096,
             "swap": 0,
-            "disk": 3072,
+            "disk": 32240,
             "io": 500,
-            "cpu": 0
+            "cpu": 150
         },
         "environment": {
-            "start_command1": "pip install -r requirements.txt",
-            "start_command2": "python bot.py",
+            "MINECRAFT_VERSION": "latest",
+            "SERVER_JARFILE": "server.jar",
+            "BUILD_NUMBER": "latest"
         },
         "feature_limits": {
             "databases": 0,
@@ -27,7 +28,6 @@ module.exports = (userID, serverName, location) => {
             "dedicated_ip": false,
             "port_range": []
         },
-        "start_on_completion": false,
-        "oom_disabled": false
+        "start_on_completion": false
     }
 }

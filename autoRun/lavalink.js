@@ -3,7 +3,7 @@ const config = require('../config.json')
 
 module.exports = async (client) => {
     if(!config.settings.lavalinkStatus) return
-    const channel = client.channels.cache.get('1005974893915017227')
+    const channel = client.channels.cache.get(config.lavalink.channelID)
     let msg = (await channel.messages.fetch({limit: 10})).filter(m => m.author.id === client.user.id).last()
     
     const embed = new Discord.EmbedBuilder()
