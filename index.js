@@ -77,16 +77,16 @@ client.on('guildMemberRemove', async member => {
             }
         }).then(async res => {
             const servers1 = res.data.attributes.relationships.servers.data.map(e => e.attributes.id)
-            client.channels.cache.get('942502078172000266').send({
+            client.channels.cache.get(config.channelID.leavedeletelogs).send({
                 embeds: [
                     new Discord.EmbedBuilder()
                     .setColor(Discord.Colors.Red)
                     .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${UserDB.consoleID} with ${servers1.length} servers.`)
                 ]
             })
-            client.channels.cache.get('942502078172000266').send('deleting.....')
+            client.channels.cache.get(config.channelID.leavedeletelogs).send('deleting.....')
             if (servers1.length > 0) {
-                await client.channels.cache.get('942502078172000266').send({
+                await client.channels.cache.get(config.channelID.leavedeletelogs).send({
                     embeds: [
                         new Discord.EmbedBuilder()
                         .setColor(Discord.Colors.Red)
@@ -94,7 +94,7 @@ client.on('guildMemberRemove', async member => {
                     ]
                 })
                 await Promise.all(servers1.map(async server => {
-                    client.channels.cache.get('942502078172000266').send({ embeds: [
+                    client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
                         new Discord.EmbedBuilder()
                         .setColor(Discord.Colors.Red)
                         .setTitle(`🦺 Deleting server ${server}...`)
@@ -110,14 +110,14 @@ client.on('guildMemberRemove', async member => {
                             'Accept': 'Application/vnd.pterodactyl.v1+json',
                         }
                     }).then(async res => {
-                        client.channels.cache.get('942502078172000266').send({ embeds: [
+                        client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
                             new Discord.EmbedBuilder()
                             .setColor(Discord.Colors.Red)
                             .setTitle(`🦺 Server ${server} deleted.`)
                         ]})
                     }
                     ).catch(err => {
-                        client.channels.cache.get('942502078172000266').send({ embeds: [
+                        client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
                             new Discord.EmbedBuilder()
                             .setColor(Discord.Colors.Red)
                             .setTitle(`🦺 Error deleting server ${server}`)
@@ -138,7 +138,7 @@ client.on('guildMemberRemove', async member => {
                     'Accept': 'Application/vnd.pterodactyl.v1+json',
                 }
             }).then(async res => {
-                client.channels.cache.get('942502078172000266').send({ embeds: [
+                client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
                     new Discord.EmbedBuilder()
                     .setColor(Discord.Colors.Red)
                     .setTitle(`🦺 User ${UserDB.consoleID} deleted.`)

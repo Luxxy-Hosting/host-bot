@@ -19,3 +19,4 @@ npm start
 ```
 
 Thanks to zachary#0842 for helping 
+Credit to JustArtiom for v1 verison of this bot (https://github.com/JustArtiom/ArtiomsHosting-Bot/)
