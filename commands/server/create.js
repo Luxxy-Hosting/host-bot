@@ -23,10 +23,11 @@ module.exports = async (client, message, args) => {
         const noTypeListed = new Discord.EmbedBuilder() 
         .setColor(0x36393f)
         .setTitle('Types of servers you can create:')
-        .addFields({ name: `${emoji} __**Discord Bots**__: `, value: `> NodeJS \n > Python \n > AIO (all in one) \n > Golang \n > Ruby \n > Dotnet \n > RedBot`, inline: true })
-        .addFields({ name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true })
-        .addFields({ name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true })
-        .addFields({ name: `${emoji} __**Other**__:`, value: `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, inline: true })
+        .addFields({ name: `${emoji} __**Discord Bots**__: `, value: `> NodeJS \n > Python \n > AIO (all in one)`, inline: true })
+        // .addFields({ name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true })
+        // .addFields({ name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true })
+        // .addFields({ name: `${emoji} __**Other**__:`, value: `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, inline: true })
+        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper`, inline: true })
         .setFooter({ text: `Example: ${config.bot.prefix}server create discord nodejs` })
 
         message.channel.send({
@@ -117,7 +118,7 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.EmbedBuilder()
                     .setColor(Discord.Colors.Red)
-                    .addField({ name: `${error} Server creation failed`, value: `The node had ran out of allocations/ports!`})
+                    .addFields({ name: `${error} Server creation failed`, value: `The node had ran out of allocations/ports!`})
                 ]
             })
         }else if (error == "Error: Request failed with status code 504") {

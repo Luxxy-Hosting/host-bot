@@ -8,6 +8,7 @@ module.exports = async (client, message, args) => {
     let serverid = args[1]
     let domain = args[2]
     
+    return message.reply('disabled')
     if(
         !serverid ||
         !serverid?.split('-')[0] ||
