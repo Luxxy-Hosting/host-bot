@@ -3,9 +3,9 @@ module.exports = (userID, serverName, location) => {
         "name": `[Free] ${userID} ${serverName}`,
         "user": userID,
         "nest": 6,
-        "egg": 33,
-        "docker_image": "danbothosting/aio",
-        "startup": "{{STARTUP_CMD}}",
+        "egg": 42,
+        "docker_image": "ghcr.io/luxxy-gf/python_3.10",
+        "startup": "/start.sh",
         "limits": {
             "memory": 500,
             "swap": 0,
@@ -14,7 +14,8 @@ module.exports = (userID, serverName, location) => {
             "cpu": 50
         },
         "environment": {
-            "STARTUP_CMD": "bash"
+            "start_command1": "pip install -r requirements.txt",
+            "start_command2": "python bot.py"
         },
         "feature_limits": {
             "databases": 0,

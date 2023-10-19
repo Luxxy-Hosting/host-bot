@@ -26,8 +26,8 @@ module.exports = async (client, message, args) => {
         .addFields({ name: `${emoji} __**Discord Bots**__: `, value: `> NodeJS \n > Python \n > AIO (all in one)`, inline: true })
         // .addFields({ name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true })
         // .addFields({ name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true })
-        // .addFields({ name: `${emoji} __**Other**__:`, value: `> CodeServer \n > Gitea \n > Haste \n > Sharex \n > Share`, inline: true })
-        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper`, inline: true })
+        .addFields({ name: `${emoji} __**Other**__:`, value: `> BeamMP`, inline: true })
+        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Bedrock`, inline: true })
         .setFooter({ text: `Example: ${config.bot.prefix}server create discord nodejs` })
 
         message.channel.send({

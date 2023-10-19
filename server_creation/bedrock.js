@@ -2,19 +2,24 @@ module.exports = (userID, serverName, location) => {
     return {
         "name": `[Free] ${userID} ${serverName}`,
         "user": userID,
-        "nest": 6,
-        "egg": 33,
-        "docker_image": "danbothosting/aio",
-        "startup": "{{STARTUP_CMD}}",
+        "nest": 1,
+        "egg": 40,
+        "docker_image": "ghcr.io/parkervcp/yolks:debian",
+        "startup": "./bedrock_server",
         "limits": {
-            "memory": 500,
+            "memory": 1024,
             "swap": 0,
-            "disk": 2048,
+            "disk": 10240,
             "io": 500,
-            "cpu": 50
+            "cpu": 150
         },
         "environment": {
-            "STARTUP_CMD": "bash"
+            "BEDROCK_VERSION": "latest",
+            "LD_LIBRARY_PATH": ".",
+            "SERVERNAME": "Bedrock Dedicated Server",
+            "GAMEMODE": "survival",
+            "DIFFICULTY": "easy",
+            "CHEATS": "false"
         },
         "feature_limits": {
             "databases": 0,
@@ -26,7 +31,6 @@ module.exports = (userID, serverName, location) => {
             "dedicated_ip": false,
             "port_range": []
         },
-        "start_on_completion": false,
-        "oom_disabled": false
+        "start_on_completion": false
     }
 }
