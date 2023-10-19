@@ -1,5 +1,5 @@
 const config = require('../config.json')
-const Discord = require('discord.js')
+const { EmbedBuilder } = require('discord.js')
 const axios = require('axios')
 module.exports = async (client) => {
     if(!config.settings.nodeStatus) return
@@ -13,7 +13,7 @@ module.exports = async (client) => {
         let lavalink = ''
         
         await axios({
-            url: config.pterodactyl.host+"/api/application/nodes/" + "10" + "?include=servers,location,allocations",
+            url: config.pterodactyl.host+"/api/application/nodes/" + "8" + "?include=servers,location,allocations",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
@@ -26,7 +26,7 @@ module.exports = async (client) => {
             panel = "🟢 Online"
 
             await axios({
-                url: config.pterodactyl.host + '/api/client/servers/' + "e27f31ed" + "/resources",
+                url: config.pterodactyl.host + '/api/client/servers/' + config.settings.statusembeds.node1 + "/resources",
                 method: 'GET',
                 followRedirect: true,
                 maxRedirects: 5,
@@ -50,9 +50,9 @@ module.exports = async (client) => {
         
 
         let embed = [
-            new Discord.MessageEmbed()
+            new EmbedBuilder()
             .setTitle(`Luxxy Hosting Node Status:`)
-            .setDescription(`**Node Status:**\nNode 1: ${node1}\n\nPanel: ${panel}\nLavalink: ${lavalink}\n\n*updating every \`${config.settings.nodeStatusDelay} seconds\`*`)
+            .setDescription(`**Node Status:**\nNode 1: ${node1}\n\nPanel: ${panel}\n\n*updating every \`${config.settings.nodeStatusDelay} seconds\`*`)
             .setColor(`#677bf9`)
             .setTimestamp()
             .setFooter({text: `Last Time Updated`})

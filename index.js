@@ -62,7 +62,7 @@ client.on('guildMemberRemove', async member => {
     const UserDB = await UserData1.findOne({ ID: member.id })
     if (!UserDB) {
         console.log('User is not in the database.')
-        client.channels.cache.get('942502078172000266').send('🤵 User is not in the database. (mongoose)')
+        client.channels.cache.get(config.channelID.leavedeletelogs).send('🤵 User is not in the database. (mongoose)')
     }
     if (UserDB) {
         await axios({

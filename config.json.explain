@@ -1,0 +1,103 @@
+{
+    "settings": {
+        "maintenance": false,
+        "nodeStatus": true,
+        "McScript": false,
+        "autoLeave": true,
+        "consoleSave": false,
+        "updateFromGithub": false,
+        "anticrash": false,
+        "lavalinkStatus": false,
+        "mongoDB": "",
+
+        "nodeStatusDelay": 15,
+        "vcUpdateInterval": 60,
+
+        "guildID": "941026456396509244",
+        "admin": ["517107022399799331"],
+        "owner": "517107022399799331",
+
+        "statusOnMaintenance": "Luxxy Hosting | 🟠 On Maintenance mode",
+        "avoidServerPorts": [],
+
+        "webhook": {
+            "id": "1164315342114390076",
+            "token": "B"
+        },
+        "statusembeds": {
+            "node1": "a18823fe"
+        }
+    },
+
+    "logs":{
+        "dms": "1028046810209583156",
+        "createlog": "1028046978204061716"
+    },
+
+    "channelID": {
+        "legal":"947234663771029624",
+        "errorLog":"1028046701413552186",
+        "welcome":"1028046701413552186",
+        "bye":"1028046701413552186",
+        "abuse": "1028046701413552186",
+        "ticketChannel": "1164315851562958848",
+        "nodeStatus": "1164315768767394012",
+        "suggestions": "1164315622344245291",
+        "analyse": "947234663771029624",
+        "github": "957403118797197402",
+        "leavedeletelogs": "1028046978204061716"
+    },
+
+    "voiceID": {
+        "members": "1164316079565320223",
+        "clients": "1164316100088049685",
+        "servers": "1164316120212328458"
+    },
+    "parentID": {
+        "createAccount": "1164316285530812416",
+        "ticketParent": "1028047184379269251"
+    },
+    "roleID": {
+        "staff": "941756285286776853",
+        "support": "941756285286776853",
+        "member": "941026456434270284",
+        "admin": "941026456446828567",
+        "administrator": "980035372505505862",
+        "client": "941068776554774649",
+        "betatester": "980035372505505862"
+    },
+
+    "fastify": {
+        "port": 8069
+    },
+    
+    "bot":{
+        "token": "",
+        "prefix": "!"
+    },
+
+    "pterodactyl": {
+        "myIp": "1.1.1.1",
+        "host": "https://panel.luxxy.host",
+        "adminApiKey": "",
+        "clientAPI":"",
+        "depolymentlocations": [ 2 ]
+    },
+    "nginxPM": {
+        "host": "",
+        "email": "",
+        "pass": ""
+    },
+    "lavalink": {
+        "channelID": "",
+        "nodes": [
+            {
+                "host": "n1.luxxy.host",
+                "port": 9000,
+                "password": "",
+                "retryDelay": 3000,
+                "secure": false
+            }
+        ]
+    }
+}
