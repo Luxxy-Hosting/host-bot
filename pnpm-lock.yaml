@@ -21,14 +21,14 @@ dependencies:
     specifier: ^5.0.0
     version: 5.0.0
   discord.js:
-    specifier: ^14.0.3
+    specifier: ^14.13.0
     version: 14.13.0
   dns:
     specifier: ^0.2.2
     version: 0.2.2
   erela.js:
-    specifier: ^2.3.3
-    version: 2.3.3
+    specifier: ^2.4.0
+    version: 2.4.0
   erela.js-spotify:
     specifier: ^1.2.0
     version: 1.2.0
@@ -39,13 +39,13 @@ dependencies:
     specifier: ^1.0.5
     version: 1.0.5
   moment:
-    specifier: ^2.29.3
+    specifier: ^2.29.4
     version: 2.29.4
   moment-duration-format:
     specifier: ^2.3.2
     version: 2.3.2
   mongoose:
-    specifier: ^6.4.1
+    specifier: ^6.12.1
     version: 6.12.1
   ms:
     specifier: ^2.1.3
@@ -55,7 +55,7 @@ dependencies:
     version: 0.2.3
   os: {specifier: ^0.1.2, version: 0.1.2}
   ping:
-    specifier: ^0.4.2
+    specifier: ^0.4.4
     version: 0.4.4
   prettysize:
     specifier: ^2.0.0
@@ -67,13 +67,13 @@ dependencies:
     specifier: ^0.1.5
     version: 0.1.5
   systeminformation:
-    specifier: ^5.11.14
+    specifier: ^5.21.12
     version: 5.21.12
   util:
-    specifier: ^0.12.4
+    specifier: ^0.12.5
     version: 0.12.5
   validator:
-    specifier: ^13.7.0
+    specifier: ^13.11.0
     version: 13.11.0
 
 packages:
@@ -640,11 +640,6 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@discordjs/collection@0.1.6:
-    resolution: {integrity: sha512-utRNxnd9kSS2qhyivo9lMlt5qgAUasH2gb7BEOn6p0efFh24gjGomHzWKMAPn2hEReOPQZCJaRKoURwRotKucQ==}
-    deprecated: no longer supported
-    dev: false
-
   /@discordjs/collection@1.5.3:
     resolution: {integrity: sha512-SVb428OMd3WO1paV3rm6tSjM4wC+Kecaa1EUGX7vc6/fddvw/6lg90z4QtCqm21zvVe92vMMDt9+DkIvjXImQQ==}
     engines: {node: '>=16.11.0'}
@@ -724,6 +719,11 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: false
+
+  /@fastify/busboy@2.0.0:
+    resolution: {integrity: sha512-JUFJad5lv7jxj926GPgymrWQxxjPYuJNiNjNMzqT+HiuP6Vl3dk5xzG+8sTX96np0ZAluvaMzPsjhHZ5rNuNQQ==}
+    engines: {node: '>=14'}
     dev: false
 
   /@mongodb-js/saslprep@1.1.0:
@@ -1771,19 +1771,21 @@ packages:
     resolution: {integrity: sha512-FbkdVK7OquVzyNVl4aZ3AU6RHRrHzBpORGorK5q+L26y3hB/7ze9mQ7uiOa5PsskskELRWepoluqke3U8edbmQ==}
     dependencies:
       axios: 0.20.0
-      erela.js: 2.3.3
+      erela.js: 2.4.0
     transitivePeerDependencies:
       - bufferutil
       - debug
       - utf-8-validate
     dev: false
 
-  /erela.js@2.3.3:
-    resolution: {integrity: sha512-tzowGHLSodZr2j311csFSqm9lwE6plqeULTAwPwuRX9PQbXg4Ohdy/3MTMWrltiFAMSIG/5r9GQtTUt9Mqzhhw==}
+  /erela.js@2.4.0:
+    resolution: {integrity: sha512-wLfPvfzbDZTDV0zwJYXGkjO9Q6mkXi3PNf984apdv58Ktt0cv1Zp8og3hmp7Ose4C4iwAKitHxV/yiP+pt3FRQ==}
+    engines: {node: '>=16.0.0'}
     dependencies:
-      '@discordjs/collection': 0.1.6
-      petitio: 1.4.0
-      ws: 7.5.9
+      '@discordjs/collection': 1.5.3
+      tslib: 2.6.2
+      undici: 5.26.4
+      ws: 8.14.2
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -2540,11 +2542,6 @@ packages:
     resolution: {integrity: sha512-sd4vSOW+DCM6A5aRICI1CWaC7nufnzVpZfuh5T0VXshxxzFWuaFcvqKovAFLNGReOc+uZRptpcpPmn7CDvzLuA==}
     dev: false
 
-  /petitio@1.4.0:
-    resolution: {integrity: sha512-9LaVd/5BLmbNU8Q4Ax8NezihiPt2ISNqi2vKilEchSSf+YSOXxfsLUb0SUmDskm1WkBOVTsqdyuyYI0RYKqr0Q==}
-    engines: {node: '>=12.3.0'}
-    dev: false
-
   /ping@0.4.4:
     resolution: {integrity: sha512-56ZMC0j7SCsMMLdOoUg12VZCfj/+ZO+yfOSjaNCRrmZZr6GLbN2X/Ui56T15dI8NhiHckaw5X2pvyfAomanwqQ==}
     engines: {node: '>=4.0.0'}
@@ -3034,6 +3031,13 @@ packages:
       busboy: 1.6.0
     dev: false
 
+  /undici@5.26.4:
+    resolution: {integrity: sha512-OG+QOf0fTLtazL9P9X7yqWxQ+Z0395Wk6DSkyTxtaq3wQEjIroVe7Y4asCX/vcCxYpNGMnwz8F0qbRYUoaQVMw==}
+    engines: {node: '>=14.0'}
+    dependencies:
+      '@fastify/busboy': 2.0.0
+    dev: false
+
   /utf8@2.0.0:
     resolution: {integrity: sha512-jWXHr+bQ8RsWazLzVY3V7XACPTbBHYSg/VoDVok+DBQk5ULm0AuBCNb9tGmjq2H+znnkBFwjhzzCbn9G3xlYcA==}
     dev: false
@@ -3168,19 +3172,6 @@ packages:
       nan: 0.3.2
       options: 0.0.6
       tinycolor: 0.0.1
-    dev: false
-
-  /ws@7.5.9:
-    resolution: {integrity: sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==}
-    engines: {node: '>=8.3.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
     dev: false
 
   /ws@8.14.2:
