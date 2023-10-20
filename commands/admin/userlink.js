@@ -36,7 +36,7 @@ module.exports = {
                     linkDate: moment().format("YYYY-MM-DD"),
                 }).save().catch(e => message.reply('no'))
                 
-                message.reply(`🍑 i have linked <@!${discordid}> to the account **${user.data.attributes.username}**`)
+                message.reply(`🍑 i have linked <@!${discorduser.id}> to the account **${user.data.attributes.username}**`)
             }).catch(e => message.reply(`Error: ${e}`))
             
         }

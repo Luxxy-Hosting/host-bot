@@ -8,6 +8,7 @@
         "updateFromGithub": false,
         "anticrash": false,
         "lavalinkStatus": false,
+        "joinvoicechannelonready": false,
         "mongoDB": "",
 
         "nodeStatusDelay": 15,

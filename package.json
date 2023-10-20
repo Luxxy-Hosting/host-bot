@@ -8,8 +8,8 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
-    "@discordjs/voice": "github:discordjs/voice",
+    "@discordjs/opus": "^0.9.0",
+    "@discordjs/voice": "^0.16.0",
     "axios": "^0.26.1",
     "chalk": "^2.4.2",
     "delay": "^5.0.0",
@@ -24,6 +24,7 @@
     "mongoose": "^6.12.1",
     "ms": "^2.1.3",
     "node-superfetch": "^0.2.3",
+    "opus@latest": "link:discordjs/opus@latest",
     "os": "^0.1.2",
     "ping": "^0.4.4",
     "prettysize": "^2.0.0",

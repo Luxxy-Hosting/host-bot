@@ -4,6 +4,7 @@ const config = require('../config.json')
 const fs = require('fs')
 const { default: axios } = require('axios')
 const exec = require('child_process').exec;
+const { ActivityType } = require('discord.js')
 let idkwhatisthis = false
 module.exports = async (client) => {
     console.log(chalk.hex('#6b7dfb')(`Luxxy Hosting`) + chalk.hex('#6b7dfb')(` is now online!`))
@@ -15,14 +16,35 @@ module.exports = async (client) => {
     console.log(`Minecraft Port Checker: ${config.settings.McScript ? chalk.green('true') : chalk.red('false')}`)
     console.log(`Lavalink Status: ${config.settings.lavalinkStatus ? chalk.green('true') : chalk.red('false')}`)
     console.log()
-
-    client.manager.init(client.user.id);
+    
+    // client.manager.init(client.user.id);
     const autorun = fs.readdirSync(`./autoRun`).filter(file => file.endsWith('.js'));
     autorun.forEach(file => {
         require(`../autoRun/${file}`)(client)
     });
+    
+    client.user.setPresence({
+        activities: [{ name: `❤️ Luxxy Hosting`, type: ActivityType.Custom }],
+        status: 'dnd',
+    });
 
-
+    if (config.settings.joinvoicechannelonready) {
+        const { joinVoiceChannel } = require('@discordjs/voice');
+        const channel = client.channels.cache.get('1164316079565320223')
+        const connection = joinVoiceChannel({
+            channelId: channel.id,
+            guildId: config.settings.guildID,
+            adapterCreator: channel.guild.voiceAdapterCreator,
+        });
+        const { VoiceConnectionStatus } = require('@discordjs/voice');
+        connection.on(VoiceConnectionStatus.Ready, () => {
+            console.log('The connection has entered the Ready state - ready to play audio!');
+        });
+    } else {
+        return
+    }
+        
+    
     if(config.settings.updateFromGithub){
         setInterval(async () => {
             await exec(`git pull origin master`, async (error, stdout) => {
@@ -47,7 +69,6 @@ module.exports = async (client) => {
             })
         }, 30000)
     }
-
     const ramdomstring = function () {
         let text = "";
         let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -55,24 +76,13 @@ module.exports = async (client) => {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
-    const clientactivity = [
-        `!help | Luxxy Hosting`,
-        `i'm nothing but a bot`,
-        `i'm a bot`,
-        `what`,
-        `message.reply('help')`,
-        `${ramdomstring()}`
-    ]
-    client.user.setPresence({ status: "idle" });
-    client.user.setActivity(clientactivity[Math.floor(Math.random() * clientactivity.length)], { type: "WATCHING" })
-    setInterval(() => {
-        client.user.setActivity(clientactivity[Math.floor(Math.random() * clientactivity.length)], { type: "WATCHING" })
-    }, 10000)
+
+
     setInterval(() => {
         let guild = client.guilds.cache.get(config.settings.guildID);
         let membercount3 = guild.members.cache.filter(member => !member.user.bot).size.toLocaleString();
         client.channels.cache.get(config.voiceID.members).edit({ 
-            name: `💀 Total Members: ${membercount3}`
+            name: `(ง︡'-'︠)ง Total Members: ${membercount3}`
         })
 
         axios({
@@ -85,7 +95,7 @@ module.exports = async (client) => {
             },
         }).then(response => {
             client.channels.cache.get(config.voiceID.servers).edit({ 
-                name: `🟢 Total Servers: ${response.data.meta.pagination.total.toLocaleString()} Servers`
+                name: `🖥️ Total Servers: ${response.data.meta.pagination.total.toLocaleString()} Servers`
             })
         })
 
@@ -99,7 +109,7 @@ module.exports = async (client) => {
             },
         }).then(response => {
             client.channels.cache.get(config.voiceID.clients).edit({ 
-                name: `🤝 Total Users: ${response.data.meta.pagination.total.toLocaleString()} Users`
+                name: `🙋‍♂️ Total Users: ${response.data.meta.pagination.total.toLocaleString()} Users`
             })
         })    
         console.log(chalk.hex('#6b7dfb')(`Luxxy Hosting`) + ` | ${chalk.green('[')} ${chalk.blue('Online')} ${chalk.green(']')}`)    
