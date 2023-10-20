@@ -1,27 +1,44 @@
-const Discord = require("discord.js");
-const util = require('util');
 const userData = require('../../models/userData');
 const moment = require('moment');
-const { MessageFlagsBitField } = require("discord.js");
+const axios = require('axios')
+const config = require('../../config.json')
 
 module.exports = {
     name: "userlink",
     category: "Owner",
-    description: "eeeeeeeee",
+    description: "Links User to Account",
     run: async (client, message, args) => {
-        const discordid = args[0]
-        const email = args[1]
-        const consoleid = args[2]
+        if (message.author.id === config.settings.owner) {
 
-        userData({
-            ID: discordid,
-            consoleID: consoleid,
-            email: email,
-            username: 'eeeeee',
-            linkTime: moment().format("HH:mm:ss"),
-            linkDate: moment().format("YYYY-MM-DD"),
-        }).save().catch(e => message.reply('no'))
+            const discorduser = await message.mentions.users.first();
+            const consoleid = args[1]
+            if (!args[1]) {
+                return message.reply('Please put a console id <:what2:965935677416013824>')
+            }
 
-        message.reply('user linked')
+            axios({
+                url: `${config.pterodactyl.host}/api/application/users/${consoleid}`,
+                method: 'GET',
+                followRedirect: true,
+                maxRedirects: 5,
+                headers: {
+                    'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+                    'Content-Type': 'application/json',
+                    'Accept': 'Application/vnd.pterodactyl.v1+json',
+                },
+            }).then(async user => {
+                userData({
+                    ID: discorduser.id,
+                    consoleID: user.data.attributes.id,
+                    email: user.data.attributes.email,
+                    username: user.data.attributes.username,
+                    linkTime: moment().format("HH:mm:ss"),
+                    linkDate: moment().format("YYYY-MM-DD"),
+                }).save().catch(e => message.reply('no'))
+                
+                message.reply(`🍑 i have linked <@!${discordid}> to the account **${user.data.attributes.username}**`)
+            }).catch(e => message.reply(`Error: ${e}`))
+            
+        }
     }
 }

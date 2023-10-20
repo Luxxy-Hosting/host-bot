@@ -7,7 +7,7 @@ module.exports = (userID, serverName, location) => {
         "docker_image": "ghcr.io/luxxy-gf/java_17",
         "startup": "java --add-modules=jdk.incubator.vector -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
         "limits": {
-            "memory": 2048,
+            "memory": 3172,
             "swap": 0,
             "disk": 15240,
             "io": 500,
