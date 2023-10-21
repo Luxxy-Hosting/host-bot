@@ -24,6 +24,7 @@
     "moment-duration-format": "^2.3.2",
     "mongoose": "^6.12.1",
     "ms": "^2.1.3",
+    "node-cron": "^3.0.2",
     "node-superfetch": "^0.2.3",
     "opus@latest": "link:discordjs/opus@latest",
     "os": "^0.1.2",

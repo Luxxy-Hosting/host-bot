@@ -15,6 +15,7 @@ module.exports = async (client) => {
     console.log(`Auto Leave Guilds: ${config.settings.autoLeave ? chalk.green('true') : chalk.red('false')}`)
     console.log(`Minecraft Port Checker: ${config.settings.McScript ? chalk.green('true') : chalk.red('false')}`)
     console.log(`Lavalink Status: ${config.settings.lavalinkStatus ? chalk.green('true') : chalk.red('false')}`)
+    console.log(`Server Checker Deleter: ${config.settings.serverchecker ? chalk.green('true') : chalk.red('false')}`)
     console.log()
     
     // client.manager.init(client.user.id);

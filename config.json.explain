@@ -1,7 +1,7 @@
 {
     "settings": {
         "maintenance": false,
-        "nodeStatus": true,
+        "nodeStatus": false,
         "McScript": false,
         "autoLeave": true,
         "consoleSave": false,
@@ -9,6 +9,7 @@
         "anticrash": false,
         "lavalinkStatus": false,
         "joinvoicechannelonready": false,
+        "serverchecker": false,
         "mongoDB": "",
 
         "nodeStatusDelay": 15,
