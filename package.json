@@ -18,6 +18,7 @@
     "erela.js": "^2.4.0",
     "erela.js-spotify": "^1.2.0",
     "format-duration": "^2.0.0",
+    "mathjs": "^11.11.2",
     "minecraft-pinger": "^1.0.5",
     "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",

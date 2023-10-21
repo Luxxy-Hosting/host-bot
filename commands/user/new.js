@@ -89,7 +89,7 @@ module.exports = async (client, message, args) => {
             return
         }
         if(reason === 'RejectLegal'){
-            channel.send(`${error} Without accepting our legal, we will now allow you to create an account and use our servicies`)
+            channel.send(`${error} Without accepting our legal, we will now allow you to create an account and use our services`)
             await wait(5000)
             try{ channel.delete() }catch(err){}
             return
