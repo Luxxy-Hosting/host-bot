@@ -22,13 +22,14 @@ module.exports = async (client, message, args) => {
         
         const noTypeListed = new Discord.EmbedBuilder() 
         .setColor(0x36393f)
+        .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: 'png', size: 1024, dynamic: true }) })
         .setTitle('Types of servers you can create:')
         .addFields({ name: `${emoji} __**Discord Bots**__: `, value: `> NodeJS \n > Python \n > AIO (all in one)`, inline: true })
         // .addFields({ name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true })
         // .addFields({ name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true })
         .addFields({ name: `${emoji} __**Other**__:`, value: `> BeamMP`, inline: true })
-        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Bedrock`, inline: true })
-        .setFooter({ text: `Example: ${config.bot.prefix}server create discord nodejs` })
+        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Bedrock \n > PocketmineMP`, inline: true })
+        .setFooter({ text: `Example: ${config.bot.prefix}server create paper very sexy smp server`, iconURL: message.guild.iconURL({ size: 1024, format: 'png', dynamic: true }) })
 
         message.channel.send({
             content: `> ${error} What type of server you want me to create?`,

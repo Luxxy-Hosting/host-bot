@@ -22,7 +22,7 @@ module.exports = async (client) => {
         const serverid = res.data.attributes.relationships.servers.data.filter(server => server.attributes.identifier)
         
         for(let server of serverid){
-            if (server.attributes.egg === 28) {
+            if (server.attributes.egg === 28 || server.attributes.egg === 45) {
                 
                 axios({
                     url: `${config.pterodactyl.host}/api/client/servers/${server.attributes.identifier}/resources`,
@@ -36,8 +36,8 @@ module.exports = async (client) => {
                     }
                 }).then(serverdata => {
                     if(serverdata.data.attributes.current_state == 'offline'){ return console.log('offline') }
-                    if (serverdata.data.attributes.resources.uptime > 36000000) {
-                        webhook.send(`${server.attributes.identifier} more then 10 hours`)
+                    if (serverdata.data.attributes.resources.uptime > 10800000) {
+                        webhook.send(`${server.attributes.identifier} more then 3 hours`)
                         axios({
                             url: `${config.pterodactyl.host}/api/client/servers/${server.attributes.identifier}/power`,
                             method: 'POST',
