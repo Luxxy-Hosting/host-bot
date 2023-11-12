@@ -65,9 +65,13 @@ module.exports = async (client, message) => {
     if (message.author.bot === false) {
         if(message.mentions.members.size > 4)
         {
-            message.delete();
-            message.guild.members.kick(message.author.id);
-            message.channel.send(`${message.author.tag} has been kicked for spamming mentions.`);
+            if (message.member.roles.cache.has('987715609414496297')) {
+                return
+            } else {
+                message.delete();
+                message.guild.members.kick(message.author.id);
+                message.channel.send(`${message.author.tag} has been kicked for spamming mentions.`);
+            }
         }
     }
 

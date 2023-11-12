@@ -11,6 +11,12 @@ module.exports = (client, message) => {
     //     .setTimestamp()
     //     .setFooter(`ID: ${message.id}`);
     // webhook.send({ embeds: [deleteembed] });
+    const deletembed = new Discord.EmbedBuilder()
+        .setDescription(`${message.author.username} deleted a message in ${message.channel.name}`)
+        .addFields({ name: 'Deleted Message', value: message.content })
+        .setTimestamp()
+        .setFooter({ text: message.id })
+    webhook.send({ embeds: [deletembed] })
 
     let data = {
         message: message.content,

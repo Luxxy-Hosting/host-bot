@@ -19,7 +19,7 @@ module.exports = (userID, serverName, location) => {
             "BUILD_NUMBER": "latest"
         },
         "feature_limits": {
-            "databases": 0,
+            "databases": 1,
             "allocations": 1,
             "backups": 0
         },
