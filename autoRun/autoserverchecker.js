@@ -22,7 +22,7 @@ module.exports = async (client) => {
         const serverid = res.data.attributes.relationships.servers.data.filter(server => server.attributes.identifier)
         
         for(let server of serverid){
-            if (server.attributes.egg === 28 || server.attributes.egg === 45 || server.attributes.egg === 40) {
+            if (server.attributes.egg === 28 || server.attributes.egg === 45 || server.attributes.egg === 40 || server.attributes.egg === 2) {
                 
                 axios({
                     url: `${config.pterodactyl.host}/api/client/servers/${server.attributes.identifier}/resources`,

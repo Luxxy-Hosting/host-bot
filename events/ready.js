@@ -25,8 +25,8 @@ module.exports = async (client) => {
     });
     
     client.user.setPresence({
-        activities: [{ name: `❤️ Luxxy Hosting`, type: ActivityType.Custom }],
-        status: 'dnd',
+        activities: [{ name: `I'm on top of the world because of you`, type: ActivityType.Custom }],
+        status: 'online',
     });
 
     if (config.settings.joinvoicechannelonready) {

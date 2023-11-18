@@ -3,9 +3,9 @@ module.exports = (userID, serverName, location) => {
         "name": `[Free] ${userID} ${serverName}`,
         "user": userID,
         "nest": 1,
-        "egg": 2,
+        "egg": 28,
         "docker_image": "ghcr.io/pterodactyl/yolks:java_18",
-        "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
+        "startup": "java --add-modules=jdk.incubator.vector -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
         "limits": {
             "memory": 3172,
             "swap": 0,
@@ -16,7 +16,6 @@ module.exports = (userID, serverName, location) => {
         "environment": {
             "MINECRAFT_VERSION": "latest",
             "SERVER_JARFILE": "server.jar",
-            "DL_PATH": null,
             "BUILD_NUMBER": "latest"
         },
         "feature_limits": {
