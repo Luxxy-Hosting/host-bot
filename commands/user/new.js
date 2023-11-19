@@ -211,7 +211,7 @@ module.exports = async (client, message, args) => {
                         }).save()
                         server1.set(message.author.id, {
                             used: 0,
-                            have: 3
+                            have: 1
                         })
                         msg.edit({
                             content: `${message.author}`,

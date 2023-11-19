@@ -18,7 +18,7 @@ module.exports = async (client) => {
     console.log(`Server Checker Deleter: ${config.settings.serverchecker ? chalk.green('true') : chalk.red('false')}`)
     console.log()
     
-    // client.manager.init(client.user.id);
+//    client.manager.init(client.user.id);
     const autorun = fs.readdirSync(`./autoRun`).filter(file => file.endsWith('.js'));
     autorun.forEach(file => {
         require(`../autoRun/${file}`)(client)

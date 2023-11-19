@@ -42,7 +42,7 @@ module.exports = async (client, message, args) => {
     if(!serverCount.get(message.author.id)) {
         serverCount.set(message.author.id, {
             used: 0,
-            have: 3
+            have: 1
         })
     }else if(serverCount.get(message.author.id).used >= serverCount.get(message.author.id).have) return message.reply(`:x: You already used your all server slots. For more info run: !server count`)
 
