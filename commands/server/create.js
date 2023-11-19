@@ -28,8 +28,8 @@ module.exports = async (client, message, args) => {
         // .addFields({ name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true })
         // .addFields({ name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true })
         .addFields({ name: `${emoji} __**Other**__:`, value: `> BeamMP`, inline: true })
-        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Purpur \n > Bedrock \n > PocketmineMP`, inline: true })
-        .setFooter({ text: `Example: ${config.bot.prefix}server create paper very sexy smp server`, iconURL: message.guild.iconURL({ size: 1024, format: 'png', dynamic: true }) })
+        .addFields({ name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Purpur \n > Bedrock \n > PocketmineMP \n > Fabric`, inline: true })
+        .setFooter({ text: `Example: ${config.bot.prefix}server create paper Luxxy is the best`, iconURL: message.guild.iconURL({ size: 1024, format: 'png', dynamic: true }) })
 
         message.channel.send({
             content: `> ${error} What type of server you want me to create?`,

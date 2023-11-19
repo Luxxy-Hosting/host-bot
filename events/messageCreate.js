@@ -78,6 +78,14 @@ module.exports = async (client, message) => {
     if(config.settings.maintenance === true && !message.member.roles.cache.has(config.roleID.administrator)) return
     if(!message.content.toLowerCase().startsWith(config.bot.prefix) || message.author.bot) return;
     if(message.content.length <= config.bot.prefix.length) return 
+    
+    if(message.channel.id === '971693841751093269' || '1164551170631680020' || '1164315622344245291' || '1165254828549746750') {
+        message.delete();
+        message.channel.send(`<@!${message.author.id}> please use the <#1164496167938293830> for this command`).then(mss => {
+            setTimeout(() => mss.delete(), 5000)
+        })
+        return;
+    }
 
     const args = message.content.slice(config.bot.prefix.length).split(/ +/);
     const cmd = args.shift().toLowerCase();
