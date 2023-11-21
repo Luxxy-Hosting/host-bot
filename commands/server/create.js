@@ -10,6 +10,15 @@ module.exports = async (client, message, args) => {
         return;
     }
 
+    const mcnames = [
+        "paper",
+        "purpur",
+        "bedrock",
+        "pockminemp",
+        "fabric",
+        "vanillamc"
+    ];
+
     if(!args[1] || args[1]?.toLowerCase() === 'list'){  
         
         const panelButton = new Discord.ButtonBuilder()
@@ -48,7 +57,7 @@ module.exports = async (client, message, args) => {
         })
     } else {
          
-        if (args[1].toLowerCase() === "paper") {
+        if (mcnames.includes(args[1].toLowerCase())) {
             if (serverCount.get(message.author.id).mineused >= serverCount.get(message.author.id).minehave) return message.reply(`:x: You already used your \`Minecraft\` server slots. For more info run: !server count`)
         } else if (serverCount.get(message.author.id).botused >= serverCount.get(message.author.id).bothave) return message.reply(`:x: You already used your \`Bot\` servers slots. For more info run: !server count`)
     }
@@ -119,7 +128,7 @@ module.exports = async (client, message, args) => {
         console.log(`${args[1]}`)
         
         logchannel.send({ embeds: [ new Discord.EmbedBuilder().addFields({ name: `Server Created`, value: `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``}).addFields({ name: `Server ID`, value: `\`${response.data.attributes.uuid}\``}).setColor(Discord.Colors.Red).addFields({ name: `Server Status`, value: `\`${response.statusText}\``}).setFooter({ text: `User ID: ${userDB.consoleID}`}).setTimestamp() ] })
-        if (args[1].toLowerCase() === "paper" || "purpur" || "bedrock" || "pocketminemp" || "fabric" || "vanillamc") {
+        if (mcnames.includes(args[1].toLowerCase())) {
             serverCount.add(message.author.id + '.mineused', 1)
             console.log('added mine used')
         } else {
