@@ -91,11 +91,14 @@ module.exports = {
             interaction.reply(":x: You dont have an account created. type `!user new` to create one");
             return;
         }
+        return interaction.reply("working in development")
 
         if(!serverCount.get(interaction.user.id)) {
             serverCount.set(interaction.user.id, {
-                used: 0,
-                have: 3
+                mineused: 0,
+                botused: 0,
+                minehave: 1,
+                bothave: 2
             })
         }else if(serverCount.get(interaction.user.id).used >= serverCount.get(interaction.user.id).have) return interaction.reply(`:x: You already used your all server slots. For more info run: !server count`)
 

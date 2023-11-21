@@ -10,8 +10,10 @@ module.exports = {
         const user = interaction.user
         if(!serverCount.get(user.id)) {
             await serverCount.set(user.id, {
-                used: 0,
-                have: 3
+                mineused: 0,
+                botused: 0,
+                minehave: 1,
+                bothave: 2
             })
         }
     

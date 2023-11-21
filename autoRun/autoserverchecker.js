@@ -37,7 +37,7 @@ module.exports = async (client) => {
                 }).then(serverdata => {
                     if(serverdata.data.attributes.current_state == 'offline'){ return console.log('offline') }
                     if (serverdata.data.attributes.resources.uptime > 10800000) {
-                        webhook.send(`${server.attributes.identifier} more then 3 hours`)
+                        webhook.send(`${server.attributes.identifier} more then 3 hours ${server.attributes.egg}`)
                         axios({
                             url: `${config.pterodactyl.host}/api/client/servers/${server.attributes.identifier}/power`,
                             method: 'POST',
@@ -54,13 +54,13 @@ module.exports = async (client) => {
                         }).then(kille => {
                             console.log(kille)
                         }).catch(fuckfuck => console.log(fuckfuck))
-                        webhook.send(`${server.attributes.identifier} kill`)
+                        webhook.send(`${server.attributes.identifier} kill ${server.attributes.egg}`)
                     } else {
-                        return webhook.send(`${server.attributes.identifier} safe`)
+                        return webhook.send(`${server.attributes.identifier} safe ${server.attributes.egg}`)
                     }
                     
                 }).catch(e => { console.log(e) })
-    } else webhook.send(`${server.attributes.identifier} not a minecraft server`)
+    } else webhook.send(`${server.attributes.identifier} not a minecraft server ${server.attributes.egg}`)
 }
 }).catch(() => {return console.log('uhhh- something is happening with the pannel and i cant get information about the servers')})
 })

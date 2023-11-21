@@ -41,10 +41,17 @@ module.exports = async (client, message, args) => {
 
     if(!serverCount.get(message.author.id)) {
         serverCount.set(message.author.id, {
-            used: 0,
-            have: 1
+            mineused: 0,
+            botused: 0,
+            minehave: 1,
+            bothave: 2
         })
-    }else if(serverCount.get(message.author.id).used >= serverCount.get(message.author.id).have) return message.reply(`:x: You already used your all server slots. For more info run: !server count`)
+    } else {
+         
+        if (args[1].toLowerCase() === "paper") {
+            if (serverCount.get(message.author.id).mineused >= serverCount.get(message.author.id).minehave) return message.reply(`:x: You already used your \`Minecraft\` server slots. For more info run: !server count`)
+        } else if (serverCount.get(message.author.id).botused >= serverCount.get(message.author.id).bothave) return message.reply(`:x: You already used your \`Bot\` servers slots. For more info run: !server count`)
+    }
 
     let ServerData
     let srvname = args.slice(2).join(' ')
@@ -108,9 +115,17 @@ module.exports = async (client, message, args) => {
             console.log(`[${new Date().toLocaleString()}] [ERROR] [LOGS] Could not find the logs channel.`)
             return;
         }
+
+        console.log(`${args[1]}`)
         
         logchannel.send({ embeds: [ new Discord.EmbedBuilder().addFields({ name: `Server Created`, value: `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${srvname ? srvname : args[1]}\`\n**Server Type:** \`${args[1].toLowerCase()}\``}).addFields({ name: `Server ID`, value: `\`${response.data.attributes.uuid}\``}).setColor(Discord.Colors.Red).addFields({ name: `Server Status`, value: `\`${response.statusText}\``}).setFooter({ text: `User ID: ${userDB.consoleID}`}).setTimestamp() ] })
-        serverCount.add(message.author.id + '.used', 1)
+        if (args[1].toLowerCase() === "paper") {
+            serverCount.add(message.author.id + '.mineused', 1)
+            console.log('added mine used')
+        } else {
+            serverCount.add(message.author.id + '.botused', 1)
+            console.log('added bot used')
+        }
             
     }).catch(error => {
         if (error == "Error: Request failed with status code 400") {

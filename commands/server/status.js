@@ -16,7 +16,7 @@ module.exports = async (client, message, args) => {
     let server = args[0]?.split('-')[0];
 
     if (!server) {
-        let embed = new Discord.MessageEmbed()
+        let embed = new Discord.EmbedBuilder()
             .setColor("GREEN")
             .addField("__**Server Status**__", "What server should I display?\nCommand Format: `" + config.bot.prefix + "server status <server id>`");
         return message.channel.send({ embeds: [embed] });

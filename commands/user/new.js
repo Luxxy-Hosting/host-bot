@@ -210,8 +210,10 @@ module.exports = async (client, message, args) => {
                             linkDate: moment().format("YYYY-MM-DD"),
                         }).save()
                         server1.set(message.author.id, {
-                            used: 0,
-                            have: 1
+                            mineused: 0,
+                            botused: 0,
+                            minehave: 1,
+                            bothave: 2
                         })
                         msg.edit({
                             content: `${message.author}`,

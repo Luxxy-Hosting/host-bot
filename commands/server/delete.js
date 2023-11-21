@@ -63,8 +63,8 @@ module.exports = async (client, message, args) => {
                 })
 
                 axios({
-                    url: config.pterodactyl.host + "/api/application/servers/" + output.attributes.id + "/force",
-                    method: 'DELETE',
+                    url: config.pterodactyl.host + "/api/application/servers/" + output.attributes.id,
+                    method: 'get',
                     followRedirect: true,
                     maxRedirects: 5,
                     headers: {
@@ -72,13 +72,32 @@ module.exports = async (client, message, args) => {
                         'Content-Type': 'application/json',
                         'Accept': 'Application/vnd.pterodactyl.v1+json',
                     }
-                }).then(() => {
-                    msg.edit(`${success} Server deleted!`)
-                    if(!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
-                    serverCount.subtract(message.author.id + '.used', 1)
-                }).catch(err => {
-                    msg.edit(`Error: ${err}`)
+                }).then(deleted => {
+                    axios({
+                        url: config.pterodactyl.host + "/api/application/servers/" + output.attributes.id + "/force",
+                        method: 'DELETE',
+                        followRedirect: true,
+                        maxRedirects: 5,
+                        headers: {
+                            'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+                            'Content-Type': 'application/json',
+                            'Accept': 'Application/vnd.pterodactyl.v1+json',
+                        }
+                    }).then(() => {
+                        msg.edit(`${success} Server deleted!`)
+                        if(!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
+                        if (deleted.data.attributes.egg === 28 || deleted.data.attributes.egg === 45 || deleted.data.attributes.egg === 40 || deleted.data.attributes.egg === 2 || deleted.data.attributes.egg === 47 || deleted.data.attributes.egg === 5) {
+                            serverCount.subtract(message.author.id + '.mineused', 1)
+                            console.log('subtract mine')
+                        } else {
+                            serverCount.subtract(message.author.id + '.botused', 1)
+                            console.log('subtract bot')
+                        }
+                    }).catch(err => {
+                        msg.edit(`Error: ${err}`)
+                    })
                 })
+
 
             }
             if(i.customId === "RejectDelete") {
