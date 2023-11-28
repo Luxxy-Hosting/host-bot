@@ -7,7 +7,7 @@ module.exports = (userID, serverName, location) => {
         "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
         "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
         "limits": {
-            "memory": 3172,
+            "memory": 4096,
             "swap": 0,
             "disk": 15240,
             "io": 500,

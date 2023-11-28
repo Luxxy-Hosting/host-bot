@@ -14,7 +14,7 @@ module.exports = async (client, message, args) => {
         "paper",
         "purpur",
         "bedrock",
-        "pockminemp",
+        "pocketminemp",
         "fabric",
         "vanillamc"
     ];

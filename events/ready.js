@@ -83,7 +83,7 @@ module.exports = async (client) => {
         let guild = client.guilds.cache.get(config.settings.guildID);
         let membercount3 = guild.members.cache.filter(member => !member.user.bot).size.toLocaleString();
         client.channels.cache.get(config.voiceID.members).edit({ 
-            name: `(ง︡'-'︠)ง Total Members: ${membercount3}`
+            name: `Total Members: ${membercount3}`
         })
 
         axios({
@@ -96,7 +96,7 @@ module.exports = async (client) => {
             },
         }).then(response => {
             client.channels.cache.get(config.voiceID.servers).edit({ 
-                name: `🖥️ Total Servers: ${response.data.meta.pagination.total.toLocaleString()} Servers`
+                name: `Total Servers: ${response.data.meta.pagination.total.toLocaleString()} Servers`
             })
         })
 
@@ -110,7 +110,7 @@ module.exports = async (client) => {
             },
         }).then(response => {
             client.channels.cache.get(config.voiceID.clients).edit({ 
-                name: `🙋‍♂️ Total Users: ${response.data.meta.pagination.total.toLocaleString()} Users`
+                name: `Total Users: ${response.data.meta.pagination.total.toLocaleString()} Users`
             })
         })    
         console.log(chalk.hex('#6b7dfb')(`Luxxy Hosting`) + ` | ${chalk.green('[')} ${chalk.blue('Online')} ${chalk.green(']')}`)    

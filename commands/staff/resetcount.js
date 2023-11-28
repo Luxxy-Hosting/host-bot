@@ -46,8 +46,10 @@ module.exports = async (client, message, args) => {
                         content: `Resetting ${user.tag}'s count to ${number}... <a:whatisthis:951132055134162954>`,
                     })
                     serverCount.set(user.id, {
-                        have: 3,
-                        used: number
+                        mineused: 0,
+                        botused: 0,
+                        minehave: 1,
+                        bothave: 2
                     })
                     msg.edit(`${success} ${user.tag} Count reset!`)
                 }
