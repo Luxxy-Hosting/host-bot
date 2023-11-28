@@ -56,7 +56,7 @@ module.exports = async (client, message, args) => {
                     .addFields({ name:'Link Time', value: `\`\`\`\n${userDB.linkTime}\`\`\``, inline: true})
                     .addFields({ name: 'Servers', value:  `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, inline: true})
                     .addFields({ name: 'Servers Name', value:  `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, inline: true})
-                    .addFields({ name: 'Server Count', value: `\`\`\`\n${serverCount.get(user.id).used} / ${serverCount.get(user.id).have}\`\`\``, inline: true})
+                    .addFields({ name: 'Server Count', value: `\`\`\`\n${serverCount.get(user.id).mineused} / ${serverCount.get(user.id).minehave} \n${serverCount.get(user.id).botused} / ${serverCount.get(user.id).bothave}\`\`\``, inline: true})
                     .setColor(Discord.Colors.Green)
                 ]
             })

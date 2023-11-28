@@ -14,6 +14,9 @@ module.exports = async (client, message) => {
     
     if(blacklisted == true) return;
 
+    if (message.content === '<:happy:967250513492049960>') return message.reply('<:happy:967250513492049960>')
+    if (message.content === '💀') return message.react('💀')
+
     function deleteMessage() {
         //console.log("deleted " + message.content + " from " + message.author.tag)
         message.delete(1);
