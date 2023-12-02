@@ -114,6 +114,7 @@ module.exports = async (client, message, args) => {
                 > **Server ID:** \`${response.data.attributes.identifier}\`
                 > **Server Name:** \`${srvname ? srvname : args[1]}\`
                 > **Server Type:** \`${args[1].toLowerCase()}\`
+                \n__Got issues?__ **Make a ticket** <#1164497677334085642>
                 `)
             ],
             components: [row2]

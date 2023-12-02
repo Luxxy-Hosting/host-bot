@@ -38,8 +38,8 @@ module.exports = (client) => {
             const logChannel = member.guild.channels.cache.find(c => c.id === config.channelID.welcome);
 
             welcometext = [
-    `Welcome to Luxxy Hosting, a place where you can create coding servers for free. Luxxy Hosting includes 24/7 Hosting and a powerful panel with a lot of features.`,
-]
+    `Welcome to Luxxy Hosting`
+            ]
     const welembed = new Discord.EmbedBuilder()
             .setTitle(`Welcome ${member.user.tag}`)
             .setDescription(`${welcometext}`)
