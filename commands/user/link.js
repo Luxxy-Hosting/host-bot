@@ -9,8 +9,9 @@ module.exports = async (client, message, args) => {
     message.channel.send({embeds:[
         new Discord.EmbedBuilder()
         .setColor(0x00ff00)
-        .addField(`Username:`, `${userDataDB.username}`)
-        .addField(`Link Date:`, `${userDataDB.linkDate}`)
-        .addField(`Link Time:`, `${userDataDB.linkTime}`)
+        .addFields({ name: `Username:`, value: `${userDataDB.username}`, inline: true })
+        .addFields({ name: `Link Date:`, value: `${userDataDB.linkDate}`, inline: true })
+        .addFields({ name: `Link Date:`, value: `${userDataDB.linkTime}`, inline: true })
+        .setTimestamp()
     ]})
 }

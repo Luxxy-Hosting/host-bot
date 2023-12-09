@@ -7,7 +7,7 @@ module.exports = (userID, serverName, location) => {
         "docker_image": "ghcr.io/pterodactyl/yolks:java_18",
         "startup": "java --add-modules=jdk.incubator.vector -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
         "limits": {
-            "memory": 4096,
+            "memory": 3072,
             "swap": 0,
             "disk": 15240,
             "io": 500,

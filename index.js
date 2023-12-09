@@ -19,6 +19,7 @@ const client = new Discord.Client({
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.DirectMessageReactions,
         GatewayIntentBits.DirectMessageTyping,
+        GatewayIntentBits.GuildInvites,
     ],
     partials: [ Partials.Message, Partials.Channel, Partials.Reaction, Partials.User ],
 })
@@ -54,6 +55,55 @@ handler.loadSlashCommands(client);
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 
 client.login(config.bot.token);
+
+const InvitesTracker = require('@androz2091/discord-invites-tracker');
+const tracker = InvitesTracker.init(client, {
+    fetchGuilds: true,
+    fetchVanity: true,
+    fetchAuditLogs: true
+})
+welcometext = [
+    `Welcome to Luxxy Hosting.`,
+]
+tracker.on('guildMemberAdd', (member, type, invite) => {
+    const welcomeChannel = member.guild.channels.cache.find((ch) => ch.id === '1178443369639321640');
+
+    if(type === 'normal'){
+
+        const NormalEmbed = new Discord.EmbedBuilder()
+            .setTitle(`Welcome ${member.user.username}`)
+            .setDescription(`${welcometext}`)
+            .addFields({ name: `**Invited by:**`, value: `**${invite.inviter.username}**`})
+            .setColor('#530A8B')
+            .setThumbnail(member.user.displayAvatarURL())
+            .setImage('https://media.discordapp.net/attachments/941026457075994698/1000302292857270312/welcome_new_.png')
+            .setTimestamp()
+            .setFooter({ text: `ID: ${member.id}`, iconURL: member.user.displayAvatarURL()})
+        welcomeChannel.send({ embeds: [NormalEmbed] });
+        
+    } else if(type === 'vanity'){
+
+        const VanityEmbed = new Discord.EmbedBuilder()
+            .setTitle(`Welcome ${member.user.username}`)
+            .setDescription(`${welcometext}`)
+            .addFields({ name: `**Invited by:**`, value: `**Custom Invite**`})
+            .setColor('#530A8B')
+            .setThumbnail(member.user.displayAvatarURL())
+            .setImage('https://media.discordapp.net/attachments/941026457075994698/1000302292857270312/welcome_new_.png')
+            .setTimestamp()
+            .setFooter({ text: `ID: ${member.id}`, iconURL: member.user.displayAvatarURL()})
+        welcomeChannel.send({ embeds: [VanityEmbed] });
+        
+    } else if(type === 'permissions'){
+
+        welcomeChannel.send(`Welcome <@!${member.id}>! I can't figure out how you joined because I don't have the "Manage Server" permission!`);
+        
+    } else if(type === 'unknown'){
+
+        welcomeChannel.send(`Welcome <@!${member.id}>! I can't figure out how you joined the server...`);
+        
+    }
+})
 
 
 const UserData1 = require('./models/userData.js')
