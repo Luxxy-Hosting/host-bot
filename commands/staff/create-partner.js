@@ -5,7 +5,6 @@ const moment = require('moment');
 const userData = require('../../models/userData');
 
 module.exports = async (client, message, args) => {
-    return message.reply('This command is currently disabled.');
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
     const user = await message.mentions.users.first()
 
@@ -45,11 +44,11 @@ module.exports = async (client, message, args) => {
     message.reply(`${user.username} is now a partner`)
     message.reply(`Creating partner Server with ${memory} MB`).then(msg => {
         const data = ({
-            "name": `${user.username}'s Partner Server`,
+            "name": `[Partner] ${user.username}'s Server`,
             "user": userDB.consoleID,
             "nest": 1,
-            "egg": 3,
-            "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
+            "egg": 48,
+            "docker_image": "ghcr.io/pterodactyl/yolks:java_18",
             "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
             "limits": {
                 "memory": memory,
@@ -61,7 +60,7 @@ module.exports = async (client, message, args) => {
             "environment": {
                 "MINECRAFT_VERSION": "latest",
                 "SERVER_JARFILE": "server.jar",
-                "DL_PATH": "https://papermc.io/api/v2/projects/paper/versions/1.18.1/builds/214/downloads/paper-1.18.1-214.jar",
+                "DL_PATH": "https://api.papermc.io/v2/projects/paper/versions/1.20.2/builds/318/downloads/paper-1.20.2-318.jar",
                 "BUILD_NUMBER": "latest"
             },
             "feature_limits": {
@@ -70,7 +69,7 @@ module.exports = async (client, message, args) => {
                 "backups": 10
             },
             "deploy": {
-                "locations": [ 3 ],
+                "locations": [ 2 ],
                 "dedicated_ip": false,
                 "port_range": []
             },
@@ -93,11 +92,11 @@ module.exports = async (client, message, args) => {
 
             // log
             const logchannel = client.channels.cache.get('971131533131915264')
-            const embed = new Discord.MessageEmbed()
+            const embed = new Discord.EmbedBuilder()
             .setTitle(`${user.username}'s Partner Server has been created`)
             .setDescription(`${res.data.attributes.identifier} \n https://panel.luxxy.host/server/${res.data.attributes.identifier}`)
-            .setColor(`GREEN`)
-            .setFooter(`${moment().format('dddd, MMMM Do YYYY, h:mm:ss a')}`)
+            .setColor(Discord.Colors.DarkAqua)
+            .setTimestamp()
             logchannel.send({ embeds: [embed] })
         })
     })
