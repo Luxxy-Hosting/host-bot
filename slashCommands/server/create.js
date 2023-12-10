@@ -22,12 +22,16 @@ module.exports = {
                 value: 'codeserver'
             },
             {
-                name: 'dotnet',
-                value: 'dotnet'
+                name: 'paper',
+                value: 'paper'
             },
             {
-                name: 'gitea',
-                value: 'gitea'
+                name: 'purpur',
+                value: 'purpur'
+            },
+            {
+                name: 'bedrock',
+                value: 'bedrock',
             },
             {
                 name: 'golang',

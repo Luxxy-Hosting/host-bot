@@ -91,7 +91,7 @@ module.exports = async (client, message) => {
     if(authorized.includes(message.channel.id)) {
         message.delete();
         message.channel.send(`<@!${message.author.id}> please use the <#1164496167938293830> for this command`).then(mss => {
-            setTimeout(() => mss.delete(), 10000)
+            setTimeout(() => mss.delete(), 3000)
         })
         return;
     }

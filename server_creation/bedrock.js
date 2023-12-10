@@ -11,7 +11,7 @@ module.exports = (userID, serverName, location) => {
             "swap": 0,
             "disk": 10240,
             "io": 500,
-            "cpu": 150
+            "cpu": 350
         },
         "environment": {
             "BEDROCK_VERSION": "latest",
