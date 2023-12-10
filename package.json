@@ -28,7 +28,6 @@
     "nekobot-api": "^2.1.0",
     "node-cron": "^3.0.3",
     "node-superfetch": "^0.2.3",
-    "opus@latest": "link:discordjs/opus@latest",
     "os": "^0.1.2",
     "ping": "^0.4.4",
     "prettysize": "^2.0.0",
