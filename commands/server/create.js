@@ -98,9 +98,16 @@ module.exports = async (client, message, args) => {
         } else {
             serverButton.setLabel(`Server Link`)
         }
-
+        
         const row2 = new Discord.ActionRowBuilder()
         .addComponents([serverButton])
+        .addComponents(
+            new Discord.ButtonBuilder()
+                .setCustomId('ShowSpecs')
+                .setLabel('Show my resources')
+                .setStyle('Success'),
+        )
+
         
         msg.edit({
             content: null,
@@ -118,6 +125,38 @@ module.exports = async (client, message, args) => {
                 `)
             ],
             components: [row2]
+        })
+
+        const filter = i => i.user.id === message.author.id;
+        const Collector = msg.createMessageComponentCollector({ filter, time: 300000 });
+        const disablerow2 = new Discord.ActionRowBuilder()
+        .addComponents([serverButton])
+        .addComponents(
+            new Discord.ButtonBuilder()
+                .setCustomId('ShowSpecs')
+                .setLabel('Show my resources')
+                .setStyle('Success')
+                .setDisabled(true),
+        )
+        Collector.on('collect', async i => {
+            i.deferUpdate()
+            Collector.stop()
+            if(i.customId === "ShowSpecs") {
+                msg.edit({
+                    content: null,
+                    embeds:[
+                        new Discord.EmbedBuilder()
+                        .setColor(Discord.Colors.Green)
+                        .setDescription(`
+                        > <:cpu:1183573635072524319> \`350%\`
+                        > <:ram:1183573571243610192> \`3GB\`
+                        > <:hdd:1183573739456184350> \`15GB\`
+                        \n__Got issues?__ **Make a ticket** <#1164497677334085642>
+                        `)
+                    ],
+                    components: [disablerow2]
+                })
+            }
         })
 
         const logchannel = client.channels.cache.get(config.logs.createlog)

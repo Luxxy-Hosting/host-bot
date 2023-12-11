@@ -7,8 +7,6 @@ module.exports = async (client, message, args) => {
     let localdomain
     let serverid = args[1]
     let domain = args[2]
-    
-    return message.reply('disabled')
     if(
         !serverid ||
         !serverid?.split('-')[0] ||
@@ -72,7 +70,7 @@ module.exports = async (client, message, args) => {
     let msg = await message.channel.send(`Proxying . . .`)
 
     domainIP = await getDomainIP(domain)
-    if(!domainIP || domainIP !== '138.68.159.181') return msg.edit(`The domain you gave doesnt have the right ip address. the ip should be: \`138.68.159.181\` *with cloudflare proxy turned off*`)
+    if(!domainIP || domainIP !== '23.26.226.86') return msg.edit(`The domain you gave doesnt have the right ip address. the ip should be: \`23.26.226.86\` *with cloudflare proxy turned off*`)
 
     msg.edit(`Creating LetsEncrypt certificate, this might take some time.`)
     let proxyinfo = await proxyDomain(domain, localdomain, port)

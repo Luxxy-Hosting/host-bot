@@ -21,7 +21,7 @@ const proxyDomain = async (domain, ip, port) => {
                 "access_list_id": "0",
                 "certificate_id": "new",
                 "meta": {
-                    "letsencrypt_email": "artiom@gmail.com",
+                    "letsencrypt_email": "certs@luxxy.xyz",
                     "letsencrypt_agree": true,
                     "dns_challenge": false
                 },

@@ -33,7 +33,7 @@ module.exports = (userID, serverName, location) => {
             "backups": 0
         },
         "deploy": {
-            "locations": location,
+            "locations": [ 3 ],
             "dedicated_ip": false,
             "port_range": []
         },
