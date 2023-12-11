@@ -7,7 +7,7 @@ module.exports = {
     description: "nah",
     aliases: ['n4'],
     run: async (client, message, args) => {
-        await axios.get("https://n4.luxxy.host:997/api/v1/stats").then(e => {
+        await axios.get("https://n2.luxxy.host:997/api/v1/stats").then(e => {
             let name = e.data.name
             let uptime = e.data.uptime
             let network_rx = e.data.network_rx
