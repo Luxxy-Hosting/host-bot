@@ -10,7 +10,7 @@ module.exports = async (client, message, args) => {
 
     if (!user) return message.reply({
         embeds: [
-            new Discord.MessageEmbed()
+            new Discord.EmbedBuilder()
             .setTitle(`:x: | You need to mention a user`)
             .setColor(`RED`)
         ]

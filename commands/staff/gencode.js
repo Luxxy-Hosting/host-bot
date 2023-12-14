@@ -21,7 +21,7 @@ module.exports = async(client, message, args) => {
     const code = gencode()
     const name = args[1]
     const number = args[2]
-    const embed = new Discord.MessageEmbed()
+    const embed = new Discord.EmbedBuilder()
     .addField(`Code`, `${code}`)
     .addField(`Name`, `${name}`)
     .addField(`Number of servers`, `${number}`)
@@ -34,7 +34,7 @@ module.exports = async(client, message, args) => {
             balance: number,
             createdAt: Date.now()
         });
-        const logs = new Discord.MessageEmbed()
+        const logs = new Discord.EmbedBuilder()
         .setTitle(`Code Created`)
         .addField(`Code`, `${code}`)
         .addField(`Name`, `${name}`)

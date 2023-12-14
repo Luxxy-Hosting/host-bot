@@ -45,7 +45,7 @@ module.exports = async (client) => {
                 console.log(`${chalk.red('[ Security ]')} Minecraft server found on port ${chalk.bold(`${allocation.attributes.port}`)}, Server ID: ${chalk.bold(`${server.attributes.uuid?.split('-')[0]}`)}, Discord ID: ${chalk.bold(`${userData.all().find(x => JSON.parse(x.data).consoleID === user?.attributes.id)}`)}`)
                 await client.channels.cache.get(config.channelID.abuse).send({
                     embeds:[
-                        new Discord.MessageEmbed()
+                        new Discord.EmbedBuilder()
                         .setTitle(`Minecraft Server Found!`)
                         .setColor(`RED`)
                         .setDescription(``

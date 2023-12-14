@@ -1,7 +1,7 @@
 const config = require("../config.json")
 const wait = require('node:timers/promises').setTimeout;
 const chalk = require('chalk');
-const { Discord, MessageEmbed } = require('discord.js');
+const { Discord, EmbedBuilder } = require('discord.js');
 const db = require("quick.db");
 module.exports = async (client, message) => {
     let blacklisted = db.get(`blacklist_${message.author.id}`);
@@ -43,7 +43,7 @@ module.exports = async (client, message) => {
     //     .replace(/{MESSAGE}/g, message.content)
     //     .replace ("://", ": //");
     //     const logChannel = client.channels.cache.get(config.channelID.logs)
-    //     const logEmbed = new MessageEmbed()
+    //     const logEmbed = new EmbedBuilder()
     //     .setColor(`RED`)
     //     .setAuthor(message.author.tag, message.author.displayAvatarURL())
     //     .setDescription(logEmbedDesc)

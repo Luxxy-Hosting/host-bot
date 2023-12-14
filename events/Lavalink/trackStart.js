@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const { EmbedBuilder, MessageActionRow, MessageButton } = require("discord.js");
 const { convertTime } = require('../../handlers/convert');
 
 
@@ -11,7 +11,7 @@ module.exports = async (client, player, track, payload) => {
   const emojiresume = '▶';
   const emojiskip = '⏭';
 
-  const thing = new MessageEmbed()
+  const thing = new EmbedBuilder()
     .setDescription(`${emojiplay} **Started Playing**\n [${track.title}](${track.uri}) - \`[${convertTime(track.duration)}]\``)
     .setThumbnail(`https://img.youtube.com/vi/${track.identifier}/mqdefault.jpg`)
     .setColor(client.embedColor)
@@ -31,7 +31,7 @@ module.exports = async (client, player, track, payload) => {
   let NowPlaying = await client.channels.cache.get(player.textChannel).send({ embeds: [thing], components: [row] });
   //player.setNowplayingMessage(NowPlaying);
 
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setColor(client.embedColor)
     .setTimestamp();
   const collector = NowPlaying.createMessageComponentCollector({

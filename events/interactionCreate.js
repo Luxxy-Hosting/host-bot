@@ -32,7 +32,7 @@ module.exports = async (client, interaction) => {
     //     })
 
     //     const WelcomToTicket = await channel.send({content: `<@${interaction.user.id}>`, embeds:[
-    //         new Discord.MessageEmbed()
+    //         new Discord.EmbedBuilder()
     //         .setTitle(`${interaction.user.username}'s Ticket`)
     //         .setColor(`BLUE`)
     //         .setDescription(`Welcome to Artiom's Hosting official support, how can we help you?\nPlease describe your problem as much as possible \:D`)

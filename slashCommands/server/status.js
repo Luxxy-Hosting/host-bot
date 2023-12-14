@@ -143,7 +143,7 @@ module.exports = {
                                         }).then(async response => {
                                             interaction.channel.send({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                     .setTitle(`:white_check_mark: | Server started`)
                                                     .setDescription(`The server with the id ${serverid} has been started`)
                                                     .setColor(`GREEN`)
@@ -152,7 +152,7 @@ module.exports = {
                                         }).catch(async error => {
                                             interaction.channel.send({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                     .setTitle(`:x: | Error`)
                                                     .setDescription(`The server with the id ${serverid} could not be started`)
                                                     .setColor(`RED`)
@@ -173,7 +173,7 @@ module.exports = {
                                         }).then(async response => {
                                             interaction.channel.send({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                     .setTitle(`:white_check_mark: | Server restarted`)
                                                     .setDescription(`The server with the id ${serverid} has been restarted`)
                                                     .setColor(`GREEN`)
@@ -183,7 +183,7 @@ module.exports = {
                                         ).catch(async error => {
                                             interaction.channel.send({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                     .setTitle(`:x: | Error`)
                                                     .setDescription(`The server with the id ${serverid} could not be restarted`)
                                                     .setColor(`RED`)
@@ -205,7 +205,7 @@ module.exports = {
                                         }).then(async response => {
                                             interaction.channel.send({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                     .setTitle(`:white_check_mark: | Server stopped`)
                                                     .setDescription(`The server with the id ${serverid} has been stopped`)
                                                     .setColor(`GREEN`)
@@ -215,7 +215,7 @@ module.exports = {
                                         ).catch(async error => {
                                             interaction.channel.send({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                     .setTitle(`:x: | Error`)
                                                     .setDescription(`The server with the id ${serverid} could not be stopped`)
                                                     .setColor(`RED`)
@@ -229,7 +229,7 @@ module.exports = {
                                 collector.on('end', collected => {
                                     interaction.channel.send({
                                         embeds: [
-                                            new Discord.MessageEmbed()
+                                            new Discord.EmbedBuilder()
                                             .setTitle(`:x: | Error`)
                                             .setDescription(`The server with the id ${serverid} could not be started`)
                                             .setColor(`RED`)

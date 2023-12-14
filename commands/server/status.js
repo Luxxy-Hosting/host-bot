@@ -17,7 +17,7 @@ module.exports = async (client, message, args) => {
 
     if (!server) {
         let embed = new Discord.EmbedBuilder()
-            .setColor("GREEN")
+            .setColor(Discord.Colors.Green)
             .addField("__**Server Status**__", "What server should I display?\nCommand Format: `" + config.bot.prefix + "server status <server id>`");
         return message.channel.send({ embeds: [embed] });
     }
@@ -41,7 +41,7 @@ module.exports = async (client, message, args) => {
                 if (!output) {
                     msg.edit(':x: | Sorry, but I didn\'t find that server in your list!');
                 } else {
-                    if (output.attributes.user === userDB.consoleID) {
+                    if (output.attributes.user = userDB.consoleID) {
                         axios({
                             url: config.pterodactyl.host + '/api/client/servers/' + server,
                             method: 'GET',
@@ -76,9 +76,9 @@ module.exports = async (client, message, args) => {
                                 msg.edit({
                                     content: "<@" + message.author.id + ">",
                                     embeds: [
-                                        new Discord.MessageEmbed()
+                                        new Discord.EmbedBuilder()
                                             .setTitle("Your Server Status")
-                                            .setColor(`${resources.data.attributes.current_state == 'running' ? 'GREEN' : resources.data.attributes.current_state == 'offline' ? 'RED' : "YELLOW"}`)
+                                            //.setColor(`${resources.data.attributes.current_state == 'running' ? Discord.Colors.Green : resources.data.attributes.current_state == 'offline' ? Discord.Colors.Red : Discord.Colors.Yellow}`)
                                             .setDescription(`**Status:** \`${resources.data.attributes.current_state == 'running' ? '🟢 Running' : resources.data.attributes.current_state == 'offline' ? '🔴 Offline' : "🔄" + resources.data.attributes.current_state}\`\n`
                                                 + `**Name:** \`${srvname}\`\n`
                                                 + `**Uptime:** \`${getUptime(resources.data.attributes.resources.uptime)}\`\n`
@@ -91,32 +91,32 @@ module.exports = async (client, message, args) => {
                                             )
                                     ],
                                     components: [
-                                        new Discord.MessageActionRow()
-                                            .addComponents(
-                                                new Discord.MessageButton()
-                                                    .setCustomId('start')
-                                                    .setLabel('🟢 Start')
-                                                    .setStyle('SUCCESS')
-                                            )
-                                            .addComponents(
-                                                new Discord.MessageButton()
-                                                    .setCustomId('restart')
-                                                    .setLabel('🔄 Restart')
-                                                    .setStyle('PRIMARY')
-                                            )
-                                            .addComponents(
-                                                new Discord.MessageButton()
-                                                    .setCustomId('stop')
-                                                    .setLabel('🔴 Stop')
-                                                    .setStyle('DANGER')
-                                            )
-                                            .addComponents(
-                                                new Discord.MessageButton()
-                                                    .setLabel('🔗 Link')
-                                                    .setURL(`${config.pterodactyl.host}/server/${server}`)
-                                                    .setStyle('LINK')
-                                            )
-                                    ]
+                                        new Discord.ActionRowBuilder()
+                                        .addComponents(
+                                            new Discord.ButtonBuilder()
+                                            .setCustomId('start')
+                                            .setLabel('🟢 Start')
+                                            .setStyle('Success'),
+                                        )
+                                        .addComponents(
+                                            new Discord.ButtonBuilder()
+                                            .setCustomId('restart')
+                                            .setLabel('🔄 Restart')
+                                            .setStyle('Primary'),
+                                        )
+                                        .addComponents(
+                                            new Discord.ButtonBuilder()
+                                            .setCustomId('stop')
+                                            .setLabel('🔴 Stop')
+                                            .setStyle('Danger'),
+                                        )
+                                        .addComponents(
+                                            new Discord.ButtonBuilder()
+                                            .setLabel('🔗 Link')
+                                            .setURL(`${config.pterodactyl.host}/server/${server}`)
+                                            .setStyle('Link'),
+                                        )
+                                        ]
                                 });
 
                                 const filter = m => m.user.id === message.author.id;
@@ -147,9 +147,9 @@ module.exports = async (client, message, args) => {
                                         }).catch(err => {
                                             msg.edit({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                         .setTitle(`:x: | ${err}`)
-                                                        .setColor('RED')
+                                                        .setColor(Discord.Colors.Red)
                                                 ]
                                             });
                                         });
@@ -193,9 +193,9 @@ module.exports = async (client, message, args) => {
                                                 }).catch(err => {
                                                     msg.edit({
                                                         embeds: [
-                                                            new Discord.MessageEmbed()
+                                                            new Discord.EmbedBuilder()
                                                                 .setTitle(`:x: | ${err}`)
-                                                                .setColor('RED')
+                                                                .setColor(Discord.Colors.Red)
                                                         ]
                                                     });
                                                 });
@@ -203,9 +203,9 @@ module.exports = async (client, message, args) => {
                                         }).catch(err => {
                                             msg.edit({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                         .setTitle(`:x: | ${err}`)
-                                                        .setColor('RED')
+                                                        .setColor(Discord.Colors.Red)
                                                 ]
                                             });
                                         });
@@ -234,9 +234,9 @@ module.exports = async (client, message, args) => {
                                         }).catch(err => {
                                             msg.edit({
                                                 embeds: [
-                                                    new Discord.MessageEmbed()
+                                                    new Discord.EmbedBuilder()
                                                         .setTitle(`:x: | ${err}`)
-                                                        .setColor('RED')
+                                                        .setColor(Discord.Colors.Red)
                                                 ]
                                             });
                                         });
@@ -246,33 +246,33 @@ module.exports = async (client, message, args) => {
                                 collector.on('end', (collected, reason) => {
                                     msg.edit({
                                         components: [
-                                            new Discord.MessageActionRow()
+                                            new Discord.ActionRowBuilder()
                                                 .addComponents(
-                                                    new Discord.MessageButton()
+                                                    new Discord.ButtonBuilder()
                                                         .setCustomId('start')
                                                         .setLabel('🟢 Start')
-                                                        .setStyle('SUCCESS')
-                                                        .setDisabled(true)
+                                                        .setStyle('Success')
+                                                        .setDisabled(true),
                                                 )
                                                 .addComponents(
-                                                    new Discord.MessageButton()
+                                                    new Discord.ButtonBuilder()
                                                         .setCustomId('restart')
                                                         .setLabel('🔄 Restart')
-                                                        .setStyle('PRIMARY')
-                                                        .setDisabled(true)
+                                                        .setStyle('Primary')
+                                                        .setDisabled(true),
                                                 )
                                                 .addComponents(
-                                                    new Discord.MessageButton()
+                                                    new Discord.ButtonBuilder()
                                                         .setCustomId('stop')
                                                         .setLabel('🔴 Stop')
-                                                        .setStyle('DANGER')
-                                                        .setDisabled(true)
+                                                        .setStyle('Danger')
+                                                        .setDisabled(true),
                                                 )
                                                 .addComponents(
-                                                    new Discord.MessageButton()
+                                                    new Discord.ButtonBuilder()
                                                         .setLabel('🔗 Link')
                                                         .setURL(`https://panel.luxxy.host/server/${server}`)
-                                                        .setStyle('LINK')
+                                                        .setStyle('Link'),
                                                 )
                                         ]
                                     });
@@ -281,18 +281,18 @@ module.exports = async (client, message, args) => {
                                 if (err == 'Error: Request failed with status code 504') {
                                     msg.edit({
                                         embeds: [
-                                            new Discord.MessageEmbed()
+                                            new Discord.EmbedBuilder()
                                                 .setTitle(':x: | ' + err)
                                                 .setDescription("The server's node wings or the server might be offline, so I could not access the server")
-                                                .setColor('RED')
+                                                .setColor(Discord.Colors.Red)
                                         ]
                                     });
                                 } else {
                                     msg.edit({
                                         embeds: [
-                                            new Discord.MessageEmbed()
+                                            new Discord.EmbedBuilder()
                                                 .setTitle(':x: | ' + err)
-                                                .setColor('RED')
+                                                .setColor(Discord.Colors.Red)
                                         ]
                                     });
                                 }
@@ -302,25 +302,25 @@ module.exports = async (client, message, args) => {
                             if (error == 'Error: Request failed with status code 404') {
                                 msg.edit({
                                     embeds: [
-                                        new Discord.MessageEmbed()
+                                        new Discord.EmbedBuilder()
                                             .setTitle(':x: | The server was not found')
-                                            .setColor('RED')
+                                            .setColor(Discord.Colors.Red)
                                     ]
                                 });
                             } else if (error == 'Error: Request failed with status code 403') {
                                 msg.edit({
                                     embeds: [
-                                        new Discord.MessageEmbed()
+                                        new Discord.EmbedBuilder()
                                             .setTitle(':x: | You are not the owner')
-                                            .setColor('RED')
+                                            .setColor(Discord.Colors.Red)
                                             .setDescription('If you are the owner of this server, that means that the API key that you gave to the bot is invalid.\n `sv!config` for remaking the configuration')
                                ] });
                             } else {
                                 msg.edit({
                                     embeds: [
-                                        new Discord.MessageEmbed()
+                                        new Discord.EmbedBuilder()
                                             .setTitle(':x: | ERROR')
-                                            .setColor('RED')
+                                            .setColor(Discord.Colors.Red)
                                             .setDescription('.\n' + error)
                                ] });
                             }
