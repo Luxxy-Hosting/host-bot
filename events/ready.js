@@ -56,7 +56,7 @@ module.exports = async (client) => {
                         await client.channels.cache.get(config.channelID.github).send({content: "**RESTARTING . . .**", embeds:[
                             new Discord.EmbedBuilder()
                             .setTitle(`**[PULL FROM GITHUB]** New update on GitHub. Pulling.`)
-                            .setColor(`BLUE`)
+                            .setColor(Discord.Colors.Blue)
                             .setDescription(`Logs:\n\`\`\`\n${response}\`\`\``)
                         ]})
                         console.log(`${chalk.red('[ GitHub ]')} the new version had been installed. Restarting now . . .`)

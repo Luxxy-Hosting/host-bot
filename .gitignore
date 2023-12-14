@@ -1,7 +1,8 @@
 
 ## installed modules
 node_modules
-
+.pnpm-store
+compose-dev.yaml
 
 ## host-log
 host-bot

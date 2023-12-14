@@ -65,9 +65,6 @@ dependencies:
   node-superfetch:
     specifier: ^0.2.3
     version: 0.2.3
-  opus@latest:
-    specifier: link:discordjs/opus@latest
-    version: link:discordjs/opus@latest
   os: {specifier: ^0.1.2, version: 0.1.2}
   ping:
     specifier: ^0.4.4
