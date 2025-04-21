@@ -2,6 +2,7 @@ const config = require('../../config.json')
 const Discord = require('discord.js');
 const axios = require('axios');
 const userData = require('../../models/userData');
+const serverData = require('../../models/serverData');
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
     if (!userDB) {
@@ -86,13 +87,19 @@ module.exports = async (client, message, args) => {
                     }).then(() => {
                         msg.edit(`${success} Server deleted!`)
                         if(!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
-                        if (deleted.data.attributes.egg === 4 || deleted.data.attributes.egg === 18) {
+                        if (deleted.data.attributes.egg === 4 || deleted.data.attributes.egg === 18 || deleted.data.attributes.egg === 19) {
                             serverCount.subtract(message.author.id + '.gameused', 1)
                             console.log('subtract game')
                         } else {
                             serverCount.subtract(message.author.id + '.botused', 1)
                             console.log('subtract bot')
                         }
+                        serverData.findOneAndDelete({ serverAdminID: output.attributes.id }).then(() => {
+                            console.log('deleted server data')
+                        }
+                        ).catch(err => {
+                            console.log(err)
+                        })
                     }).catch(err => {
                         msg.edit(`Error: ${err}`)
                     })

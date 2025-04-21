@@ -1,65 +1,222 @@
 const config = require('../config.json')
-const Discord = require('discord.js')
+const {
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    PermissionsBitField,
+    ChannelType
+} = require('discord.js');
 const wait = require('node:timers/promises').setTimeout;
 module.exports = async (client, interaction) => {
-    // if(interaction.message.channelId === config.channelID.ticketChannel && interaction.customId === 'IDDD'){
-    //     const guild = interaction.message.guild;
-    //     const {message} = interaction
-
-    //     const PingChannel = interaction.message.guild.channels.cache.find(channel => channel.name === interaction.user.username.toLowerCase() + '-ticket')
-    //     if(PingChannel) {
-    //         interaction.reply({content:`<@${interaction.user.id}> You already have a ticket, <#${PingChannel.id}>`, ephemeral: true}); 
-    //         PingChannel.send(`${interaction.user} Here is your ticket :)`)
-    //         return
-    //     }
-
-    //     let role = message.guild.roles.cache.find(r => r.id === config.roleID.staff)
-
-    //     let channel = await message.guild.channels.create(interaction.user.username+'-ticket', {
-    //         parent: config.parentID.ticketParent,
-    //         permissionOverwrites: [
-    //             {
-    //                 id: interaction.user.id,
-    //                 allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-    //             }, {
-    //                 id: message.guild.id,
-    //                 deny: ['VIEW_CHANNEL']
-    //             }, {
-    //                 id: role,
-    //                 allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-    //             }
-    //         ]
-    //     })
-
-    //     const WelcomToTicket = await channel.send({content: `<@${interaction.user.id}>`, embeds:[
-    //         new Discord.EmbedBuilder()
-    //         .setTitle(`${interaction.user.username}'s Ticket`)
-    //         .setColor(`BLUE`)
-    //         .setDescription(`Welcome to Artiom's Hosting official support, how can we help you?\nPlease describe your problem as much as possible \:D`)
-    //         .setFooter({text:`Please do not ping/ghost ping! | interact with 🔒 to close the ticket`})
-    //         ],
-    //         components: [
-    //             new Discord.MessageActionRow()
-    //             .addComponents(
-    //                 new Discord.MessageButton()
-    //                     .setEmoji('🔒')
-    //                     .setCustomId('CloseTicket')
-    //                     .setLabel('Close Ticket')
-    //                     .setStyle('SECONDARY'),
-    //             )
-    //         ]
-    //     })
-    //     interaction.reply({
-    //         content: `<@${interaction.user.id}> Your ticket had been created, check <#${WelcomToTicket.channel.id}>`,
-    //         ephemeral: true
-    //     })
-    // }
-
-    // if(client.channels.cache.get(interaction.message.channelId)?.parentId === config.parentID.ticketParent && interaction?.customId === 'CloseTicket'){
-    //     interaction.reply(`Closing This Ticket . . .`)
-    //     await wait(1000)
-    //     client.channels.cache.get(interaction.message.channelId)?.delete().catch(() => {})
-    // }
+        // CREATE TICKET
+        if (interaction.message.channelId === config.channelID.interactionsChannel && interaction.customId === 'CreateTicket') {
+            const guild = message.guild;
+    
+            const existing = guild.channels.cache.find(channel => channel.name === `${interaction.user.username.toLowerCase()}-ticket`);
+            if (existing) {
+                interaction.reply({ content: `<@${interaction.user.id}> You already have a ticket: <#${existing.id}>`, ephemeral: true });
+                existing.send(`${interaction.user} Here is your ticket :)`);
+                return;
+            }
+    
+            const staffRole = guild.roles.cache.get(config.roleID.support);
+            const ticketChannel = await guild.channels.create({
+                name: `${interaction.user.username}-ticket`,
+                type: ChannelType.GuildText,
+                parent: config.parentID.ticketParent,
+                permissionOverwrites: [
+                    {
+                        id: interaction.user.id,
+                        allow: [
+                            PermissionsBitField.Flags.ViewChannel,
+                            PermissionsBitField.Flags.SendMessages,
+                            PermissionsBitField.Flags.ReadMessageHistory
+                        ]
+                    },
+                    {
+                        id: guild.id,
+                        deny: [PermissionsBitField.Flags.ViewChannel]
+                    },
+                    {
+                        id: staffRole.id,
+                        allow: [
+                            PermissionsBitField.Flags.ViewChannel,
+                            PermissionsBitField.Flags.SendMessages,
+                            PermissionsBitField.Flags.ReadMessageHistory
+                        ]
+                    }
+                ]
+            });
+    
+            const embed = new EmbedBuilder()
+                .setTitle(`${interaction.user.username}'s Ticket`)
+                .setColor('Blue')
+                .setDescription(`Welcome to Artiom's Hosting official support, how can we help you?\nPlease describe your problem as much as possible :D`)
+                .setFooter({ text: `Please do not ping/ghost ping! | interact with 🔒 to close the ticket` });
+    
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('CloseTicket')
+                    .setEmoji('🔒')
+                    .setLabel('Close Ticket')
+                    .setStyle(ButtonStyle.Secondary)
+            );
+    
+            const sent = await ticketChannel.send({
+                content: `<@${interaction.user.id}>`,
+                embeds: [embed],
+                components: [row]
+            });
+    
+            interaction.reply({
+                content: `<@${interaction.user.id}> Your ticket has been created: <#${sent.channel.id}>`,
+                ephemeral: true
+            });
+        }
+    
+        // APPLY DEVELOPER
+        if (interaction.message.channelId === config.channelID.interactionsChannel && interaction.customId === 'ApplyDeveloper') {
+            const guild = message.guild;
+    
+            const existing = guild.channels.cache.find(channel => channel.name === `${interaction.user.username.toLowerCase()}-dev`);
+            if (existing) {
+                interaction.reply({ content: `<@${interaction.user.id}> You already have a dev application: <#${existing.id}>`, ephemeral: true });
+                existing.send(`${interaction.user} Here is your channel, please use it :)`);
+                return;
+            }
+    
+            const staffRole = guild.roles.cache.get(config.roleID.support);
+            const devChannel = await guild.channels.create({
+                name: `${interaction.user.username}-dev`,
+                type: ChannelType.GuildText,
+                parent: config.parentID.applyDeveloper,
+                permissionOverwrites: [
+                    {
+                        id: interaction.user.id,
+                        allow: [
+                            PermissionsBitField.Flags.ViewChannel,
+                            PermissionsBitField.Flags.SendMessages,
+                            PermissionsBitField.Flags.ReadMessageHistory
+                        ]
+                    },
+                    {
+                        id: guild.id,
+                        deny: [PermissionsBitField.Flags.ViewChannel]
+                    },
+                    {
+                        id: staffRole.id,
+                        allow: [
+                            PermissionsBitField.Flags.ViewChannel,
+                            PermissionsBitField.Flags.SendMessages,
+                            PermissionsBitField.Flags.ReadMessageHistory
+                        ]
+                    }
+                ]
+            });
+    
+            const embed = new EmbedBuilder()
+                .setTitle(`${interaction.user.username}'s Channel`)
+                .setColor('Blue')
+                .setDescription(`Hi, we are happy to hear that you want to apply for volunteer developer at Artiom's Hosting. Please answer the following:\n\n> 1. What is your name?\n> 2. Contact Email?\n> 3. What coding languages do you know?\n> 4. Any projects you're proud of?\n> 5. Any other details?\n\nPlease wait for a response from Artiom :)`)
+                .setFooter({ text: `Please do not ping/ghost ping! | interact with 🔒 to close the ticket` });
+    
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('CloseTicket')
+                    .setEmoji('🔒')
+                    .setStyle(ButtonStyle.Secondary)
+            );
+    
+            const sent = await devChannel.send({
+                content: `<@${interaction.user.id}>`,
+                embeds: [embed],
+                components: [row]
+            });
+    
+            interaction.reply({
+                content: `<@${interaction.user.id}> Your dev application channel is ready: <#${sent.channel.id}>`,
+                ephemeral: true
+            });
+        }
+    
+        // APPLY STAFF
+        if (interaction.message.channelId === config.channelID.interactionsChannel && interaction.customId === 'ApplyStaff') {
+            const guild = message.guild;
+    
+            const existing = guild.channels.cache.find(channel => channel.name === `${interaction.user.username.toLowerCase()}-staff`);
+            if (existing) {
+                interaction.reply({ content: `<@${interaction.user.id}> You already have a staff application: <#${existing.id}>`, ephemeral: true });
+                existing.send(`${interaction.user} Here is your channel, please use it :)`);
+                return;
+            }
+    
+            const adminRole = guild.roles.cache.get(config.roleID.administrator);
+            const staffChannel = await guild.channels.create({
+                name: `${interaction.user.username}-staff`,
+                type: ChannelType.GuildText,
+                parent: config.parentID.applyStaff,
+                permissionOverwrites: [
+                    {
+                        id: interaction.user.id,
+                        allow: [
+                            PermissionsBitField.Flags.ViewChannel,
+                            PermissionsBitField.Flags.SendMessages,
+                            PermissionsBitField.Flags.ReadMessageHistory
+                        ]
+                    },
+                    {
+                        id: guild.id,
+                        deny: [PermissionsBitField.Flags.ViewChannel]
+                    },
+                    {
+                        id: adminRole.id,
+                        allow: [
+                            PermissionsBitField.Flags.ViewChannel,
+                            PermissionsBitField.Flags.SendMessages,
+                            PermissionsBitField.Flags.ReadMessageHistory
+                        ]
+                    }
+                ]
+            });
+    
+            const embed = new EmbedBuilder()
+                .setTitle(`${interaction.user.username}'s Ticket`)
+                .setColor('Blue')
+                .setDescription(`u sure u want to apply? :D`)
+                .setFooter({ text: `Please do not ping/ghost ping! | interact with 🔒 to close the ticket` });
+    
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('CloseTicket')
+                    .setEmoji('🔒')
+                    .setLabel('Close Ticket')
+                    .setStyle(ButtonStyle.Secondary)
+            );
+    
+            const sent = await staffChannel.send({
+                content: `<@${interaction.user.id}>`,
+                embeds: [embed],
+                components: [row]
+            });
+    
+            interaction.reply({
+                content: `<@${interaction.user.id}> Your staff application channel is ready: <#${sent.channel.id}>`,
+                ephemeral: true
+            });
+        }
+    
+        // CLOSE TICKET
+        if (
+            ['ticketParent', 'applyDeveloper', 'applyStaff'].some(type =>
+                client.channels.cache.get(interaction.message.channelId)?.parentId === config.parentID[type]
+            ) &&
+            interaction.customId === 'CloseTicket'
+        ) {
+            await interaction.reply('Closing this ticket...');
+            await wait(1000);
+            client.channels.cache.get(interaction.message.channelId)?.delete().catch(() => {});
+        }
 	if (!interaction.isChatInputCommand()) return;
     if (interaction.channel.id === '950030827167817798') return interaction.reply({ content: 'You can\'t use this command in this channel',  ephemeral: true });
         
