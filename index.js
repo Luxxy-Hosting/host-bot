@@ -3,6 +3,7 @@ const { GatewayIntentBits, Partials } = require('discord.js');
 const config = require(`./config.json`);
 const db = require('quick.db')
 const handler = require("./handlers/loadslash");
+const cron = require('node-cron');
 
 // dont mind this
 
@@ -51,6 +52,11 @@ require(`./handlers/command_handler`)(client);
 require(`./handlers/mongoose`)(client);
 require(`./handlers/anti_crash`)(process);
 handler.loadSlashCommands(client);
+require(`./handlers/autodelete`)(client);
+cron.schedule('0 0 * * *', async () => {
+    console.log('[CRON] Running hourly server expiration check.');
+    await autoDeleteHandler(client);
+});
 
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 

@@ -3,6 +3,7 @@ const config = require('../../config.json')
 const axios = require('axios')
 const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`)
 module.exports = async (client, message, args) => {
+    return message.reply(`:x: This command is deprecated, please use \`${config.bot.prefix}server domain\` instead`)
     let port
     let localdomain
     let serverid = args[1]

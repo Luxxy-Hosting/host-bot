@@ -271,7 +271,7 @@ module.exports = async (client, message, args) => {
                                                 .addComponents(
                                                     new Discord.ButtonBuilder()
                                                         .setLabel('🔗 Link')
-                                                        .setURL(`https://panel.luxxy.host/server/${server}`)
+                                                        .setURL(`https://panel.luxxy.cloud/server/${server}`)
                                                         .setStyle('Link'),
                                                 )
                                         ]

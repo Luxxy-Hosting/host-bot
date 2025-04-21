@@ -86,9 +86,9 @@ module.exports = async (client, message, args) => {
                     }).then(() => {
                         msg.edit(`${success} Server deleted!`)
                         if(!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
-                        if (deleted.data.attributes.egg === 28 || deleted.data.attributes.egg === 45 || deleted.data.attributes.egg === 40 || deleted.data.attributes.egg === 2 || deleted.data.attributes.egg === 47 || deleted.data.attributes.egg === 5) {
-                            serverCount.subtract(message.author.id + '.mineused', 1)
-                            console.log('subtract mine')
+                        if (deleted.data.attributes.egg === 4 || deleted.data.attributes.egg === 18) {
+                            serverCount.subtract(message.author.id + '.gameused', 1)
+                            console.log('subtract game')
                         } else {
                             serverCount.subtract(message.author.id + '.botused', 1)
                             console.log('subtract bot')
