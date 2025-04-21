@@ -26,7 +26,7 @@ module.exports = async (client, message, args) => {
         const panelButton = new Discord.ButtonBuilder().setStyle('Link').setURL('https://panel.luxxy.cloud').setLabel("Panel");
         const row = new Discord.ActionRowBuilder().addComponents([panelButton]);
 
-        const noTypeListed = new Discord.EmbedBuilder() 
+        const noTypeListed = new Discord.EmbedBuilder()
             .setColor(0x36393f)
             .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: 'png', size: 1024, dynamic: true }) })
             .setTitle('Types of servers you can create:')

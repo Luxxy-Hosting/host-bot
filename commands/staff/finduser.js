@@ -4,6 +4,13 @@ const axios = require('axios');
 const userData = require('../../models/userData');
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.support)) return message.channel.send('You do not have the required permissions to use this command.');
+    if (!args[1]) return message.reply({
+        embeds: [
+            new Discord.EmbedBuilder()
+            .setTitle(`:x: | Please provide an email`)
+            .setColor(Discord.Colors.Red)
+        ]
+    })
     const email1 = await args[1]
     const userDB = await userData.findOne({ email: email1 });
     const servercount = serverCount.get(userDB.ID);
