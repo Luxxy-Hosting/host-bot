@@ -11,7 +11,7 @@ module.exports = (userID, serverName, location) => {
             "limits": {
                 "memory": 2048,
                 "swap": 0,
-                "disk": 25240,
+                "disk": 25600,
                 "io": 500,
                 "cpu": 200
             },
