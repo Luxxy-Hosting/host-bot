@@ -85,6 +85,18 @@
         "clientAPI":"",
         "depolymentlocations": [ 2 ]
     },
+    "locations": [
+        {
+            "id": 1,
+            "label": "🇬🇧 United Kingdom",
+            "code": "gb"
+        },
+        {
+            "id": 2,
+            "label": "🇺🇸 United States",
+            "code": "us"
+        }
+    ],
     "nginxPM": {
         "host": "",
         "email": "",
