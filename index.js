@@ -1,3 +1,4 @@
+//
 const Discord = require('discord.js');
 const { GatewayIntentBits, Partials, EmbedBuilder, Colors } = require('discord.js');
 const config = require(`./config.json`);
