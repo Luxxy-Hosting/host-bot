@@ -3,8 +3,6 @@ const config = require("../../config.json");
 const axios = require("axios");
 const UserDatadata = require("../../models/userData");
 
-const serverCount = new Map(); // Temp server slot store, replace with persistent db
-
 module.exports = {
     name: "create",
     category: "server",
