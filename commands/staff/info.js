@@ -6,7 +6,7 @@ module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.support)) return message.channel.send('You do not have the required permissions to use this command.');
     const user = await message.mentions.users.first() || message.author;
     const userDB = await userData.findOne({ ID: user.id });
-    const servercount = serverCount.get(user.id);
+    const usage = serverCount.get(user.id);
     if (!userDB) return message.reply({
         embeds: [
             new Discord.EmbedBuilder()
@@ -56,7 +56,7 @@ module.exports = async (client, message, args) => {
                     .addFields({ name:'Link Time', value: `\`\`\`\n${userDB.linkTime}\`\`\``, inline: true})
                     .addFields({ name: 'Servers', value:  `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, inline: true})
                     .addFields({ name: 'Servers Name', value:  `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, inline: true})
-                    .addFields({ name: 'Server Count', value: `\`\`\`\n${serverCount.get(user.id).gameused} / ${serverCount.get(user.id).gamehave} \n${serverCount.get(user.id).botused} / ${serverCount.get(user.id).bothave}\`\`\``, inline: true})
+                    .addFields({ name: 'Server Count', value: `\`\`\`\n${usage.gameused} / ${usage.gamehave} \n${usage.botused} / ${usage.bothave}\`\`\``, inline: true})
                     .setColor(Discord.Colors.Green)
                 ]
             })
