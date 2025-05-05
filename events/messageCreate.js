@@ -123,7 +123,7 @@ module.exports = async (client, message) => {
             }catch(err){console.log(err).toString()}
             return
         }else if(cmd === 'music'){
-            return message.reply('code broke')
+         //   return message.reply('code broke')
             try{
                 if(!args[0]) return require('../commands/music/help.js')(client, message, args)
                 await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))

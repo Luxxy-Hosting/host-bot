@@ -33,6 +33,8 @@ module.exports = async (client) => {
     logSetting('Join Voice Channel', config.settings.joinvoicechannelonready);
     console.log(chalk.yellow.bold('------------------------\n'));
 
+    //client.manager.init(client.user.id);
+
     try {
         console.log(chalk.magenta('[AutoRun] Initializing autorun scripts...'));
         const autorunFiles = fs.readdirSync(`./autoRun`).filter(file => file.endsWith('.js'));

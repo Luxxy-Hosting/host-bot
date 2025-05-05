@@ -53,10 +53,7 @@ require(`./handlers/mongoose`)(client);
 require(`./handlers/anti_crash`)(process);
 handler.loadSlashCommands(client);
 require(`./handlers/autodelete`)(client);
-cron.schedule('0 0 * * *', async () => {
-    console.log('[CRON] Running hourly server expiration check.');
-    await autoDeleteHandler(client);
-});
+require(`./handlers/music`)
 
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 
