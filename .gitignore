@@ -18,3 +18,5 @@ logs
 
 ## database
 json.sqlite*
+
+temp/*

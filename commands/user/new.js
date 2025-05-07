@@ -210,9 +210,9 @@ module.exports = async (client, message, args) => {
                             linkDate: moment().format("YYYY-MM-DD"),
                         }).save()
                         server1.set(message.author.id, {
-                            mineused: 0,
+                            gameused: 0,
                             botused: 0,
-                            minehave: 1,
+                            gamehave: 1,
                             bothave: 2
                         })
                         msg.edit({
