@@ -9,7 +9,7 @@ module.exports = (userID, serverName, location) => {
         "docker_image": "ghcr.io/luxxy-gf/python_3.12",
         "startup": "/start.sh",
         "limits": {
-            "memory": 500,
+            "memory": 512,
             "swap": 0,
             "disk": 2048,
             "io": 500,
