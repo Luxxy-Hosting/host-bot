@@ -26,7 +26,7 @@ module.exports = {
     ],
     ownerOnly: false,
     run: async (client, interaction) => {
-        return interaction.reply(`:x: This command is not available yet. Please check back later.`);
+        // return interaction.reply(`:x: This command is not available yet. Please check back later.`);
         const type = interaction.options.getString('type');
         const name = interaction.options.getString('name');
 

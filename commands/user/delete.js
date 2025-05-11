@@ -131,9 +131,9 @@ module.exports = async (client, message, args) => {
                 }).then(() => {
                     const userData1 = require('../../models/userData'); userData1.deleteOne({ ID: `${userDB.ID}` }).catch(err => {return console.log(err)})
                     serverCount.set(message.author.id, {
-                        mineused: 0,
+                        gameused: 0,
                         botused: 0,
-                        minehave: 1,
+                        gamehave: 1,
                         bothave: 2
                     })
 
