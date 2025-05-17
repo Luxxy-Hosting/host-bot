@@ -52,8 +52,8 @@ require(`./handlers/command_handler`)(client);
 require(`./handlers/mongoose`)(client);
 require(`./handlers/anti_crash`)(process);
 handler.loadSlashCommands(client);
-require(`./handlers/autodelete`)(client);
-require(`./handlers/music`)
+// require(`./handlers/autodelete`)(client);
+// require(`./handlers/music`)
 
 if(config.settings.consoleSave) require(`./logs/console.log`)()
 
