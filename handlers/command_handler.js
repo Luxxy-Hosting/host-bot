@@ -11,5 +11,10 @@ module.exports = async (client) =>{
             }
         }
     }
-    ['info', 'admin'].forEach(e => load_dir(e));
+    // Load all command directories
+    ['info', 'admin', 'user', 'server', 'staff', 'music'].forEach(e => {
+        if(fs.existsSync(`./commands/${e}`)) {
+            load_dir(e);
+        }
+    });
 }

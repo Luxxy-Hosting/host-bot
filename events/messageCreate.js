@@ -82,6 +82,21 @@ module.exports = async (client, message) => {
     if(!message.content.toLowerCase().startsWith(config.bot.prefix) || message.author.bot) return;
     if(message.content.length <= config.bot.prefix.length) return 
 
+    // Redirect users to slash commands
+    const slashEmbed = new EmbedBuilder()
+        .setColor(0x0099ff)
+        .setTitle('🔄 Commands Updated!')
+        .setDescription('Traditional commands have been replaced with slash commands!\n\nUse `/help` to see all available commands.')
+        .addFields([
+            { name: '🆕 Slash Commands', value: 'Type `/` to see all available commands', inline: true },
+            { name: '📚 Examples', value: '`/user new`\n`/server create`\n`/help`', inline: true }
+        ])
+        .setFooter({ text: 'Thank you for using Luxxy Hosting!' })
+        .setTimestamp();
+    
+    message.reply({ embeds: [slashEmbed] });
+    return; 
+
     const authorized = [
         "971693841751093269",
         "1164551170631680020",
