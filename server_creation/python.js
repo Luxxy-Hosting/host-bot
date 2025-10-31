@@ -6,7 +6,7 @@ module.exports = (userID, serverName, location) => {
         "user": userID,
         "nest": 7,
         "egg": 27,
-        "docker_image": "ghcr.io/luxxy-gf/python_3.12",
+        "docker_image": "ghcr.io/luxxy-gf/python_3.14",
         "startup": "/start.sh",
         "limits": {
             "memory": 512,
