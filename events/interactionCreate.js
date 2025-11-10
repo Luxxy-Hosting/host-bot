@@ -9,9 +9,12 @@ const {
 } = require('discord.js');
 const wait = require('node:timers/promises').setTimeout;
 module.exports = async (client, interaction) => {
+    if (interaction.isButton()) {
+        const parentChannelId = interaction.message?.channelId;
+        const guild = interaction.guild;
+
         // CREATE TICKET
-        if (interaction.message.channelId === config.channelID.interactionsChannel && interaction.customId === 'CreateTicket') {
-            const guild = message.guild;
+        if (parentChannelId === config.channelID.interactionsChannel && interaction.customId === 'CreateTicket') {
     
             const existing = guild.channels.cache.find(channel => channel.name === `${interaction.user.username.toLowerCase()}-ticket`);
             if (existing) {
@@ -76,8 +79,7 @@ module.exports = async (client, interaction) => {
         }
     
         // APPLY DEVELOPER
-        if (interaction.message.channelId === config.channelID.interactionsChannel && interaction.customId === 'ApplyDeveloper') {
-            const guild = message.guild;
+        if (parentChannelId === config.channelID.interactionsChannel && interaction.customId === 'ApplyDeveloper') {
     
             const existing = guild.channels.cache.find(channel => channel.name === `${interaction.user.username.toLowerCase()}-dev`);
             if (existing) {
@@ -141,8 +143,7 @@ module.exports = async (client, interaction) => {
         }
     
         // APPLY STAFF
-        if (interaction.message.channelId === config.channelID.interactionsChannel && interaction.customId === 'ApplyStaff') {
-            const guild = message.guild;
+        if (parentChannelId === config.channelID.interactionsChannel && interaction.customId === 'ApplyStaff') {
     
             const existing = guild.channels.cache.find(channel => channel.name === `${interaction.user.username.toLowerCase()}-staff`);
             if (existing) {
@@ -209,15 +210,18 @@ module.exports = async (client, interaction) => {
         // CLOSE TICKET
         if (
             ['ticketParent', 'applyDeveloper', 'applyStaff'].some(type =>
-                client.channels.cache.get(interaction.message.channelId)?.parentId === config.parentID[type]
+                client.channels.cache.get(parentChannelId)?.parentId === config.parentID[type]
             ) &&
             interaction.customId === 'CloseTicket'
         ) {
             await interaction.reply('Closing this ticket...');
             await wait(1000);
-            client.channels.cache.get(interaction.message.channelId)?.delete().catch(() => {});
+            client.channels.cache.get(parentChannelId)?.delete().catch(() => {});
         }
-	if (!interaction.isChatInputCommand()) return;
+        return;
+    }
+
+    if (!interaction.isChatInputCommand()) return;
     if (interaction.channel.id === '950030827167817798') return interaction.reply({ content: 'You can\'t use this command in this channel',  ephemeral: true });
         
         const command = client.slash.get(interaction.commandName);

@@ -16,6 +16,7 @@ module.exports = async (client, message) => {
 
     if (message.content === '<:happy:967250513492049960>') return message.reply('<:happy:967250513492049960>')
     if (message.content === '💀') return message.react('💀')
+    if (message.content === "🖕") return message.reply("🖕")
 
     function deleteMessage() {
         //console.log("deleted " + message.content + " from " + message.author.tag)
@@ -128,6 +129,14 @@ module.exports = async (client, message) => {
                 if(!args[0]) return require('../commands/music/help.js')(client, message, args)
                 await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
                 require(`../commands/music/${args[0]}.js`)(client, message, args)
+            }catch(err){console.log(err).toString()}
+            return
+        }else if(cmd === 'vps'){
+            try{
+                if (!message.member.roles.cache.has('941026456446828568')) return message.reply('womp womp :skull:')
+                if(!args[0]) return require('../commands/vps/help.js')(client, message, args)
+                await console.log(chalk.red(`[#${message.channel.name}]`) + chalk.yellow(` ${message.author.tag} (${message.author.id})`) + chalk.green(` ${message.content}`))
+                require(`../commands/vps/${args[0]}.js`)(client, message, args)
             }catch(err){console.log(err).toString()}
             return
         }

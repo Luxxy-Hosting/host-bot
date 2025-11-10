@@ -1,25 +1,25 @@
 const { SlashCommandBuilder } = require('discord.js');
 const runLegacyCommand = require('../../utils/runLegacyCommand');
-const legacyCommand = require('../../commands/server/delete.js');
+const legacyCommand = require('../../commands/staff/finduser.js');
 
 const data = new SlashCommandBuilder()
-    .setName('server-delete')
-    .setDescription('Delete one of your servers')
+    .setName('staff-finduser')
+    .setDescription('Find a user by their panel email')
     .addStringOption(option =>
         option
-            .setName('server_id')
-            .setDescription('Server identifier (e.g. ffa92c56)')
+            .setName('email')
+            .setDescription('Email address to search for')
             .setRequired(true)
     );
 
 module.exports = {
     data,
     name: data.name,
-    category: 'server',
+    category: 'staff',
     ownerOnly: false,
     run: async (client, interaction) => {
-        const serverId = interaction.options.getString('server_id');
-        const args = ['delete', serverId];
+        const email = interaction.options.getString('email', true);
+        const args = ['finduser', email];
         await runLegacyCommand(interaction, legacyCommand, args);
     },
 };

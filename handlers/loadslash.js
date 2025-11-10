@@ -15,11 +15,20 @@ const config = require('../config.json')
         
         for (const file of commandFiles) {
             const command = require(`../slashCommands/${folder}/${file}`);
-            
+
             if (command.name) {
                 client.slash.set(command.name, command);
-                slash.push(command)
-                console.log(`SlashCommand ${file} is being loaded `);
+
+                const slashPayload = command.data?.toJSON
+                    ? command.data.toJSON()
+                    : {
+                        name: command.name,
+                        description: command.description ?? 'No description provided.',
+                        options: command.options ?? [],
+                    };
+
+                slash.push(slashPayload);
+                console.log(`SlashCommand ${file} is being loaded`);
             } else {
                 console.log(`❌ SlashCommand ${file} missing a help.name or help.name is not in string `);
                 continue;

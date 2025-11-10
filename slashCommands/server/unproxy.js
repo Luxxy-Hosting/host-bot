@@ -1,14 +1,14 @@
 const { SlashCommandBuilder } = require('discord.js');
 const runLegacyCommand = require('../../utils/runLegacyCommand');
-const legacyCommand = require('../../commands/server/delete.js');
+const legacyCommand = require('../../commands/server/unproxy.js');
 
 const data = new SlashCommandBuilder()
-    .setName('server-delete')
-    .setDescription('Delete one of your servers')
+    .setName('server-unproxy')
+    .setDescription('Remove a proxied domain from your server (deprecated)')
     .addStringOption(option =>
         option
-            .setName('server_id')
-            .setDescription('Server identifier (e.g. ffa92c56)')
+            .setName('domain')
+            .setDescription('Domain to unproxy (example.com)')
             .setRequired(true)
     );
 
@@ -18,8 +18,8 @@ module.exports = {
     category: 'server',
     ownerOnly: false,
     run: async (client, interaction) => {
-        const serverId = interaction.options.getString('server_id');
-        const args = ['delete', serverId];
+        const domain = interaction.options.getString('domain', true);
+        const args = ['unproxy', domain];
         await runLegacyCommand(interaction, legacyCommand, args);
     },
 };

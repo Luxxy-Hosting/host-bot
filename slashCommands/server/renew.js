@@ -1,14 +1,14 @@
 const { SlashCommandBuilder } = require('discord.js');
 const runLegacyCommand = require('../../utils/runLegacyCommand');
-const legacyCommand = require('../../commands/server/delete.js');
+const legacyCommand = require('../../commands/server/renew.js');
 
 const data = new SlashCommandBuilder()
-    .setName('server-delete')
-    .setDescription('Delete one of your servers')
+    .setName('server-renew')
+    .setDescription('Renew an expiring server (available within 24h of expiry)')
     .addStringOption(option =>
         option
             .setName('server_id')
-            .setDescription('Server identifier (e.g. ffa92c56)')
+            .setDescription('Server identifier to renew')
             .setRequired(true)
     );
 
@@ -18,8 +18,8 @@ module.exports = {
     category: 'server',
     ownerOnly: false,
     run: async (client, interaction) => {
-        const serverId = interaction.options.getString('server_id');
-        const args = ['delete', serverId];
+        const serverId = interaction.options.getString('server_id', true);
+        const args = ['renew', serverId];
         await runLegacyCommand(interaction, legacyCommand, args);
     },
 };

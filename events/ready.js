@@ -59,9 +59,9 @@ module.exports = async (client) => {
 
     if (config.settings.joinvoicechannelonready) {
         try {
-            const channel = client.channels.cache.get('1363986923122589697');
+            const channel = client.channels.cache.get('1411294900917637271');
             if (!channel) {
-                console.error(chalk.red('[Voice] Cannot find specified voice channel (ID: 1164316079565320223).'));
+                console.error(chalk.red('[Voice] Cannot find specified voice channel (ID: 1411294900917637271).'));
             } else if (!channel.isVoiceBased()) {
                  console.error(chalk.red(`[Voice] Channel ${channel.name} is not a voice-based channel.`));
             } else {

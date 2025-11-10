@@ -1,25 +1,25 @@
 const { SlashCommandBuilder } = require('discord.js');
 const runLegacyCommand = require('../../utils/runLegacyCommand');
-const legacyCommand = require('../../commands/server/delete.js');
+const legacyCommand = require('../../commands/staff/dmintol.js');
 
 const data = new SlashCommandBuilder()
-    .setName('server-delete')
-    .setDescription('Delete one of your servers')
+    .setName('staff-dmintol')
+    .setDescription('DM Intol with a message')
     .addStringOption(option =>
         option
-            .setName('server_id')
-            .setDescription('Server identifier (e.g. ffa92c56)')
+            .setName('message')
+            .setDescription('Message to send')
             .setRequired(true)
     );
 
 module.exports = {
     data,
     name: data.name,
-    category: 'server',
+    category: 'staff',
     ownerOnly: false,
     run: async (client, interaction) => {
-        const serverId = interaction.options.getString('server_id');
-        const args = ['delete', serverId];
+        const content = interaction.options.getString('message', true);
+        const args = ['dmintol', content];
         await runLegacyCommand(interaction, legacyCommand, args);
     },
 };

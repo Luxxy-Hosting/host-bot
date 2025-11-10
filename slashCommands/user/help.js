@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
 const runLegacyCommand = require('../../utils/runLegacyCommand');
-const legacyCommand = require('../../commands/user/new.js');
+const legacyCommand = require('../../commands/user/help.js');
 
 const data = new SlashCommandBuilder()
-    .setName('user-new')
-    .setDescription('Create a new Luxxy account');
+    .setName('user-help')
+    .setDescription('Show all /user commands');
 
 module.exports = {
     data,
@@ -12,7 +12,7 @@ module.exports = {
     category: 'user',
     ownerOnly: false,
     run: async (client, interaction) => {
-        const args = ['new'];
+        const args = ['help'];
         await runLegacyCommand(interaction, legacyCommand, args);
     },
 };
