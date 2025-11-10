@@ -41,5 +41,8 @@
     "util": "^0.12.5",
     "validator": "^13.11.0",
     "ws": "^8.18.2"
+  },
+  "overrides": {
+    "better-sqlite3": "^9.4.3"
   }
 }
