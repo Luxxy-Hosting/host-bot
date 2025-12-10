@@ -64,7 +64,6 @@ const fetchServersInLocation = async () => {
         serverData.forEach((srv) => {
             if (srv?.attributes?.identifier) {
                 servers.push({
-                    id: srv.attributes.id,
                     identifier: srv.attributes.identifier,
                     name: srv.attributes.name,
                     limits: srv.attributes.limits || {},
@@ -141,16 +140,16 @@ const checkServerUsage = async (server) => {
 
     try {
         const resourceResponse = await axios({
-            url: `${config.pterodactyl.host}/api/application/servers/${server.id}/utilization`,
+            url: `${config.pterodactyl.host}/api/client/servers/${server.identifier}/resources`,
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
+                Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
                 'Content-Type': 'application/json',
                 Accept: 'Application/vnd.pterodactyl.v1+json',
             },
         });
 
-        const resources = resourceResponse.data?.attributes || {};
+        const resources = resourceResponse.data?.attributes?.resources || {};
         const limits = server.limits || {};
 
         if (resources.current_state === 'offline') {
