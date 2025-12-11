@@ -11,6 +11,11 @@ const SUSPICIOUS_KEYWORDS = ['xmrig', 'miner', 'botnet', 'stress', 'ddos', 'udp'
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const clientFileHeaders = {
+    Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
+    Accept: 'application/json',
+};
+
 const bytesToMB = (bytes = 0) => Math.round(bytes / 1024 / 1024);
 
 const playAlertSound = (client) => {
@@ -79,34 +84,29 @@ const checkSuspiciousFiles = async (serverIdentifier) => {
     const suspiciousFindings = [];
 
     try {
-        const listResponse = await axios({
-            url: `${config.pterodactyl.host}/api/client/servers/${serverIdentifier}/files/list`,
-            method: 'GET',
-            params: { directory: '/' },
-            headers: {
-                Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
-                'Content-Type': 'application/json',
-                Accept: 'Application/vnd.pterodactyl.v1+json',
+        const listResponse = await axios.get(
+            `${config.pterodactyl.host}/api/client/servers/${serverIdentifier}/files/list`,
+            {
+                params: { directory: '/' },
+                headers: clientFileHeaders,
             },
-        });
+        );
 
-        const files = listResponse.data?.data || [];
+        const files = Array.isArray(listResponse.data?.data) ? listResponse.data.data : [];
         const flaggedFiles = files.filter((file) => file?.attributes?.is_file && SUSPICIOUS_KEYWORDS.some((keyword) => file.attributes.name.toLowerCase().includes(keyword)));
 
         for (const file of flaggedFiles.slice(0, 3)) { // keep content checks light
             await wait(300);
             try {
-                const contentResponse = await axios({
-                    url: `${config.pterodactyl.host}/api/client/servers/${serverIdentifier}/files/contents`,
-                    method: 'GET',
-                    params: { file: `/${file.attributes.name}` },
-                    headers: {
-                        Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
-                        'Content-Type': 'application/json',
-                        Accept: 'Application/vnd.pterodactyl.v1+json',
+                const contentResponse = await axios.get(
+                    `${config.pterodactyl.host}/api/client/servers/${serverIdentifier}/files/contents`,
+                    {
+                        params: { file: `/${file.attributes.name}` },
+                        headers: { ...clientFileHeaders, Accept: 'text/plain' },
+                        responseType: 'text',
+                        timeout: 5000,
                     },
-                    timeout: 5000,
-                });
+                );
 
                 const snippet = (contentResponse.data || '').toString().slice(0, 200).toLowerCase();
                 const contentKeyword = SUSPICIOUS_KEYWORDS.find((keyword) => snippet.includes(keyword));
@@ -129,7 +129,8 @@ const checkSuspiciousFiles = async (serverIdentifier) => {
             }
         }
     } catch (error) {
-        console.error(`[Abuse Monitor] Failed to list files for ${serverIdentifier}:`, error.message);
+        const status = error?.response?.status;
+        console.error(`[Abuse Monitor] Failed to list files for ${serverIdentifier}:`, status ? `${status} response` : error.message);
     }
 
     return suspiciousFindings;
