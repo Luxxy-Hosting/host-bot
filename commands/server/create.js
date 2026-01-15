@@ -34,7 +34,7 @@ module.exports = async (client, message, args) => {
                 { name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true },
                 { name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true },
                 { name: `${emoji} __**Other**__:`, value: `> BeamMP \n > Teamspeak \n > Codeserver`, inline: true },
-                { name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Purpur \n > Bedrock \n > PocketmineMP \n > Fabric \n > Vanillamc`, inline: true }
+                { name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Purpur \n > Bedrock \n > PocketmineMP \n > Fabric \n > Vanillamc \n > Hytale`, inline: true }
             )
             .setFooter({ text: `Example: ${config.bot.prefix}server create paper Luxxy is the best`, iconURL: message.guild.iconURL({ size: 1024, format: 'png', dynamic: true }) });
 
