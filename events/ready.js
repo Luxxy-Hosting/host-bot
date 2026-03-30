@@ -157,13 +157,13 @@ module.exports = async (client) => {
         }
 
         axios({
-            url: config.pterodactyl.host + "/api/application/servers",
+            url: config.pterodactyl.host + "/api/admin/servers",
             method: 'GET',
             timeout: 5000,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
         }).then(response => {
             client.channels.cache.get(config.voiceID.servers)?.edit({ name: `Total Servers: ${response.data.meta.pagination.total.toLocaleString()}` })
@@ -173,13 +173,13 @@ module.exports = async (client) => {
         });
 
         axios({
-            url: config.pterodactyl.host + "/api/application/users",
+            url: config.pterodactyl.host + "/api/admin/users",
             method: 'GET',
             timeout: 5000,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
         }).then(response => {
             client.channels.cache.get(config.voiceID.clients)?.edit({ name: `Total Users: ${response.data.meta.pagination.total.toLocaleString()}` })

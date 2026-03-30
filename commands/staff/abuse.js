@@ -9,7 +9,7 @@ const ABUSE_LOG_CHANNEL_ID = config.channelID?.abuse;
 const PANEL_HEADERS = {
     'Authorization': `Bearer ${config.pterodactyl.adminApiKey}`,
     'Content-Type': 'application/json',
-    'Accept': 'Application/vnd.pterodactyl.v1+json',
+    'Accept': 'application/json',
 };
 
 const isAlphanumeric = value => /^[a-zA-Z0-9]+$/.test(value);
@@ -174,24 +174,25 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
 
     if (ownerDoc) {
         try {
-            const response = await axios.get(`${config.pterodactyl.host}/api/application/users/${ownerDoc.consoleID}?include=servers`, {
+            const response = await axios.get(`${config.pterodactyl.host}/api/admin/users/${ownerDoc.consoleID}/servers?per_page=100`, {
                 headers: PANEL_HEADERS,
             });
-            const servers = response.data.attributes.relationships?.servers?.data || [];
+            const servers = response.data?.servers?.data || [];
 
             for (const srv of servers) {
                 try {
-                    await axios.delete(`${config.pterodactyl.host}/api/application/servers/${srv.attributes.id}/force`, {
+                    await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${srv.uuid}`, {
                         headers: PANEL_HEADERS,
+                        data: { force: true, delete_backups: true }
                     });
                     serversDeleted += 1;
-                    const trackedDoc = trackedServerMap.get(String(srv.attributes.id));
+                    const trackedDoc = trackedServerMap.get(String(srv.uuid));
                     if (trackedDoc) {
                         await serverData.deleteOne({ _id: trackedDoc._id });
-                        trackedServerMap.delete(String(srv.attributes.id));
+                        trackedServerMap.delete(String(srv.uuid));
                     }
                 } catch (err) {
-                    serverDeleteFailures.push(`${srv.attributes.identifier || srv.attributes.id}: ${formatError(err)}`);
+                    serverDeleteFailures.push(`${srv.uuid_short || srv.uuid}: ${formatError(err)}`);
                 }
             }
         } catch (err) {
@@ -200,8 +201,9 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
     } else if (trackedServers.length) {
         for (const doc of trackedServers) {
             try {
-                await axios.delete(`${config.pterodactyl.host}/api/application/servers/${doc.serverAdminID}/force`, {
+                await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${doc.serverAdminID}`, {
                     headers: PANEL_HEADERS,
+                    data: { force: true, delete_backups: true }
                 });
                 serversDeleted += 1;
                 await serverData.deleteOne({ _id: doc._id });
@@ -215,7 +217,7 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
 
     if (ownerDoc) {
         try {
-            await axios.delete(`${config.pterodactyl.host}/api/application/users/${ownerDoc.consoleID}`, {
+            await axios.delete(`${config.pterodactyl.host}/api/admin/users/${ownerDoc.consoleID}`, {
                 headers: PANEL_HEADERS,
             });
             await userData.deleteOne({ ID: ownerId });

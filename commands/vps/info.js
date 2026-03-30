@@ -39,7 +39,7 @@ module.exports = async (client, message, args) => {
     }
     const serverIdentifier = args[1].toLowerCase();
 
-    const allServersUrl = `${config.luxxy.apiUrl}/api/application/servers`;
+    const allServersUrl = `${config.luxxy.apiUrl}/api/admin/servers`;
     const apiHeaders = {
         'Authorization': `Bearer ${config.luxxy.apiToken}`,
         'Accept': 'application/json',
@@ -54,12 +54,12 @@ module.exports = async (client, message, args) => {
         return message.reply('Could not fetch the server list to find your server. The API might be experiencing issues.');
     }
 
-    if (!allServersResponse.data || !allServersResponse.data.data || !Array.isArray(allServersResponse.data.data)) {
+    if (!allServersResponse.data || !allServersResponse.data.servers?.data || !Array.isArray(allServersResponse.data.servers?.data)) {
         console.warn('Unexpected format for all servers response:', allServersResponse.data);
         return message.reply('Received an unexpected response format when fetching the server list.');
     }
 
-    const servers = allServersResponse.data.data;
+    const servers = allServersResponse.data.servers?.data;
     const matchedServers = servers.filter(server =>
         (server.id && server.id.toLowerCase() === serverIdentifier) ||
         (server.uuid && server.uuid.toLowerCase().startsWith(serverIdentifier))
@@ -83,7 +83,7 @@ module.exports = async (client, message, args) => {
     }
 
     // Step 3: Fetch specific server details
-    const specificServerUrl = `${config.luxxy.apiUrl}/api/application/servers/${targetServerFullUuid}`;
+    const specificServerUrl = `${config.luxxy.apiUrl}/api/admin/servers/${targetServerFullUuid}`;
     let specificServerResponse;
     try {
         specificServerResponse = await axios.get(specificServerUrl, { headers: apiHeaders });
@@ -96,13 +96,13 @@ module.exports = async (client, message, args) => {
     }
 
     // Check if the detailed server data is present as expected.
-    // Based on user log, data is in specificServerResponse.data.data
-    if (!specificServerResponse.data || !specificServerResponse.data.data) {
+    // Based on user log, data is in specificServerResponse.data.server
+    if (!specificServerResponse.data || !specificServerResponse.data.server) {
         console.warn("Fetched specific server data, but the expected 'data' field (containing server details) is missing. Response:", specificServerResponse.data);
         return message.reply('Could not parse server details. The API response format might be different than expected.');
     }
 
-    const serverData = specificServerResponse.data.data; // Corrected: server details are here
+    const serverData = specificServerResponse.data.server; // Corrected: server details are here
 
     // Step 4: Build and send the embed
     const embed = new EmbedBuilder()

@@ -17,20 +17,18 @@ module.exports = async (client, message, args) => {
     const userdata = require('../../models/userData')
     const userdb = await userdata.findOne({ ID: message.author.id })
     let preoutput = (await axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userdb.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + userdb.consoleID + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
-    }).catch(err => {})).data.attributes.relationships.servers.data
+    }).catch(err => {})).data?.servers?.data || [];
 
     if(!preoutput) return message.channel.send(`:x: There was an error connecting to the panel`)
 
-    const isurserver = await preoutput.find(srv => srv.attributes ? srv.attributes.identifier == args[1] : false)
+    const isurserver = await preoutput.find(srv => srv.uuid_short == args[1])
     if(!isurserver) return message.reply(`:x: I could not find that server`)
 
     let serverdata = (await axios({
@@ -41,9 +39,9 @@ module.exports = async (client, message, args) => {
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
-    }).catch(err => {}))?.data.attributes
+    }).catch(err => {}))?.data.server
     if(!serverdata) return message.channel.send(`:x: There was an error connecting to the panel`)
 
     localdomain = serverdata.sftp_details.ip
@@ -53,7 +51,7 @@ module.exports = async (client, message, args) => {
         message.reply({
             embeds:[
                 new Discord.EmbedBuilder()
-                .addFields({ name: `Apparently you have more than one port`, value: `The ports you have are:\n\`\`\`\n${serverdata.relationships.allocations.data.map(x => i++ +". "+ x.attributes.port).join('\n')}\`\`\`\nPlease send a new message with the port you want to proxy` } )
+                .addFields({ name: `Apparently you have more than one port`, value: `The ports you have are:\n\`\`\`\n${serverdata.relationships.allocations.data.map(x => i++ +". "+ x.port).join('\n')}\`\`\`\nPlease send a new message with the port you want to proxy` } )
                 .setColor(Discord.Colors.Orange)
             ]
         })
@@ -61,11 +59,11 @@ module.exports = async (client, message, args) => {
         let collected = await message.channel.awaitMessages({ filter, max: 1, time: 10000, errors: ['time'] }).catch(err => {return message.reply(`Time had expired . . .`)})
         if(isNaN(collected?.first()?.content)) return message.reply(`:x: The Message you sent is not a number`)
         let postchosen = parseInt(collected.first().content)
-        if(!serverdata.relationships.allocations.data.map(x => x.attributes.port).includes(postchosen)) return message.reply(`:x: The port selected isnt in the list.`)
+        if(!serverdata.relationships.allocations.data.map(x => x.port).includes(postchosen)) return message.reply(`:x: The port selected isnt in the list.`)
 
         port = postchosen
     }else{
-        port = serverdata.relationships.allocations.data[0].attributes.port
+        port = serverdata.relationships.allocations.data[0].port
     }
 
     let msg = await message.channel.send(`Proxying . . .`)

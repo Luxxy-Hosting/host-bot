@@ -22,7 +22,7 @@ module.exports = async (client, message, args) => {
 
     let apiResponse;
     try {
-        apiResponse = await axios.get(config.luxxy.apiUrl + '/api/application/servers', {
+        apiResponse = await axios.get(config.luxxy.apiUrl + '/api/admin/servers', {
             headers: {
                 'Authorization': `Bearer ${config.luxxy.apiToken}`,
                 'Accept': 'application/json', // Good practice to specify accept header
@@ -51,11 +51,11 @@ module.exports = async (client, message, args) => {
         return message.reply(errorMsg);
     }
 
-    if (!apiResponse || !apiResponse.data || !apiResponse.data.data) {
+    if (!apiResponse || !apiResponse.data || !(apiResponse.data.servers?.data || [])) {
         return message.reply('Failed to retrieve valid server data from the API.');
     }
 
-    const servers = apiResponse.data.data;
+    const servers = (apiResponse.data.servers?.data || []);
 
     if (servers.length === 0) {
         const embed = new EmbedBuilder()

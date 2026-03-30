@@ -36,26 +36,26 @@ module.exports = async (client, message, args) => {
     const msg = await message.channel.send(`Checking server \`${server}\`...`);
 
     try {
-        const userResponse = await axios.get(`${config.pterodactyl.host}/api/application/users/${userDB.consoleID}?include=servers`, {
+        const userResponse = await axios.get(`${config.pterodactyl.host}/api/admin/users/${userDB.consoleID}/servers?per_page=100`, {
             headers: {
                 'Authorization': `Bearer ${config.pterodactyl.adminApiKey}`,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
         });
 
-        const serverData = userResponse.data.attributes.relationships.servers.data.find(s => s.attributes?.identifier === server);
+        const serverData = (userResponse.data?.servers?.data || []).find(s => s?.uuid_short === server);
         if (!serverData) return msg.edit(`:x: | Server \`${server}\` not found in your list.`);
 
         const serverInfoResponse = await axios.get(`${config.pterodactyl.host}/api/client/servers/${server}`, {
             headers: {
                 'Authorization': `Bearer ${config.pterodactyl.clientAPI}`,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
         });
 
-        const { name: srvname, node, uuid, identifier } = serverInfoResponse.data.attributes;
+        const { name: srvname, node, uuid, uuid_short: identifier } = serverInfoResponse.data.server;
 
         const wsResp = await axios.get(`${config.pterodactyl.host}/api/client/servers/${identifier}/websocket`, {
             headers: {
@@ -65,8 +65,8 @@ module.exports = async (client, message, args) => {
             withCredentials: true
         });
 
-        const token = wsResp.data.data.token;
-        const socketURL = wsResp.data.data.socket.replace(/\\/g, '');
+        const token = wsResp.data.token;
+        const socketURL = wsResp.data.url.replace(/\\/g, '');
 
         const embed = new Discord.EmbedBuilder()
             .setTitle('Live Server Status')

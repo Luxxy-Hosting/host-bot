@@ -11,7 +11,7 @@ module.exports = async (client, message, args) => {
         .setColor(0x00ff00)
         .addFields({ name: `Username:`, value: `${userDataDB.username}`, inline: true })
         .addFields({ name: `Link Date:`, value: `${userDataDB.linkDate}`, inline: true })
-        .addFields({ name: `Link Date:`, value: `${userDataDB.linkTime}`, inline: true })
+        .addFields({ name: `Link Time:`, value: `${userDataDB.linkTime}`, inline: true })
         .setTimestamp()
     ]})
 }

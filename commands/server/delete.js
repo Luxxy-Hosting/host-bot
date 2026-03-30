@@ -17,24 +17,22 @@ module.exports = async (client, message, args) => {
 
     let msg = await message.channel.send('Let me check if this is your server, please wait . . .')
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
     }).then(async response => {
-        const preoutput = response.data.attributes.relationships.servers.data
-        const output = await preoutput.find(srv => srv.attributes ? srv.attributes.identifier == args[1] : false)
+        const preoutput = response.data?.servers?.data || [];
+        const output = await preoutput.find(srv => srv.uuid_short == args[1])
 
         if (!output) return msg.edit(`:x: I could not find that server`)
-        if (!output.attributes.user === userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
+        if (output.owner?.uuid !== userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
 
         msg.edit({
-            content: `Are you sure you want to delete \`${output.attributes.name}\`? once you delete your server you will never be able to recover it and all data and files will be lost forever!`,
+            content: `Are you sure you want to delete \`${output.name}\`? once you delete your server you will never be able to recover it and all data and files will be lost forever!`,
             components: [
                 new Discord.ActionRowBuilder()
                     .addComponents(
@@ -64,30 +62,31 @@ module.exports = async (client, message, args) => {
                 })
 
                 axios({
-                    url: config.pterodactyl.host + "/api/application/servers/" + output.attributes.id,
+                    url: config.pterodactyl.host + "/api/admin/servers/" + output.uuid,
                     method: 'get',
                     followRedirect: true,
                     maxRedirects: 5,
                     headers: {
                         'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                         'Content-Type': 'application/json',
-                        'Accept': 'Application/vnd.pterodactyl.v1+json',
+                        'Accept': 'application/json',
                     }
                 }).then(deleted => {
                     axios({
-                        url: config.pterodactyl.host + "/api/application/servers/" + output.attributes.id + "/force",
+                        url: config.pterodactyl.host + "/api/admin/servers/" + output.uuid,
                         method: 'DELETE',
                         followRedirect: true,
                         maxRedirects: 5,
                         headers: {
                             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                             'Content-Type': 'application/json',
-                            'Accept': 'Application/vnd.pterodactyl.v1+json',
-                        }
+                            'Accept': 'application/json',
+                        },
+                        data: { force: true, delete_backups: true }
                     }).then(() => {
                         msg.edit(`${success} Server deleted!`)
                         if (!serverCount.get(message.author.id)) return msg.edit('WTF? how did u got a server?')
-                        serverData.findOne({ serverAdminID: output.attributes.id }).then(async (data) => {
+                        serverData.findOne({ serverAdminID: output.uuid }).then(async (data) => {
                             if (data) {
                                 if (data.type === 'gameserver') {
                                     serverCount.subtract(message.author.id + '.gameused', 1)
@@ -97,7 +96,7 @@ module.exports = async (client, message, args) => {
                                     console.log('botused')
                                 }
                             }
-                        }).then(() => { serverData.deleteOne({ serverAdminID: output.attributes.id }) }).catch(err => {
+                        }).then(() => { serverData.deleteOne({ serverAdminID: output.uuid }) }).catch(err => {
                             console.log(err)
                         })
                     }).catch(err => {

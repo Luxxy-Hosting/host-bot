@@ -6,7 +6,7 @@ module.exports = async (client, message, args) => {
 
     let apiResponse;
     try {
-        apiResponse = await axios.get(config.luxxy.apiUrl + '/api/application/locations', {
+        apiResponse = await axios.get(config.luxxy.apiUrl + '/api/admin/locations', {
             headers: {
                 'Authorization': `Bearer ${config.luxxy.apiToken}`,
                 'Accept': 'application/json',
@@ -29,12 +29,12 @@ module.exports = async (client, message, args) => {
         return message.reply(errorMsg);
     }
 
-    if (!apiResponse || !apiResponse.data || !apiResponse.data.data) {
+    if (!apiResponse || !apiResponse.data || !(apiResponse.data.locations?.data || [])) {
         console.warn(`No valid location data received from API (${apiUrl}). Response:`, apiResponse ? apiResponse.data : 'No response object');
         return message.reply('Failed to retrieve valid location data from the API.');
     }
 
-    const locations = apiResponse.data.data;
+    const locations = (apiResponse.data.locations?.data || []);
 
     if (locations.length === 0) {
         const embed = new EmbedBuilder()

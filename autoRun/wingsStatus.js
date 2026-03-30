@@ -13,14 +13,14 @@ module.exports = async (client) => {
         let lavalink = ''
         
         await axios({
-            url: config.pterodactyl.host+"/api/application/nodes/" + "8" + "?include=servers,location,allocations",
+            url: config.pterodactyl.host+"/api/admin/nodes/" + "c172eb03-78d2-4468-aa1b-c93e4aec700a" + "/servers?per_page=1000",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             }
         }).then(async node => {
             panel = "🟢 Online"
@@ -33,14 +33,14 @@ module.exports = async (client) => {
                 headers: {
                     'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
                     'Content-Type': 'application/json',
-                    'Accept': 'Application/vnd.pterodactyl.v1+json',
+                    'Accept': 'application/json',
                 }
             }).then(data => {
-                node1 = `🟢 Online (${node.data.attributes.relationships.servers.data.length}/600)`
-                lavalink = `${data.data.attributes.current_state === 'running' ? `🟢 Online`: data.data.attributes.current_state === 'offline' ? `🔴 Offline` : `🔄 ${data.data.attributes.current_state}`}`
+                node1 = `🟢 Online (${node.data?.servers.length}/600)`
+                lavalink = `${data.data.current_state === 'running' ? `🟢 Online`: data.data.current_state === 'offline' ? `🔴 Offline` : `🔄 ${data.data.current_state}`}`
             }).catch(() => {
                 lavalink = `🔴 Offline`
-                node1 = `🔴 Offline (${node.data.attributes.relationships.servers.data.length}/600)`
+                node1 = `🔴 Offline (${node.data?.servers.length}/600)`
             })
             
         }).catch(err => {

@@ -22,17 +22,15 @@ module.exports = async (client, message, args) => {
         ]
     })
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
     }).then(async response => {
-        responce = response.data.attributes.relationships.servers.data
+        let responce = response.data?.servers?.data || [];
         let id = 1
         let id2 = 1
         if (responce.length <= 35) {
@@ -40,8 +38,8 @@ module.exports = async (client, message, args) => {
                 embeds: [
                     new Discord.EmbedBuilder()
                     .setTitle(`${user.username}'s servers`)
-                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
-                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
+                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.uuid_short}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
+                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
                     .setColor(Discord.Colors.Green)
                 ]
             }).catch(err => {

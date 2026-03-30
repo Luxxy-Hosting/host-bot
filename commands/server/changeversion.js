@@ -29,24 +29,22 @@ module.exports = async (client, message, args) => {
 
     let msg = await message.channel.send('Let me check if this is your server, please wait . . .')
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
     }).then(async response => {
-        const preoutput = response.data.attributes.relationships.servers.data
-        const output = await preoutput.find(srv => srv.attributes ? srv.attributes.identifier == args[1] : false)
+        const preoutput = response.data?.servers?.data || [];
+        const output = await preoutput.find(srv => srv.uuid_short == args[1])
 
         if(!output) return msg.edit(`:x: I could not find that server`)
-        if (!output.attributes.user === userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
+        if (output.owner?.uuid !== userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
 
         msg.edit({
-            content: `Note: ** this will delete all the files for **  \`${output.attributes.name}\`? `,
+            content: `Note: ** this will delete all the files for **  \`${output.name}\`? `,
             components:[
                 new Discord.ActionRowBuilder()
                 .addComponents(
@@ -83,7 +81,7 @@ module.exports = async (client, message, args) => {
                     headers: {
                         'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
                         'Content-Type': 'application/json',
-                        'Accept': 'Application/vnd.pterodactyl.v1+json',
+                        'Accept': 'application/json',
                     },
                     data: {
                         "root": "/",
@@ -125,7 +123,7 @@ module.exports = async (client, message, args) => {
                         headers: {
                             'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
                             'Content-Type': 'application/json',
-                            'Accept': 'Application/vnd.pterodactyl.v1+json',
+                            'Accept': 'application/json',
                         },
                         data: {
                             "key": "MINECRAFT_VERSION",
@@ -140,7 +138,7 @@ module.exports = async (client, message, args) => {
                             headers: {
                                 'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
                                 'Content-Type': 'application/json',
-                                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                                'Accept': 'application/json',
                             },
                         }).then(e => {
                             msg.edit(`<a:imdone:976448151386996787>`)

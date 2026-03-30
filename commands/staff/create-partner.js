@@ -77,24 +77,24 @@ module.exports = async (client, message, args) => {
         })
 
         axios({
-            url: config.pterodactyl.host + "/api/application/servers",
+            url: config.pterodactyl.host + "/api/admin/servers",
             method: 'POST',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
             data: data,
         }).then(res => {
-            msg.edit(`${user.username}'s Partner Server has been created \n ${res.data.attributes.identifier} \n https://panel.luxxy.cloud/server/${res.data.attributes.identifier} `)
+            msg.edit(`${user.username}'s Partner Server has been created \n ${res.data.uuid_short} \n https://panel.luxxy.cloud/server/${res.data.uuid_short} `)
 
             // log
             const logchannel = client.channels.cache.get('971131533131915264')
             const embed = new Discord.EmbedBuilder()
             .setTitle(`${user.username}'s Partner Server has been created`)
-            .setDescription(`${res.data.attributes.identifier} \n https://panel.luxxy.cloud/server/${res.data.attributes.identifier}`)
+            .setDescription(`${res.data.uuid_short} \n https://panel.luxxy.cloud/server/${res.data.uuid_short}`)
             .setColor(Discord.Colors.DarkAqua)
             .setTimestamp()
             logchannel.send({ embeds: [embed] })

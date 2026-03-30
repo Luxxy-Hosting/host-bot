@@ -71,14 +71,47 @@ module.exports = async (client, message, args) => {
 
         if (!locationID) return message.reply(':x: No location selected. Please try again.');
         console.log(`Location selected: ${locationID}`);
+        const apiHeaders = {
+            'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        };
+
+        // 1. Fetch Owner UUID
+        let owner_uuid = null;
+        if (userDB.consoleID && userDB.consoleID.length > 20) {
+            owner_uuid = userDB.consoleID;
+        } else {
+            try {
+                const uRes = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                    headers: apiHeaders,
+                    params: { 'filter[username]': userDB.username || user.username }
+                });
+                if (uRes.data.users?.data?.length > 0) {
+                    owner_uuid = uRes.data.users.data[0].uuid;
+                } else if (userDB.email) {
+                    const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                        headers: apiHeaders,
+                        params: { 'filter[email]': userDB.email }
+                    });
+                    if (uResE.data.users?.data?.length > 0) owner_uuid = uResE.data.users.data[0].uuid;
+                }
+            } catch (err) {
+                console.error("Error fetching user UUID:", err.message);
+            }
+        }
+        
+        if (!owner_uuid) return message.reply(":x: Could not find your connected account on the panel!");
+
+        let ServerData, serverType;
         try {
             const creationModule = require(`../../server_creation/${args[1]?.toLowerCase()}.js`);
-            const result = creationModule(userDB.consoleID, srvname ? srvname : args[1], locationID);
+            const result = creationModule(owner_uuid, srvname ? srvname : args[1], locationID);
             ServerData = result.data;
             serverType = result.serverType;
         } catch (err) {
             console.log(err);
-            return message.reply(`${error} I could not find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`);
+            return message.reply(`:x: I could not find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`);
         }
 
         const usage = serverCount.get(user.id);
@@ -90,19 +123,42 @@ module.exports = async (client, message, args) => {
 
         let msg = await message.reply(`${success} Attempting to create your server, please wait...`);
 
+        // 2. Find Node for this Location
+        let node_uuid = null;
+        try {
+            const nRes = await axios.get(config.pterodactyl.host + "/api/admin/nodes", { headers: apiHeaders });
+            const locUUID = ServerData.deployment?.location_uuids?.[0] || locationID; 
+            const node = nRes.data.nodes?.data?.find(n => n.location?.uuid === locUUID || n.location?.id === locUUID); // Fallback
+            if (node) node_uuid = node.uuid;
+        } catch (err) { }
+
+        if (!node_uuid) return msg.edit("❌ Could not find an active node in this location to deploy to!");
+
+        // 3. Find Available Allocation
+        let alloc_uuid = null;
+        try {
+            const aRes = await axios.get(config.pterodactyl.host + `/api/admin/nodes/${node_uuid}/allocations/available`, { headers: apiHeaders });
+            if (aRes.data.allocations?.data && aRes.data.allocations.data.length > 0) {
+                alloc_uuid = aRes.data.allocations.data[0].uuid;
+            }
+        } catch (err) { }
+
+        if (!alloc_uuid) return msg.edit("❌ The node has run out of allocations/ports!");
+
+        // 4. Clean Payload & Append Allocation
+        delete ServerData.deployment;
+        ServerData.node_uuid = node_uuid;
+        ServerData.allocation_uuids = [ alloc_uuid ];
+
         axios({
-            url: config.pterodactyl.host + "/api/application/servers",
+            url: config.pterodactyl.host + "/api/admin/servers",
             method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-                'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
-            },
+            headers: apiHeaders,
             data: ServerData,
         }).then(async response => {
             const serverName = srvname ? srvname : args[1];
-            const serverId = response.data.attributes.identifier;
-            const serverAdminId = response.data.attributes.id;
+            const serverId = response.data.server?.uuid_short || response.data.uuid_short;
+            const serverAdminId = response.data.server?.uuid || response.data.uuid;
 
             await serverData.create({
                 ownerID: user.id,
@@ -183,7 +239,7 @@ module.exports = async (client, message, args) => {
                         new Discord.EmbedBuilder()
                             .addFields(
                                 { name: `Server Created`, value: `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${serverName}\`\n**Server Type:** \`${args[1].toLowerCase()}\`` },
-                                { name: `Server ID`, value: `\`${response.data.attributes.uuid}\`` },
+                                { name: `Server ID`, value: `\`${serverId}\`` },
                                 { name: `Server Status`, value: `\`${response.statusText}\`` }
                             )
                             .setColor(Discord.Colors.Red)

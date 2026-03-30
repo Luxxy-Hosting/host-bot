@@ -12,17 +12,17 @@ module.exports = async (client, member, guild) => {
     }
     if(userdb) {
         await axios({
-            url: config.pterodactyl.host + "/api/application/users/" + userData.get(member.id).consoleID + "?include=servers",
+            url: config.pterodactyl.host + "/api/admin/users/" + userData.get(member.id).consoleID + "?include=servers",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             }
         }).then(async res => {
-            const servers1 = res.data.attributes.relationships.servers.data.map(x => x.attributes.id)
+            const servers1 = (res.data.user?.servers || res.data.user?.relationships?.servers || []).map(x => x.uuid)
             client.channels.cache.get('942502078172000266').send({
                 embeds: [
                     new Discord.EmbedBuilder()
@@ -47,14 +47,14 @@ module.exports = async (client, member, guild) => {
                         .setTitle(`🦺 Deleting server ${server}...`)
                     ]})
                     await axios({
-                        url: config.pterodactyl.host + "/api/application/servers/" + server + "/force",
+                        url: config.pterodactyl.host + "/api/admin/servers/" + server + "/force",
                         method: 'DELETE',
                         followRedirect: true,
                         maxRedirects: 5,
                         headers: {
                             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                             'Content-Type': 'application/json',
-                            'Accept': 'Application/vnd.pterodactyl.v1+json',
+                            'Accept': 'application/json',
                         }
                     }).then(() => {
                         console.log('Server deleted.')
@@ -63,14 +63,14 @@ module.exports = async (client, member, guild) => {
                 ))
             }
             await axios({
-                url: config.pterodactyl.host + "/api/application/users/" + userData.get(member.id).consoleID,
+                url: config.pterodactyl.host + "/api/admin/users/" + userData.get(member.id).consoleID,
                 method: 'DELETE',
                 followRedirect: true,
                 maxRedirects: 5,
                 headers: {
                     'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                     'Content-Type': 'application/json',
-                    'Accept': 'Application/vnd.pterodactyl.v1+json',
+                    'Accept': 'application/json',
                 }
             }).then(() => {
                 userData.delete(member.user.id)

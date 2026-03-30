@@ -112,16 +112,16 @@ module.exports = async (client, message, args) => {
     let newServerUuid;
 
     try {
-        const createResponse = await axios.post(`${apiUrl}/api/application/servers`, createPayload, { headers: apiHeaders });
+        const createResponse = await axios.post(`${apiUrl}/api/admin/servers`, createPayload, { headers: apiHeaders });
 
-        if (createResponse.data && createResponse.data.data && createResponse.data.data.uuid) {
-            newServerUuid = createResponse.data.data.uuid;
+        if (createResponse.data && createResponse.data.server && createResponse.data.server.uuid) {
+            newServerUuid = createResponse.data.server.uuid;
             await workingMsg.edit(`Server \`${vmName}\` (UUID: ${newServerUuid}) provisioned. Fetching details...`);
         } else {
             // Fallback if UUID is not in the expected place but creation might have succeeded
             // Pterodactyl, for example, returns attributes.uuid
-            if (createResponse.data && createResponse.data.attributes && createResponse.data.attributes.uuid) {
-                 newServerUuid = createResponse.data.attributes.uuid;
+            if (createResponse.data && createResponse.data.attributes && createResponse.data.uuid) {
+                 newServerUuid = createResponse.data.uuid;
                  await workingMsg.edit(`Server \`${vmName}\` (UUID: ${newServerUuid}) provisioned. Fetching details...`);
             } else {
                 console.error('Server creation API response did not contain expected UUID:', createResponse.data);
@@ -138,11 +138,11 @@ module.exports = async (client, message, args) => {
     let serverDetails;
     let primaryIp = 'Not available';
     try {
-        const detailsResponse = await axios.get(`${apiUrl}/api/application/servers/${newServerUuid}`, { headers: apiHeaders });
+        const detailsResponse = await axios.get(`${apiUrl}/api/admin/servers/${newServerUuid}`, { headers: apiHeaders });
         // The structure of server details (especially IP) varies greatly between APIs.
         // Based on your serverinfo.js log, details are in `response.data.data`
-        if (detailsResponse.data && detailsResponse.data.data) {
-            serverDetails = detailsResponse.data.data;
+        if (detailsResponse.data && detailsResponse.data.server) {
+            serverDetails = detailsResponse.data.server;
 
             // Attempt to find IP address. This is highly API-specific.
             // From your log: serverData.limits.addresses might hold it.
@@ -163,8 +163,8 @@ module.exports = async (client, message, args) => {
                 }
             }
             // Pterodactyl specific IP location (example, adjust if your API is different)
-            // else if (serverDetails.attributes && serverDetails.attributes.relationships && serverDetails.attributes.relationships.allocations && serverDetails.attributes.relationships.allocations.data.length > 0) {
-            //    primaryIp = serverDetails.attributes.relationships.allocations.data[0].attributes.ip;
+            // else if (serverDetails.attributes && serverDetails.relationships && serverDetails.relationships.allocations && serverDetails.relationships.allocations.data.length > 0) {
+            //    primaryIp = serverDetails.relationships.allocations.data[0].ip;
             // }
 
         } else {

@@ -6,18 +6,30 @@ module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id })
     if(!userDB) return message.reply(`${error}` + " You dont have an account created. type `!user new` to create one")
     if (message.author.id === '517107022399799331') return message.reply(`${error} You can't delete your owners account`)
+    let owner_uuid = null;
+    if (userDB.consoleID && userDB.consoleID.length > 20) {
+        owner_uuid = userDB.consoleID;
+    } else if (userDB.email) {
+        try {
+            const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                headers: { 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey, 'Accept': 'application/json' },
+                params: { 'filter[email]': userDB.email }
+            });
+            if (uResE.data.users?.data?.length > 0) owner_uuid = uResE.data.users.data[0].uuid;
+        } catch(e) {}
+    }
+    if (!owner_uuid) return message.reply(":x: Could not find your connected account on the panel!");
+
     await axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
     }).then(async response => {
-        let servers = response.data.attributes.relationships.servers.data.map(x => x.attributes.id)
+        let servers = (response.data?.servers?.data || []).map(x => x.uuid)
 
         let msg = await message.reply({content: `You are going to delete your account with username: \`${userDB.username}\`. Once you click the yes button all your ${servers.length > 1 ? '\`'+ servers.length + '\` servers' : 'servers'} will be deleted.\n\n⚠️ *This acction is not reversable. once you deleted your account all your data will be lost forever*`, components:[
             new Discord.ActionRowBuilder()
@@ -103,15 +115,16 @@ module.exports = async (client, message, args) => {
                     await msg.edit('Deleting servers...')
                     await Promise.all(servers.map(async server => {
                         await axios({
-                            url: config.pterodactyl.host + "/api/application/servers/" + server + "/force",
+                            url: config.pterodactyl.host + "/api/admin/servers/" + server,
                             method: 'DELETE',
                             followRedirect: true,
                             maxRedirects: 5,
                             headers: {
                                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                                 'Content-Type': 'application/json',
-                                'Accept': 'Application/vnd.pterodactyl.v1+json',
-                            }
+                                'Accept': 'application/json',
+                            },
+                            data: { force: true, delete_backups: true }
                         }).then(() => {}).catch(err => {return msg.edit('Error deleting server')})
                     }))
                 }
@@ -119,14 +132,12 @@ module.exports = async (client, message, args) => {
                 await msg.edit('Deleting account . . .')
 
                 await axios({
-                    url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
+                    url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid,
                     method: 'DELETE',
-                    followRedirect: true,
-                    maxRedirects: 5,
                     headers: {
                         'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                         'Content-Type': 'application/json',
-                        'Accept': 'Application/vnd.pterodactyl.v1+json',
+                        'Accept': 'application/json',
                     }
                 }).then(() => {
                     const userData1 = require('../../models/userData'); userData1.deleteOne({ ID: `${userDB.ID}` }).catch(err => {return console.log(err)})

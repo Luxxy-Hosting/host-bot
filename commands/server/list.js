@@ -9,19 +9,30 @@ module.exports = async (client, message, args) => {
         return;
     }
 
+    let owner_uuid = null;
+    if (userDB.consoleID && userDB.consoleID.length > 20) {
+        owner_uuid = userDB.consoleID;
+    } else if (userDB.email) {
+        try {
+            const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                headers: { 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey, 'Accept': 'application/json' },
+                params: { 'filter[email]': userDB.email }
+            });
+            if (uResE.data.users?.data?.length > 0) owner_uuid = uResE.data.users.data[0].uuid;
+        } catch(e) {}
+    }
+    if (!owner_uuid) return message.reply(":x: Could not find your connected account on the panel!");
 
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
     }).then(async response => {
-        responce = response.data.attributes.relationships.servers.data
+        let responce = response.data.servers?.data || [];
         let id = 1
         let id2 = 1
 
@@ -30,8 +41,8 @@ module.exports = async (client, message, args) => {
                 embeds:[
                     new Discord.EmbedBuilder()
                     .setTitle(`${message.author.username}'s servers`)
-                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
-                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
+                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.uuid_short}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
+                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
                     .setColor(Discord.Colors.Green)
                 ]
             }).catch(err => {
@@ -46,7 +57,7 @@ module.exports = async (client, message, args) => {
             })
         }else{
             let id = 1
-            let servers = responce.map(x => `${id++}. ${x.attributes.identifier} ➜ ${x.attributes.name}`).join('\n')
+            let servers = responce.map(x => `${id++}. ${x.uuid_short} ➜ ${x.name}`).join('\n')
             message.channel.send({
                 files:[
                     {

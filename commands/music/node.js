@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports = async (client, message, args) => {
     const all = client.manager.nodes.map(node => 
-        `Node ${(node.options.identifier)} Connected` +
+        `Node ${(node.options.uuid_short)} Connected` +
         `\nPlayer: ${node.stats.players}` +
         `\nPlaying Players: ${node.stats.playingPlayers}` +
         `\nUptime: ${new Date(node.stats.uptime).toISOString().slice(11, 19)}` +

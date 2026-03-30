@@ -119,17 +119,17 @@ client.on('guildMemberRemove', async member => {
     }
     if (UserDB) {
         await axios({
-            url: config.pterodactyl.host + "/api/application/users/" + UserDB.consoleID + "?include=servers",
+            url: config.pterodactyl.host + "/api/admin/users/" + UserDB.consoleID + "/servers?per_page=100",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             }
         }).then(async res => {
-            const servers1 = res.data.attributes.relationships.servers.data.map(e => e.attributes.id)
+            const servers1 = (res.data?.servers?.data || []).map(e => e.uuid)
             client.channels.cache.get(config.channelID.leavedeletelogs).send({
                 embeds: [
                     new Discord.EmbedBuilder()
@@ -153,15 +153,16 @@ client.on('guildMemberRemove', async member => {
                         .setTitle(`🦺 Deleting server ${server}...`)
                     ]})
                     await axios({
-                        url: config.pterodactyl.host + "/api/application/servers/" + server + "/force",
+                        url: config.pterodactyl.host + "/api/admin/servers/" + server,
                         method: 'DELETE',
                         followRedirect: true,
                         maxRedirects: 5,
                         headers: {
                             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                             'Content-Type': 'application/json',
-                            'Accept': 'Application/vnd.pterodactyl.v1+json',
-                        }
+                            'Accept': 'application/json',
+                        },
+                        data: { force: true, delete_backups: true }
                     }).then(async res => {
                         client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
                             new Discord.EmbedBuilder()
@@ -181,14 +182,14 @@ client.on('guildMemberRemove', async member => {
             }
             await UserData1.deleteOne({ ID: member.id })
             await axios({
-                url: config.pterodactyl.host + "/api/application/users/" + UserDB.consoleID,
+                url: config.pterodactyl.host + "/api/admin/users/" + UserDB.consoleID,
                 method: 'DELETE',
                 followRedirect: true,
                 maxRedirects: 5,
                 headers: {
                     'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                     'Content-Type': 'application/json',
-                    'Accept': 'Application/vnd.pterodactyl.v1+json',
+                    'Accept': 'application/json',
                 }
             }).then(async res => {
                 client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [

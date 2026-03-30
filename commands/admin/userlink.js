@@ -17,26 +17,26 @@ module.exports = {
             }
 
             axios({
-                url: `${config.pterodactyl.host}/api/application/users/${consoleid}`,
+                url: `${config.pterodactyl.host}/api/admin/users/${consoleid}`,
                 method: 'GET',
                 followRedirect: true,
                 maxRedirects: 5,
                 headers: {
                     'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                     'Content-Type': 'application/json',
-                    'Accept': 'Application/vnd.pterodactyl.v1+json',
+                    'Accept': 'application/json',
                 },
             }).then(async user => {
                 userData({
                     ID: discorduser.id,
-                    consoleID: user.data.attributes.id,
-                    email: user.data.attributes.email,
-                    username: user.data.attributes.username,
+                    consoleID: user.data.id,
+                    email: user.data.email,
+                    username: user.data.username,
                     linkTime: moment().format("HH:mm:ss"),
                     linkDate: moment().format("YYYY-MM-DD"),
                 }).save().catch(e => message.reply('no'))
                 
-                message.reply(`🍑 i have linked <@!${discorduser.id}> to the account **${user.data.attributes.username}**`)
+                message.reply(`🍑 i have linked <@!${discorduser.id}> to the account **${user.data.username}**`)
             }).catch(e => message.reply(`Error: ${e}`))
             
         }

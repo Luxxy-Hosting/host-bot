@@ -180,22 +180,22 @@ module.exports = async (client, message, args) => {
                     const data = {
                         "username": username.toLowerCase(),
                         "email": email.toLowerCase(),
-                        "first_name": username,
-                        "last_name": "user",
+                        "name_first": username,
+                        "name_last": "user",
                         "password": getPassword(),
-                        "root_admin": false,
+                        "admin": false,
                         "language": "en"
                     }
 
                     axios({
-                        url: config.pterodactyl.host + "/api/application/users",
+                        url: config.pterodactyl.host + "/api/admin/users",
                         method: 'POST',
                         followRedirect: true,
                         maxRedirects: 5,
                         headers: {
                             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                             'Content-Type': 'application/json',
-                            'Accept': 'Application/vnd.pterodactyl.v1+json',
+                            'Accept': 'application/json',
                         },
                         data: data,
                     }).then(async user => {
@@ -203,9 +203,9 @@ module.exports = async (client, message, args) => {
                         message.member.roles.add(message.guild.roles.cache.get(config.roleID.client))
                         userData({
                             ID: message.author.id,
-                            consoleID: user.data.attributes.id,
-                            email: user.data.attributes.email,
-                            username: user.data.attributes.username,
+                            consoleID: user.data.user?.uuid || user.data.uuid || user.data.id,
+                            email: email,
+                            username: username,
                             linkTime: moment().format("HH:mm:ss"),
                             linkDate: moment().format("YYYY-MM-DD"),
                         }).save()

@@ -50,21 +50,21 @@ module.exports = async (client, message, args) => {
             return;
         }
         axios({
-            url: config.pterodactyl.host + "/api/application/users/" + consoleid,
+            url: config.pterodactyl.host + "/api/admin/users/" + consoleid,
             method: 'get',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
         }).then(async user => {
             userData({
                 ID: user1.id,
                 consoleID: consoleid,
-                email: user.data.attributes.email,
-                username: user.data.attributes.username,
+                email: user.data.email,
+                username: user.data.username,
                 linkTime: moment().format("HH:mm:ss"),
                 linkDate: moment().format("YYYY-MM-DD"),
             }).save()
@@ -73,7 +73,7 @@ module.exports = async (client, message, args) => {
                     new Discord.EmbedBuilder()
                     .setColor(0x00ff00)
                     .setTitle('Success')
-                    .setDescription('User linked successfully! \n Username: ' + user.data.attributes.username + '\n Email: ' + user.data.attributes.email + '\n Console ID: ' + consoleid)
+                    .setDescription('User linked successfully! \n Username: ' + user.data.username + '\n Email: ' + user.data.email + '\n Console ID: ' + consoleid)
                     ]
                 })
             })

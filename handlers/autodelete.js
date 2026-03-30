@@ -21,10 +21,10 @@ module.exports = async (client) => {
                 
                 if (timeLeft <= 0) {
                     try {
-                        await axios.delete(`${config.pterodactyl.host}/api/application/servers/${server.serverAdminID}`, {
+                        await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${server.serverAdminID}`, {
                             headers: {
                                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-                                'Accept': 'Application/vnd.pterodactyl.v1+json'
+                                'Accept': 'application/json'
                             }
                         });
                         

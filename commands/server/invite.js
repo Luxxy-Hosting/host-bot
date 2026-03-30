@@ -23,24 +23,22 @@ module.exports = async (client, message, args) => {
     let msg = await message.channel.send('Let me check if this is your server, please wait . . .')
     console.log(userDB.consoleID)
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         }
     }).then(async response => {
-        const preoutput = response.data.attributes.relationships.servers.data
-        const output = await preoutput.find(srv => srv.attributes ? srv.attributes.identifier == serverid : false)
+        const preoutput = response.data?.servers?.data || [];
+        const output = await preoutput.find(srv => srv.uuid_short == serverid)
 
         if(!output) return msg.edit(`:x: I could not find that server`)
-        if (!output.attributes.user === userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
+        if (output.owner?.uuid !== userDB.consoleID) return msg.edit(`:x: You are not the owner of this server`)
 
         msg.edit({
-            content: `Are you sure you want to invite \`${user.username}\` to \`${output.attributes.name}\`?`,
+            content: `Are you sure you want to invite \`${user.username}\` to \`${output.name}\`?`,
             components:[
                 new Discord.ActionRowBuilder()
                 .addComponents(
@@ -66,7 +64,7 @@ module.exports = async (client, message, args) => {
             Collector.stop()
             if(i.customId === "AcceptInvite") {
                 msg.edit({
-                    content: `Inviting ${user.username} to ${output.attributes.name}`,
+                    content: `Inviting ${user.username} to ${output.name}`,
                 })
                 const data = {
                     "email": inviteuserdb.email,
@@ -102,20 +100,20 @@ module.exports = async (client, message, args) => {
                         "websocket.connect"
                     ]
                 }
-                console.log(output.attributes.identifier)
+                console.log(output.uuid_short)
                 axios({
-                    url: config.pterodactyl.host + "/api/client/servers/" + output.attributes.identifier + "/users",
+                    url: config.pterodactyl.host + "/api/client/servers/" + output.uuid_short + "/users",
                     method: 'POST',
                     followRedirect: true,
                     maxRedirects: 5,
                     headers: {
                         'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
                         'Content-Type': 'application/json',
-                        'Accept': 'Application/vnd.pterodactyl.v1+json',
+                        'Accept': 'application/json',
                     },
                     data: data
                 }).then(async response => {
-                    msg.edit(`${user.username} has been invited to ${output.attributes.name}`)
+                    msg.edit(`${user.username} has been invited to ${output.name}`)
                 }).catch(err => {
                     msg.edit(`${error} ${err}`)
                 })

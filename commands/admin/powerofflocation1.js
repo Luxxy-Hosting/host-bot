@@ -30,18 +30,18 @@ module.exports = {
 
         try {
             const nodeResponse = await axios({
-                url: `${config.pterodactyl.host}/api/application/nodes`,
+                url: `${config.pterodactyl.host}/api/admin/nodes`,
                 method: 'GET',
                 params: { per_page: 100 },
                 headers: {
                     Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
                     'Content-Type': 'application/json',
-                    Accept: 'Application/vnd.pterodactyl.v1+json',
+                    Accept: 'application/json',
                 },
             });
 
             const locationNodes = nodeResponse.data?.data?.filter(
-                (node) => node?.attributes?.location_id === locationId,
+                (node) => node?.location_id === locationId,
             ) || [];
 
             if (locationNodes.length === 0) {
@@ -54,22 +54,22 @@ module.exports = {
             for (const node of locationNodes) {
                 await wait(250); // small delay for rate limiting
                 const detailedNode = await axios({
-                    url: `${config.pterodactyl.host}/api/application/nodes/${node.attributes.id}`,
+                    url: `${config.pterodactyl.host}/api/admin/nodes/${node.id}`,
                     method: 'GET',
                     params: { include: 'servers' },
                     headers: {
                         Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
                         'Content-Type': 'application/json',
-                        Accept: 'Application/vnd.pterodactyl.v1+json',
+                        Accept: 'application/json',
                     },
                 });
 
-                const serverData = detailedNode.data?.attributes?.relationships?.servers?.data || [];
+                const serverData = detailedNode.data?.relationships?.servers?.data || [];
                 serverData.forEach((srv) => {
-                    if (srv?.attributes?.identifier) {
+                    if (srv?.uuid_short) {
                         servers.push({
-                            identifier: srv.attributes.identifier,
-                            name: srv.attributes.name,
+                            identifier: srv.uuid_short,
+                            name: srv.name,
                         });
                     }
                 });
@@ -88,13 +88,13 @@ module.exports = {
                 await wait(500); // avoid hitting API rate limits
                 try {
                     await axios({
-                        url: `${config.pterodactyl.host}/api/client/servers/${server.identifier}/power`,
+                        url: `${config.pterodactyl.host}/api/client/servers/${server.uuid_short}/power`,
                         method: 'POST',
                         data: { signal: 'stop' },
                         headers: {
                             Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
                             'Content-Type': 'application/json',
-                            Accept: 'Application/vnd.pterodactyl.v1+json',
+                            Accept: 'application/json',
                         },
                     });
                     summary.stopSent += 1;
@@ -105,13 +105,13 @@ module.exports = {
                 await wait(500);
                 try {
                     await axios({
-                        url: `${config.pterodactyl.host}/api/client/servers/${server.identifier}/power`,
+                        url: `${config.pterodactyl.host}/api/client/servers/${server.uuid_short}/power`,
                         method: 'POST',
                         data: { signal: 'kill' },
                         headers: {
                             Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
                             'Content-Type': 'application/json',
-                            Accept: 'Application/vnd.pterodactyl.v1+json',
+                            Accept: 'application/json',
                         },
                     });
                     summary.killSent += 1;

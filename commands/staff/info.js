@@ -20,29 +20,27 @@ module.exports = async (client, message, args) => {
              .setTitle(`user don't have server count`)
     ]})
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID + "?include=servers",
+        url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID + "/servers?per_page=100",
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
 
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
             'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         },
     }).then(async response => {
-        responce = response.data.attributes.relationships.servers.data;
+        let responce = response.data?.servers?.data || [];
         let id = 1;
         let id2 = 1;
         axios({
-            url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
+            url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID,
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
         }).then(async res => {
             message.reply({
@@ -50,12 +48,12 @@ module.exports = async (client, message, args) => {
                     new Discord.EmbedBuilder()
                     .setTitle(`${user.username}'s Info`)
                     .addFields({ name: 'Console ID', value: `\`\`\`\n${userDB.consoleID}\`\`\``, inline: true })
-                    .addFields({ name: 'Email', value:  `\`\`\`\n${res.data.attributes.email}\`\`\``, inline: true })
-                    .addFields({ name: 'Username', value:  `\`\`\`\n${res.data.attributes.username}\`\`\``, inline: true })
+                    .addFields({ name: 'Email', value:  `\`\`\`\n${res.data.email}\`\`\``, inline: true })
+                    .addFields({ name: 'Username', value:  `\`\`\`\n${res.data.username}\`\`\``, inline: true })
                     .addFields({ name: 'Link Date', value:  `\`\`\`\n${userDB.linkDate}\`\`\``, inline: true})
                     .addFields({ name:'Link Time', value: `\`\`\`\n${userDB.linkTime}\`\`\``, inline: true})
-                    .addFields({ name: 'Servers', value:  `\`\`\`\n${responce.map(x => `${id++}. ${x.attributes.identifier}`).join('\n')}\`\`\``, inline: true})
-                    .addFields({ name: 'Servers Name', value:  `\`\`\`\n${responce.map(x => `${id2++}. ${x.attributes.name}`).join('\n')}\`\`\``, inline: true})
+                    .addFields({ name: 'Servers', value:  `\`\`\`\n${responce.map(x => `${id++}. ${x.uuid_short}`).join('\n')}\`\`\``, inline: true})
+                    .addFields({ name: 'Servers Name', value:  `\`\`\`\n${responce.map(x => `${id2++}. ${x.name}`).join('\n')}\`\`\``, inline: true})
                     .addFields({ name: 'Server Count', value: `\`\`\`\n${serverCount.get(user.id).gameused} / ${serverCount.get(user.id).gamehave} \n${serverCount.get(user.id).botused} / ${serverCount.get(user.id).bothave}\`\`\``, inline: true})
                     .setColor(Discord.Colors.Green)
                 ]

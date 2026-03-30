@@ -40,38 +40,38 @@ const fetchServersInLocation = async () => {
     const servers = [];
 
     const nodesResponse = await axios({
-        url: `${config.pterodactyl.host}/api/application/nodes`,
+        url: `${config.pterodactyl.host}/api/admin/nodes`,
         method: 'GET',
         params: { per_page: 100 },
         headers: {
             Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
             'Content-Type': 'application/json',
-            Accept: 'Application/vnd.pterodactyl.v1+json',
+            Accept: 'application/json',
         },
     });
 
-    const locationNodes = nodesResponse.data?.data?.filter((node) => node?.attributes?.location_id === LOCATION_ID) || [];
+    const locationNodes = nodesResponse.data?.nodes?.data?.filter((node) => node?.location?.uuid === '736caecc-5443-4363-953e-25dabfb1f168' || node?.location_id === LOCATION_ID) || [];
 
     for (const node of locationNodes) {
         await wait(400); // respect panel rate limits
         const detailedNode = await axios({
-            url: `${config.pterodactyl.host}/api/application/nodes/${node.attributes.id}`,
+            url: `${config.pterodactyl.host}/api/admin/nodes/${node.uuid}/servers`,
             method: 'GET',
-            params: { include: 'servers' },
+            params: { per_page: 500 },
             headers: {
                 Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
                 'Content-Type': 'application/json',
-                Accept: 'Application/vnd.pterodactyl.v1+json',
+                Accept: 'application/json',
             },
         });
 
-        const serverData = detailedNode.data?.attributes?.relationships?.servers?.data || [];
+        const serverData = detailedNode.data?.servers?.data || [];
         serverData.forEach((srv) => {
-            if (srv?.attributes?.identifier) {
+            if (srv?.uuid_short) {
                 servers.push({
-                    identifier: srv.attributes.identifier,
-                    name: srv.attributes.name,
-                    limits: srv.attributes.limits || {},
+                    identifier: srv.uuid_short,
+                    name: srv.name,
+                    limits: srv.limits || {},
                 });
             }
         });
@@ -92,8 +92,8 @@ const checkSuspiciousFiles = async (serverIdentifier) => {
             },
         );
 
-        const files = Array.isArray(listResponse.data?.data) ? listResponse.data.data : [];
-        const flaggedFiles = files.filter((file) => file?.attributes?.is_file && SUSPICIOUS_KEYWORDS.some((keyword) => file.attributes.name.toLowerCase().includes(keyword)));
+        const files = Array.isArray(listResponse.data?.entries) ? listResponse.data.entries : [];
+        const flaggedFiles = files.filter((file) => file?.is_file && SUSPICIOUS_KEYWORDS.some((keyword) => file.name.toLowerCase().includes(keyword)));
 
         for (const file of flaggedFiles.slice(0, 3)) { // keep content checks light
             await wait(300);
@@ -101,7 +101,7 @@ const checkSuspiciousFiles = async (serverIdentifier) => {
                 const contentResponse = await axios.get(
                     `${config.pterodactyl.host}/api/client/servers/${serverIdentifier}/files/contents`,
                     {
-                        params: { file: `/${file.attributes.name}` },
+                        params: { file: `/${file.name}` },
                         headers: { ...clientFileHeaders, Accept: 'text/plain' },
                         responseType: 'text',
                         timeout: 5000,
@@ -112,18 +112,18 @@ const checkSuspiciousFiles = async (serverIdentifier) => {
                 const contentKeyword = SUSPICIOUS_KEYWORDS.find((keyword) => snippet.includes(keyword));
                 if (contentKeyword) {
                     suspiciousFindings.push({
-                        name: file.attributes.name,
+                        name: file.name,
                         reason: `Keyword match in content: ${contentKeyword}`,
                     });
                 } else {
                     suspiciousFindings.push({
-                        name: file.attributes.name,
+                        name: file.name,
                         reason: 'Suspicious filename',
                     });
                 }
             } catch (error) {
                 suspiciousFindings.push({
-                    name: file.attributes.name,
+                    name: file.name,
                     reason: `Could not read content (${error?.response?.status || error.message})`,
                 });
             }
@@ -141,16 +141,16 @@ const checkServerUsage = async (server) => {
 
     try {
         const resourceResponse = await axios({
-            url: `${config.pterodactyl.host}/api/client/servers/${server.identifier}/resources`,
+            url: `${config.pterodactyl.host}/api/client/servers/${server.uuid_short}/resources`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
                 'Content-Type': 'application/json',
-                Accept: 'Application/vnd.pterodactyl.v1+json',
+                Accept: 'application/json',
             },
         });
 
-        const resources = resourceResponse.data?.attributes?.resources || {};
+        const resources = resourceResponse.data?.resources || {};
         const limits = server.limits || {};
 
         if (resources.current_state === 'offline') {
@@ -193,7 +193,7 @@ module.exports = async (client) => {
 
                 if (issues.length === 0) continue;
 
-                const suspiciousFiles = await checkSuspiciousFiles(server.identifier);
+                const suspiciousFiles = await checkSuspiciousFiles(server.uuid_short);
 
                 if (issues.length > 0 || suspiciousFiles.length > 0) {
                     flaggedServers.push({ ...server, issues, suspiciousFiles });
@@ -217,7 +217,7 @@ module.exports = async (client) => {
 
             const details = [issueLines, fileNotes].filter(Boolean).join('\n');
             embed.addFields({
-                name: server.name || server.identifier,
+                name: server.name || server.uuid_short,
                 value: details || 'Issues detected but no details available.',
             });
         });

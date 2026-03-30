@@ -17,33 +17,45 @@ module.exports = async (client, message, args) => {
     };
 
     let password = await getPassword();
+    
+    // 1. Fetch Owner UUID
+    let owner_uuid = null;
+    if (userDB.consoleID && userDB.consoleID.length > 20) {
+        owner_uuid = userDB.consoleID;
+    } else if (userDB.email) {
+        try {
+            const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                headers: { 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey, 'Accept': 'application/json' },
+                params: { 'filter[email]': userDB.email }
+            });
+            if (uResE.data.users?.data?.length > 0) owner_uuid = uResE.data.users.data[0].uuid;
+        } catch(e) {}
+    }
+    if (!owner_uuid) return message.reply(":x: Could not find your connected account on the panel!");
+
     axios({
-        url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
+        url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid,
         method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
         headers: {
             'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'Application/vnd.pterodactyl.v1+json',
+            'Accept': 'application/json',
         },
     }).then(fetch => {
+        const u = fetch.data.user || fetch.data;
         const data = {
-            "email": fetch.data.attributes.email,
-            "username": fetch.data.attributes.username,
-            "first_name": fetch.data.attributes.first_name,
-            "last_name": fetch.data.attributes.last_name,
+            "email": u.email,
+            "username": u.username,
+            "name_first": u.name_first || u.first_name,
+            "name_last": u.name_last || u.last_name,
             "password": password
         }
         axios({
-            url: config.pterodactyl.host + "/api/application/users/" + userDB.consoleID,
+            url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid,
             method: 'PATCH',
-            followRedirect: true,
-            maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             },
             data: data,
         }).then(user => {

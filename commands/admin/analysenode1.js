@@ -19,26 +19,26 @@ module.exports = {
         let msg
         let start = Date.now()
         await axios({
-            url: config.pterodactyl.host+"/api/application/nodes/" + "2" + "?include=servers,location,allocations",
+            url: config.pterodactyl.host+"/api/admin/nodes/" + "2" + "?include=servers,location,allocations",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
             headers: {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
-                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Accept': 'application/json',
             }
         }).then(async ({data}) => {
 
-            msg = await message.reply('Calculating '+data.attributes.relationships.servers.data.length+' servers. . .')
+            msg = await message.reply('Calculating '+data?.servers.length+' servers. . .')
 
-            let done = (await Promise.all(data.attributes.relationships.servers.data.map(x => x.attributes).map(async server => {
+            let done = (await Promise.all(data?.servers.map(x => x).map(async server => {
 
-                let id = server.identifier
+                let id = server.uuid_short
                 let name = server.name
 
                 try{
-                    let {data: {attributes: {resources}}} = await axios({
+                    let {data: {resources}} = await axios({
                         url: config.pterodactyl.host + '/api/client/servers/' + id + "/resources",
                         method: 'GET',
                         followRedirect: true,
@@ -46,7 +46,7 @@ module.exports = {
                         headers: {
                             'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
                             'Content-Type': 'application/json',
-                            'Accept': 'Application/vnd.pterodactyl.v1+json',
+                            'Accept': 'application/json',
                         }
                     })
                     return {Name: name, ID: id, CPU: resources.cpu_absolute + "%",  RAM: pretty(resources.memory_bytes), Disk: pretty(resources.disk_bytes), resources}
