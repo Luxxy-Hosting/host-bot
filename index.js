@@ -112,92 +112,93 @@ tracker.on('guildMemberAdd', (member, type, invite) => {
 const UserData1 = require('./models/userData.js')
 const { default: axios } = require('axios')
 client.on('guildMemberRemove', async member => {
-    const UserDB = await UserData1.findOne({ ID: member.id })
+    const UserDB = await UserData1.findOne({ ID: member.id });
+    const logChannel = client.channels.cache.get(config.channelID.leavedeletelogs);
+
     if (!UserDB) {
-        console.log('User is not in the database.')
-        client.channels.cache.get(config.channelID.leavedeletelogs).send('🤵 User is not in the database. (mongoose)')
+        if (logChannel) logChannel.send('🤵 User is not in the database. (mongoose)');
+        return;
     }
-    if (UserDB) {
-        await axios({
-            url: config.pterodactyl.host + "/api/admin/users/" + UserDB.consoleID + "/servers?per_page=100",
-            method: 'GET',
-            followRedirect: true,
-            maxRedirects: 5,
-            headers: {
-                'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            }
-        }).then(async res => {
-            const servers1 = (res.data?.servers?.data || []).map(e => e.uuid)
-            client.channels.cache.get(config.channelID.leavedeletelogs).send({
+
+    const apiHeaders = {
+        'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    };
+
+    let owner_uuid = null;
+    if (UserDB.consoleID && UserDB.consoleID.length > 20) {
+        owner_uuid = UserDB.consoleID;
+    } else if (UserDB.email) {
+        try {
+            const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                headers: apiHeaders,
+                params: { search: UserDB.email, per_page: 50 }
+            });
+            const match = (uResE.data.users?.data || []).find(u => u.email?.toLowerCase() === UserDB.email.toLowerCase());
+            if (match) owner_uuid = match.uuid;
+        } catch (e) {}
+    }
+
+    if (!owner_uuid) {
+        if (logChannel) logChannel.send({
+            embeds: [
+                new Discord.EmbedBuilder()
+                    .setColor(Discord.Colors.Red)
+                    .setDescription(`🦺 ${member.user.tag} left, but no matching panel account was found for email/ID. Deleting local DB records.`)
+            ]
+        });
+        await UserData1.deleteOne({ ID: member.id });
+        return;
+    }
+
+    await axios({
+        url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid + "/servers?per_page=100",
+        method: 'GET',
+        headers: apiHeaders
+    }).then(async res => {
+        const servers1 = (res.data?.servers?.data || []).map(e => e.uuid);
+        
+        if (logChannel) {
+            logChannel.send({
                 embeds: [
                     new Discord.EmbedBuilder()
-                    .setColor(Discord.Colors.Red)
-                    .setDescription(` 🦺 ${member.user.tag} has left with consoleid ${UserDB.consoleID} with ${servers1.length} servers.`)
+                        .setColor(Discord.Colors.Red)
+                        .setDescription(`🦺 ${member.user.tag} left with UUID ${owner_uuid} owning ${servers1.length} servers.`)
                 ]
-            })
-            client.channels.cache.get(config.channelID.leavedeletelogs).send('deleting.....')
-            if (servers1.length > 0) {
-                await client.channels.cache.get(config.channelID.leavedeletelogs).send({
-                    embeds: [
-                        new Discord.EmbedBuilder()
-                        .setColor(Discord.Colors.Red)
-                        .setTitle('🦺 Deleting servers...')
-                    ]
-                })
-                await Promise.all(servers1.map(async server => {
-                    client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
-                        new Discord.EmbedBuilder()
-                        .setColor(Discord.Colors.Red)
-                        .setTitle(`🦺 Deleting server ${server}...`)
-                    ]})
-                    await axios({
-                        url: config.pterodactyl.host + "/api/admin/servers/" + server,
-                        method: 'DELETE',
-                        followRedirect: true,
-                        maxRedirects: 5,
-                        headers: {
-                            'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        data: { force: true, delete_backups: true }
-                    }).then(async res => {
-                        client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
-                            new Discord.EmbedBuilder()
-                            .setColor(Discord.Colors.Red)
-                            .setTitle(`🦺 Server ${server} deleted.`)
-                        ]})
-                    }
-                    ).catch(err => {
-                        client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
-                            new Discord.EmbedBuilder()
-                            .setColor(Discord.Colors.Red)
-                            .setTitle(`🦺 Error deleting server ${server}`)
-                        ]})
-                    }
-                    )
-                }))
-            }
-            await UserData1.deleteOne({ ID: member.id })
-            await axios({
-                url: config.pterodactyl.host + "/api/admin/users/" + UserDB.consoleID,
-                method: 'DELETE',
-                followRedirect: true,
-                maxRedirects: 5,
-                headers: {
-                    'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                }
-            }).then(async res => {
-                client.channels.cache.get(config.channelID.leavedeletelogs).send({ embeds: [
-                    new Discord.EmbedBuilder()
-                    .setColor(Discord.Colors.Red)
-                    .setTitle(`🦺 User ${UserDB.consoleID} deleted.`)
-                ]})
-            })
-        })
-    }
-})
+            });
+        }
+
+        if (servers1.length > 0) {
+            await Promise.all(servers1.map(async server => {
+                await axios({
+                    url: config.pterodactyl.host + "/api/admin/servers/" + server,
+                    method: 'DELETE',
+                    headers: apiHeaders,
+                    data: { force: true, delete_backups: true }
+                }).then(async () => {
+                   if (logChannel) logChannel.send({ embeds: [new Discord.EmbedBuilder().setColor(Discord.Colors.Red).setTitle(`🦺 Server ${server} deleted.`)] });
+                }).catch(err => {
+                   if (logChannel) logChannel.send({ embeds: [new Discord.EmbedBuilder().setColor(Discord.Colors.Red).setTitle(`🦺 Error deleting server ${server}`)] });
+                });
+            }));
+        }
+
+        await UserData1.deleteOne({ ID: member.id });
+        if (global.serverCount) {
+             global.serverCount.set(member.id, { gameused: 0, botused: 0, gamehave: 1, bothave: 2 });
+        }
+
+        await axios({
+            url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid,
+            method: 'DELETE',
+            headers: apiHeaders
+        }).then(async () => {
+            if (logChannel) logChannel.send({ embeds: [new Discord.EmbedBuilder().setColor(Discord.Colors.Red).setTitle(`🦺 User ${owner_uuid} deleted.`)] });
+        }).catch(err => {
+            if (logChannel) logChannel.send({ embeds: [new Discord.EmbedBuilder().setColor(Discord.Colors.Red).setTitle(`🦺 Failed to delete user ${owner_uuid}.`)] });
+        });
+    }).catch(err => {
+        if (logChannel) logChannel.send(`Failed to fetch servers for leaving user. UUID: ${owner_uuid}`);
+    });
+});
