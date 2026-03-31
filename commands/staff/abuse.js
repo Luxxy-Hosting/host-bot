@@ -1,8 +1,9 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, ComponentType } = require('discord.js');
+const { ContainerBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 const axios = require('axios');
 const config = require('../../config.json');
 const serverData = require('../../models/serverData');
 const userData = require('../../models/userData');
+const { C, V2, errorMsg, successMsg, warnMsg } = require('../../helpers/components');
 
 const APPROVER_ROLE_ID = '941026456446828568';
 const ABUSE_LOG_CHANNEL_ID = config.channelID?.abuse;
@@ -29,16 +30,16 @@ module.exports = async (client, message, args) => {
         message.member.roles.cache.has(config.roleID.admin);
 
     if (!hasStaffAccess) {
-        return message.reply('You do not have the required permissions to use this command.');
+        return message.reply({ components: [errorMsg('No Permission', 'You do not have the required permissions to use this command.')], ...V2 });
     }
 
     const serverIdentifier = args[1]?.toLowerCase();
     if (!serverIdentifier) {
-        return message.reply(`Please provide a server identifier. Usage: \`${config.bot.prefix}staff abuse <identifier> [reason]\``);
+        return message.reply({ components: [errorMsg('Missing Identifier', `Usage: \`${config.bot.prefix}staff abuse <identifier> [reason]\``)], ...V2 });
     }
 
     if (!isAlphanumeric(serverIdentifier) || serverIdentifier.length < 4) {
-        return message.reply('Please provide a valid server identifier (example: `668568ff`).');
+        return message.reply({ components: [errorMsg('Invalid Identifier', 'Please provide a valid server identifier (example: `668568ff`).')], ...V2 });
     }
 
     const reasonInput = args.slice(2).join(' ').trim() || 'No reason provided.';
@@ -46,7 +47,7 @@ module.exports = async (client, message, args) => {
 
     const trackedServer = await serverData.findOne({ serverID: serverIdentifier });
     if (!trackedServer) {
-        return message.reply(`I couldn't find any tracked server with the ID \`${serverIdentifier}\`.`);
+        return message.reply({ components: [errorMsg('Not Found', `I couldn't find any tracked server with the ID \`${serverIdentifier}\`.`)], ...V2 });
     }
 
     const ownerMention = `<@${trackedServer.ownerID}>`;
@@ -60,41 +61,43 @@ module.exports = async (client, message, args) => {
         reason,
     };
 
-    const embed = new EmbedBuilder()
-        .setColor(Colors.Yellow)
-        .setTitle('🚨 Abuse Flag Created')
-        .setDescription('A staff member reported an abusive server. An approver must review this request before we remove the user.')
-        .addFields(
-            { name: 'Server Name', value: `\`${trackedServer.serverName}\``, inline: true },
-            { name: 'Server ID', value: `\`${trackedServer.serverID}\``, inline: true },
-            { name: 'Owner', value: `${ownerMention} (\`${trackedServer.ownerID}\`)\nTag: \`${ownerTag}\``, inline: false },
-            { name: 'Flagged By', value: `<@${message.author.id}> (\`${message.author.id}\`)`, inline: false },
-            { name: 'Reason', value: reason, inline: false },
-            { name: 'Status', value: 'Pending approval', inline: false }
-        )
-        .setTimestamp();
+    const container = new ContainerBuilder()
+        .setAccentColor(C.Warning)
+        .addTextDisplayComponents(td => td.setContent(`## 🚨 Abuse Flag Created`))
+        .addSeparatorComponents(sep => sep.setDivider(true))
+        .addTextDisplayComponents(td => td.setContent(
+            `A staff member reported an abusive server. An approver must review this request before we remove the user.\n\n` +
+            `**Server Name:** \`${trackedServer.serverName}\`\n` +
+            `**Server ID:** \`${trackedServer.serverID}\`\n` +
+            `**Owner:** ${ownerMention} (\`${trackedServer.ownerID}\` — \`${ownerTag}\`)\n` +
+            `**Flagged By:** <@${message.author.id}> (\`${message.author.id}\`)\n` +
+            `**Reason:** ${reason}\n\n` +
+            `**Status:** Pending approval`
+        ));
 
     const approveId = buildCustomId('approve', trackedServer.serverID, trackedServer.ownerID);
     const rejectId = buildCustomId('reject', trackedServer.serverID, trackedServer.ownerID);
-    const reviewMessage = await message.reply({ embeds: [embed], components: [buildActionRow({ approveId, rejectId, state: 'pending' })] });
+    
+    container.addActionRowComponents(row =>
+        row.addComponents(
+            new ButtonBuilder().setCustomId(approveId).setLabel('Approve & Ban').setEmoji('🛑').setStyle(ButtonStyle.Danger),
+            new ButtonBuilder().setCustomId(rejectId).setLabel('Reject').setEmoji('✋').setStyle(ButtonStyle.Secondary)
+        )
+    );
 
-    const collector = reviewMessage.createMessageComponentCollector({
-        componentType: ComponentType.Button,
-    });
+    const reviewMessage = await message.reply({ components: [container], ...V2 });
+
+    const collector = reviewMessage.createMessageComponentCollector({ componentType: 2 });
 
     collector.on('collect', async interaction => {
         if (![approveId, rejectId].includes(interaction.customId)) return;
 
         if (!interaction.member.roles.cache.has(APPROVER_ROLE_ID)) {
-            return interaction.reply({
-                content: `Only members with <@&${APPROVER_ROLE_ID}> can approve this request.`,
-                ephemeral: true,
-            });
+            return interaction.reply({ content: `Only members with <@&${APPROVER_ROLE_ID}> can approve this request.`, ephemeral: true });
         }
 
         const [, action, serverId, ownerId] = interaction.customId.split('|');
-        const reasonField = interaction.message.embeds[0]?.fields?.find(field => field.name === 'Reason');
-        const abuseReason = reasonField?.value || 'No reason provided.';
+        const abuseReason = reason;
 
         if (action === 'approve') {
             collector.stop('approved');
@@ -107,19 +110,26 @@ module.exports = async (client, message, args) => {
                 abuseReason,
             });
 
-            const updatedEmbed = buildResolutionEmbed({
-                interaction,
-                originalEmbed: interaction.message.embeds[0],
-                summaryText: actionSummary.summaryText,
-                statusText: `Approved by <@${interaction.user.id}> on <t:${Math.floor(Date.now() / 1000)}:F>`,
-                color: Colors.Red,
-                footerPrefix: 'Approved by',
-            });
+            const resolvedContainer = new ContainerBuilder()
+                .setAccentColor(C.Error)
+                .addTextDisplayComponents(td => td.setContent(`## 🚨 Abuse Flag Approved`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(
+                    `**Server Name:** \`${trackedServer.serverName}\`\n` +
+                    `**Server ID:** \`${trackedServer.serverID}\`\n` +
+                    `**Owner:** ${ownerMention} (\`${trackedServer.ownerID}\` — \`${ownerTag}\`)\n` +
+                    `**Flagged By:** <@${message.author.id}> (\`${message.author.id}\`)\n` +
+                    `**Reason:** ${reason}\n\n` +
+                    `**Status:** Approved by <@${interaction.user.id}> on <t:${Math.floor(Date.now() / 1000)}:F>\n\n` +
+                    `**Action Summary:**\n${actionSummary.summaryText}`
+                ))
+                .addActionRowComponents(row =>
+                    row.addComponents(
+                        new ButtonBuilder().setCustomId(approveId).setLabel('Approved').setEmoji('✅').setStyle(ButtonStyle.Success).setDisabled(true)
+                    )
+                );
 
-            await reviewMessage.edit({
-                embeds: [updatedEmbed],
-                components: [buildActionRow({ approveId, rejectId, state: 'approved' })],
-            });
+            await reviewMessage.edit({ components: [resolvedContainer], ...V2 });
             await interaction.editReply(actionSummary.ephemeralMessage);
             await sendAbuseLog(client, {
                 flagContext,
@@ -134,20 +144,27 @@ module.exports = async (client, message, args) => {
             await interaction.deferReply({ ephemeral: true });
 
             const summaryText = `🚫 Request rejected by <@${interaction.user.id}>. No action was taken.`;
-            const updatedEmbed = buildResolutionEmbed({
-                interaction,
-                originalEmbed: interaction.message.embeds[0],
-                summaryText,
-                statusText: `Rejected by <@${interaction.user.id}> on <t:${Math.floor(Date.now() / 1000)}:F>`,
-                color: Colors.Yellow,
-                footerPrefix: 'Rejected by',
-            });
+            
+            const resolvedContainer = new ContainerBuilder()
+                .setAccentColor(C.Warning)
+                .addTextDisplayComponents(td => td.setContent(`## 🚨 Abuse Flag Rejected`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(
+                    `**Server Name:** \`${trackedServer.serverName}\`\n` +
+                    `**Server ID:** \`${trackedServer.serverID}\`\n` +
+                    `**Owner:** ${ownerMention} (\`${trackedServer.ownerID}\` — \`${ownerTag}\`)\n` +
+                    `**Flagged By:** <@${message.author.id}> (\`${message.author.id}\`)\n` +
+                    `**Reason:** ${reason}\n\n` +
+                    `**Status:** Rejected by <@${interaction.user.id}> on <t:${Math.floor(Date.now() / 1000)}:F>\n\n` +
+                    `**Action Summary:**\n${summaryText}`
+                ))
+                .addActionRowComponents(row =>
+                    row.addComponents(
+                        new ButtonBuilder().setCustomId(rejectId).setLabel('Rejected').setEmoji('🚫').setStyle(ButtonStyle.Danger).setDisabled(true)
+                    )
+                );
 
-            await reviewMessage.edit({
-                embeds: [updatedEmbed],
-                components: [buildActionRow({ approveId, rejectId, state: 'rejected' })],
-            });
-
+            await reviewMessage.edit({ components: [resolvedContainer], ...V2 });
             await interaction.editReply('Abuse flag rejected. No action was taken.');
             await sendAbuseLog(client, {
                 flagContext,
@@ -168,23 +185,16 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
     let banMessage = '';
 
     const ownerDoc = await userData.findOne({ ID: ownerId }).catch(() => null);
-
     const trackedServers = await serverData.find({ ownerID: ownerId }).catch(() => []);
     const trackedServerMap = new Map(trackedServers.map(doc => [String(doc.serverAdminID), doc]));
 
     if (ownerDoc) {
         try {
-            const response = await axios.get(`${config.pterodactyl.host}/api/admin/users/${ownerDoc.consoleID}/servers?per_page=100`, {
-                headers: PANEL_HEADERS,
-            });
+            const response = await axios.get(`${config.pterodactyl.host}/api/admin/users/${ownerDoc.consoleID}/servers?per_page=100`, { headers: PANEL_HEADERS });
             const servers = response.data?.servers?.data || [];
-
             for (const srv of servers) {
                 try {
-                    await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${srv.uuid}`, {
-                        headers: PANEL_HEADERS,
-                        data: { force: true, delete_backups: true }
-                    });
+                    await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${srv.uuid}`, { headers: PANEL_HEADERS, data: { force: true, delete_backups: true } });
                     serversDeleted += 1;
                     const trackedDoc = trackedServerMap.get(String(srv.uuid));
                     if (trackedDoc) {
@@ -201,10 +211,7 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
     } else if (trackedServers.length) {
         for (const doc of trackedServers) {
             try {
-                await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${doc.serverAdminID}`, {
-                    headers: PANEL_HEADERS,
-                    data: { force: true, delete_backups: true }
-                });
+                await axios.delete(`${config.pterodactyl.host}/api/admin/servers/${doc.serverAdminID}`, { headers: PANEL_HEADERS, data: { force: true, delete_backups: true } });
                 serversDeleted += 1;
                 await serverData.deleteOne({ _id: doc._id });
             } catch (err) {
@@ -217,9 +224,7 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
 
     if (ownerDoc) {
         try {
-            await axios.delete(`${config.pterodactyl.host}/api/admin/users/${ownerDoc.consoleID}`, {
-                headers: PANEL_HEADERS,
-            });
+            await axios.delete(`${config.pterodactyl.host}/api/admin/users/${ownerDoc.consoleID}`, { headers: PANEL_HEADERS });
             await userData.deleteOne({ ID: ownerId });
             userDeleted = true;
         } catch (err) {
@@ -234,17 +239,11 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
     }
 
     try {
-        await interaction.guild.members.ban(ownerId, {
-            reason: `Abuse Approval • ${abuseReason}`,
-            deleteMessageSeconds: 0,
-        });
+        await interaction.guild.members.ban(ownerId, { reason: `Abuse Approval • ${abuseReason}`, deleteMessageSeconds: 0 });
         banMessage = `Banned <@${ownerId}> successfully.`;
     } catch (err) {
         try {
-            await interaction.guild.bans.create(ownerId, {
-                reason: `Abuse Approval • ${abuseReason}`,
-                deleteMessageSeconds: 0,
-            });
+            await interaction.guild.bans.create(ownerId, { reason: `Abuse Approval • ${abuseReason}`, deleteMessageSeconds: 0 });
             banMessage = `Banned <@${ownerId}> successfully.`;
         } catch (banErr) {
             banMessage = `Failed to ban user: ${formatError(banErr)}`;
@@ -280,54 +279,29 @@ async function handleApproval({ serverId, ownerId, interaction, abuseReason }) {
     };
 }
 
-function buildResolutionEmbed({ interaction, originalEmbed, summaryText, statusText, color, footerPrefix }) {
-    const embed = EmbedBuilder.from(originalEmbed)
-        .setColor(color)
-        .setTimestamp(new Date());
-
-    const fields = originalEmbed.fields?.map(field => {
-        if (field.name === 'Status') {
-            return {
-                name: 'Status',
-                value: statusText,
-                inline: field.inline,
-            };
-        }
-        return field;
-    }) || [];
-
-    embed.setFields(fields);
-    embed.addFields({ name: 'Action Summary', value: summaryText || 'No additional details.' });
-    embed.setFooter({ text: `${footerPrefix} ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL({ size: 128 }) });
-
-    return embed;
-}
-
 async function sendAbuseLog(client, { flagContext, actionBy, summary, status = 'Approved' }) {
     if (!ABUSE_LOG_CHANNEL_ID) return;
 
     try {
         let channel = client.channels.cache.get(ABUSE_LOG_CHANNEL_ID);
-        if (!channel) {
-            channel = await client.channels.fetch(ABUSE_LOG_CHANNEL_ID).catch(() => null);
-        }
+        if (!channel) channel = await client.channels.fetch(ABUSE_LOG_CHANNEL_ID).catch(() => null);
         if (!channel?.isTextBased()) return;
 
-        const embed = new EmbedBuilder()
-            .setColor(Colors.Red)
-            .setTitle('Abuse Case Update')
-            .addFields(
-                { name: 'Server', value: `\`${flagContext.serverName}\` (\`${flagContext.serverId}\`)`, inline: true },
-                { name: 'Owner', value: `<@${flagContext.ownerId}> (\`${flagContext.ownerId}\`)`, inline: true },
-                { name: 'Flagged By', value: `<@${flagContext.flaggedBy}>`, inline: true },
-                { name: 'Status', value: status, inline: true },
-                { name: 'Actioned By', value: `<@${actionBy}>`, inline: true },
-                { name: 'Reason', value: flagContext.reason, inline: false },
-                { name: 'Summary', value: summary || 'No summary available.', inline: false },
-            )
-            .setTimestamp();
+        const logContainer = new ContainerBuilder()
+            .setAccentColor(C.Error)
+            .addTextDisplayComponents(td => td.setContent(`## 🚨 Abuse Case Update`))
+            .addSeparatorComponents(sep => sep.setDivider(true))
+            .addTextDisplayComponents(td => td.setContent(
+                `**Server:** \`${flagContext.serverName}\` (\`${flagContext.serverId}\`)\n` +
+                `**Owner:** <@${flagContext.ownerId}> (\`${flagContext.ownerId}\`)\n` +
+                `**Flagged By:** <@${flagContext.flaggedBy}>\n` +
+                `**Actioned By:** <@${actionBy}>\n` +
+                `**Status:** ${status}\n\n` +
+                `**Reason:** ${flagContext.reason}\n\n` +
+                `**Summary:**\n${summary || 'No summary available.'}`
+            ));
 
-        await channel.send({ embeds: [embed] });
+        await channel.send({ components: [logContainer], ...V2 });
     } catch (err) {
         console.error('[AbuseLog] Failed to send approval log:', err.message);
     }
@@ -335,23 +309,4 @@ async function sendAbuseLog(client, { flagContext, actionBy, summary, status = '
 
 function buildCustomId(action, serverId, ownerId) {
     return `abuse|${action}|${serverId}|${ownerId}`;
-}
-
-function buildActionRow({ approveId, rejectId, state = 'pending' }) {
-    const isPending = state === 'pending';
-    const approveButton = new ButtonBuilder()
-        .setCustomId(approveId)
-        .setLabel(state === 'approved' ? 'Approved' : 'Approve & Ban')
-        .setEmoji(state === 'approved' ? '✅' : '🛑')
-        .setStyle(state === 'approved' ? ButtonStyle.Success : ButtonStyle.Danger)
-        .setDisabled(!isPending);
-
-    const rejectButton = new ButtonBuilder()
-        .setCustomId(rejectId)
-        .setLabel(state === 'rejected' ? 'Rejected' : 'Reject')
-        .setEmoji(state === 'rejected' ? '🚫' : '✋')
-        .setStyle(state === 'rejected' ? ButtonStyle.Danger : ButtonStyle.Secondary)
-        .setDisabled(!isPending);
-
-    return new ActionRowBuilder().addComponents(approveButton, rejectButton);
 }

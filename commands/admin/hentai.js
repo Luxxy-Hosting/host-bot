@@ -1,6 +1,7 @@
-const Discord = require("discord.js");
+const { MediaGalleryBuilder, MessageFlags } = require("discord.js");
 const { NekoBot } = require("nekobot-api");
 const api = new NekoBot();
+const { V2, errorMsg } = require("../../helpers/components");
 
 module.exports = {
     name: "hentai",
@@ -8,16 +9,16 @@ module.exports = {
     description: "nah",
     aliases: ['h'],
     run: async (client, message, args) => {
-
         if (message.channel.nsfw === true) {
-
-            const nsfw = await api.get("hentai")
-
-            const embed = new Discord.EmbedBuilder()
-            .setImage(nsfw)
-
-            message.reply({ embeds: [embed] }).catch(err => message.reply('error'))
-        } else return message.reply("not nsfw channel")
-
+            try {
+                const nsfw = await api.get("hentai");
+                const gallery = new MediaGalleryBuilder().addItems(item => item.setURL(nsfw).setDescription('Hentai'));
+                message.reply({ components: [gallery], ...V2 }).catch(err => message.reply({ components: [errorMsg('Error', 'Failed to send image.')], ...V2 }));
+            } catch (err) {
+                message.reply({ components: [errorMsg('API Error', 'Failed to fetch image.')], ...V2 });
+            }
+        } else {
+            return message.reply({ components: [errorMsg('NSFW Only', 'This command can only be used in NSFW channels.')], ...V2 });
+        }
     }
-}
+};

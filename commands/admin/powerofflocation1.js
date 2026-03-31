@@ -1,142 +1,108 @@
-const Discord = require('discord.js');
+const { CommandInteraction, PermissionsBitField, ContainerBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
+const fs = require('fs');
+const ServerData = require('../../models/serverData');
 const config = require('../../config.json');
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { C, V2, errorMsg, successMsg, warnMsg } = require('../../helpers/components');
 
 module.exports = {
     name: 'powerofflocation1',
-    category: 'Owner',
-    description: 'Power off all servers in location 1.',
-    aliases: ['shutdownloc1'],
-    run: async (client, message) => {
-        if (message.author.id !== config.settings.owner) return;
+    description: 'Powers off all servers deployed on Node 1 components.',
 
-        const locationId = 1;
-        const summary = {
-            totalServers: 0,
-            stopSent: 0,
-            killSent: 0,
-            failed: 0,
-        };
-
-        const embed = new Discord.EmbedBuilder()
-            .setColor(Discord.Colors.Red)
-            .setTitle('Powering off servers')
-            .setDescription(`Collecting servers for location **${locationId}**...`)
-            .setTimestamp();
-
-        const statusMessage = await message.reply({ embeds: [embed] });
-
-        try {
-            const nodeResponse = await axios({
-                url: `${config.pterodactyl.host}/api/admin/nodes`,
-                method: 'GET',
-                params: { per_page: 100 },
-                headers: {
-                    Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                },
-            });
-
-            const locationNodes = nodeResponse.data?.data?.filter(
-                (node) => node?.location_id === locationId,
-            ) || [];
-
-            if (locationNodes.length === 0) {
-                embed.setDescription(`No nodes found for location **${locationId}**.`).setColor(Discord.Colors.Orange);
-                return statusMessage.edit({ embeds: [embed] });
-            }
-
-            const servers = [];
-
-            for (const node of locationNodes) {
-                await wait(250); // small delay for rate limiting
-                const detailedNode = await axios({
-                    url: `${config.pterodactyl.host}/api/admin/nodes/${node.id}`,
-                    method: 'GET',
-                    params: { include: 'servers' },
-                    headers: {
-                        Authorization: `Bearer ${config.pterodactyl.adminApiKey}`,
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                });
-
-                const serverData = detailedNode.data?.relationships?.servers?.data || [];
-                serverData.forEach((srv) => {
-                    if (srv?.uuid_short) {
-                        servers.push({
-                            identifier: srv.uuid_short,
-                            name: srv.name,
-                        });
-                    }
-                });
-            }
-
-            if (servers.length === 0) {
-                embed.setDescription(`No servers found in location **${locationId}**.`).setColor(Discord.Colors.Orange);
-                return statusMessage.edit({ embeds: [embed] });
-            }
-
-            summary.totalServers = servers.length;
-            embed.setDescription(`Sending power off signals to **${summary.totalServers}** servers...`);
-            await statusMessage.edit({ embeds: [embed] });
-
-            for (const server of servers) {
-                await wait(500); // avoid hitting API rate limits
-                try {
-                    await axios({
-                        url: `${config.pterodactyl.host}/api/client/servers/${server.uuid_short}/power`,
-                        method: 'POST',
-                        data: { signal: 'stop' },
-                        headers: {
-                            Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                        },
-                    });
-                    summary.stopSent += 1;
-                } catch (err) {
-                    summary.failed += 1;
-                }
-
-                await wait(500);
-                try {
-                    await axios({
-                        url: `${config.pterodactyl.host}/api/client/servers/${server.uuid_short}/power`,
-                        method: 'POST',
-                        data: { signal: 'kill' },
-                        headers: {
-                            Authorization: `Bearer ${config.pterodactyl.clientAPI}`,
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                        },
-                    });
-                    summary.killSent += 1;
-                } catch (err) {
-                    summary.failed += 1;
-                }
-            }
-
-            embed
-                .setColor(Discord.Colors.Green)
-                .setTitle('Power off complete')
-                .setDescription(`Processed **${summary.totalServers}** servers in location **${locationId}**.`)
-                .setFields(
-                    { name: 'Stop signals', value: summary.stopSent.toString(), inline: true },
-                    { name: 'Kill signals', value: summary.killSent.toString(), inline: true },
-                    { name: 'Failures', value: summary.failed.toString(), inline: true },
-                );
-        } catch (error) {
-            embed
-                .setColor(Discord.Colors.Red)
-                .setTitle('Power off failed')
-                .setDescription('An error occurred while powering off servers.')
-                .addFields({ name: 'Error', value: error?.message || 'Unknown error' });
+    async run(client, message, args) {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+            return message.reply({ components: [errorMsg('No Permission', 'You do not have permission to use this command.')], ...V2 });
         }
 
-        return statusMessage.edit({ embeds: [embed] });
-    },
+        try {
+            const nRes = await axios.get(config.pterodactyl.host + "/api/admin/nodes", {
+                headers: {
+                    'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }
+            });
+
+            const node1NodeId = 1; 
+            const node = nRes.data.nodes?.data?.find(n => n.id === node1NodeId || n.location?.id === node1NodeId);
+            if (!node) {
+                 return message.reply({ components: [errorMsg('Not Found', 'Count not find Node 1.')], ...V2 });
+            }
+            const nodeUUID = node.uuid;
+
+            const initContainer = new ContainerBuilder()
+                .setAccentColor(C.Warning)
+                .addTextDisplayComponents(td => td.setContent(`## ⚠️ Initiating Power Off...`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(`Target: **Node 1**\nFetching servers...`));
+
+            const msg = await message.reply({ components: [initContainer], ...V2 });
+
+            const serversResponse = await axios.get(`${config.pterodactyl.host}/api/admin/nodes/${nodeUUID}/servers`, {
+                headers: {
+                    'Authorization': `Bearer ${config.pterodactyl.adminApiKey}`,
+                    'Accept': 'application/json'
+                }
+            });
+
+            const servers = serversResponse.data?.servers?.data || [];
+            if (servers.length === 0) {
+                return msg.edit({ components: [warnMsg('Empty', 'No servers found on Node 1.')], ...V2 });
+            }
+
+            msg.edit({
+                components: [
+                    new ContainerBuilder()
+                        .setAccentColor(C.Warning)
+                        .addTextDisplayComponents(td => td.setContent(`## ⚠️ Initiating Power Off...`))
+                        .addSeparatorComponents(sep => sep.setDivider(true))
+                        .addTextDisplayComponents(td => td.setContent(`Target: **Node 1**\nFound **${servers.length}** servers. Sending kill signals...`))
+                ], 
+                ...V2
+            });
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const server of servers) {
+                const serverId = server.uuid_short;
+
+                try {
+                    await axios.post(`${config.pterodactyl.host}/api/client/servers/${serverId}/power`, 
+                    {
+                        signal: 'kill'
+                    }, 
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${config.pterodactyl.clientAPI}`,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    successCount++;
+                } catch (error) {
+                    console.error(`Failed to power off server ${serverId}:`, error.message);
+                    failCount++;
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            const resultContainer = new ContainerBuilder()
+                .setAccentColor(C.Success)
+                .addTextDisplayComponents(td => td.setContent(`## ✅ Power Off Complete`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(
+                    `**Node 1** servers have been killed.\n` +
+                    `✅ **Success:** \`${successCount}\`\n` +
+                    `❌ **Failed:** \`${failCount}\``
+                ));
+
+            msg.edit({ components: [resultContainer], ...V2 });
+
+        } catch (error) {
+            console.error('Error powering off location 1 servers:', error);
+            message.reply({ components: [errorMsg('Error', `Failed to execute: ${error.message}`)], ...V2 });
+        }
+    }
 };

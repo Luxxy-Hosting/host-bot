@@ -1,104 +1,128 @@
-const Discord = require('discord.js');
-const config = require('../../config.json')
-const axios = require('axios')
-const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`)
+const { ContainerBuilder, MessageFlags } = require('discord.js');
+const config = require('../../config.json');
+const axios = require('axios');
+const { getDomainIP, proxyDomain, findProxy, deleteProxy } = require(`../../nginxPM/index`);
+const { C, V2, errorMsg, warnMsg, successMsg, infoMsg } = require('../../helpers/components');
+
 module.exports = async (client, message, args) => {
-    return message.reply(`:x: This command is deprecated, please use \`${config.bot.prefix}server domain\` instead`)
-    let port
-    let localdomain
-    let serverid = args[1]
-    let domain = args[2]
-    if(
+    return message.reply({ components: [errorMsg('Deprecated', `This command is deprecated. Please use \`${config.bot.prefix}server domain\` instead.`)], ...V2 });
+    
+    let port;
+    let localdomain;
+    let serverid = args[1];
+    let domain = args[2];
+    
+    if (
         !serverid ||
         !serverid?.split('-')[0] ||
         !domain ||
         domain.split('.').length === 1
-    ) return message.channel.send(`:x: Incorrect command usage. Please run: \`${config.bot.prefix}server proxy <server id> <your_domain.com>\``)
-    const userdata = require('../../models/userData')
-    const userdb = await userdata.findOne({ ID: message.author.id })
-    let preoutput = (await axios({
-        url: config.pterodactyl.host + "/api/admin/users/" + userdb.consoleID + "/servers?per_page=100",
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+    ) return message.channel.send({ components: [errorMsg('Usage', `Incorrect usage. \`${config.bot.prefix}server proxy <server id> <your_domain.com>\``)], ...V2 });
+    
+    const userdata = require('../../models/userData');
+    const userdb = await userdata.findOne({ ID: message.author.id });
+    
+    let preoutput;
+    try {
+        const res = await axios({
+            url: config.pterodactyl.host + "/api/admin/users/" + userdb.consoleID + "/servers?per_page=100",
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
+        preoutput = res.data?.servers?.data || [];
+    } catch(err) {}
+
+    if (!preoutput) return message.channel.send({ components: [errorMsg('Connection Error', `There was an error connecting to the panel.`)], ...V2 });
+
+    const isurserver = preoutput.find(srv => srv.uuid_short == args[1]);
+    if (!isurserver) return message.reply({ components: [errorMsg('Not Found', `I could not find that server.`)], ...V2 });
+
+    let serverdata;
+    try {
+        const res = await axios({
+            url: config.pterodactyl.host + "/api/client/servers/" + serverid,
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
+        serverdata = res.data?.server;
+    } catch(err) {}
+    
+    if (!serverdata) return message.channel.send({ components: [errorMsg('Connection Error', `There was an error connecting to the panel.`)], ...V2 });
+
+    localdomain = serverdata.sftp_details.ip;
+
+    if (serverdata.relationships.allocations.data.length !== 1) {
+        let i = 1;
+        const portContainer = new ContainerBuilder()
+            .setAccentColor(C.Warning)
+            .addTextDisplayComponents(td => td.setContent(`## ⚠️ Multiple Ports Found`))
+            .addSeparatorComponents(sep => sep.setDivider(true))
+            .addTextDisplayComponents(td => td.setContent(
+                `The ports you have are:\n` +
+                `\`\`\`\n${serverdata.relationships.allocations.data.map(x => `${i++}. ${x.port}`).join('\n')}\n\`\`\`\n` +
+                `Please send a new message with the port you want to proxy.`
+            ));
+
+        message.reply({ components: [portContainer], ...V2 });
+        
+        const filter = m => m.author.id === message.author.id;
+        let collected = await message.channel.awaitMessages({ filter, max: 1, time: 10000, errors: ['time'] }).catch(err => {
+            return message.reply({ components: [warnMsg('Timeout', 'Time has expired.')], ...V2 });
+        });
+        if (!collected) return;
+        
+        if (isNaN(collected?.first()?.content)) return message.reply({ components: [errorMsg('Invalid Input', `The message you sent is not a number.`)], ...V2 });
+        let postchosen = parseInt(collected.first().content);
+        if (!serverdata.relationships.allocations.data.map(x => x.port).includes(postchosen)) {
+            return message.reply({ components: [errorMsg('Not Found', `The port selected isn't in the list.`)], ...V2 });
         }
-    }).catch(err => {})).data?.servers?.data || [];
 
-    if(!preoutput) return message.channel.send(`:x: There was an error connecting to the panel`)
-
-    const isurserver = await preoutput.find(srv => srv.uuid_short == args[1])
-    if(!isurserver) return message.reply(`:x: I could not find that server`)
-
-    let serverdata = (await axios({
-        url: config.pterodactyl.host + "/api/client/servers/" + serverid,
-        method: 'GET',
-        followRedirect: true,
-        maxRedirects: 5,
-        headers: {
-            'Authorization': 'Bearer ' + config.pterodactyl.clientAPI,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        }
-    }).catch(err => {}))?.data.server
-    if(!serverdata) return message.channel.send(`:x: There was an error connecting to the panel`)
-
-    localdomain = serverdata.sftp_details.ip
-
-    if(serverdata.relationships.allocations.data.length !== 1){
-        let i = 1
-        message.reply({
-            embeds:[
-                new Discord.EmbedBuilder()
-                .addFields({ name: `Apparently you have more than one port`, value: `The ports you have are:\n\`\`\`\n${serverdata.relationships.allocations.data.map(x => i++ +". "+ x.port).join('\n')}\`\`\`\nPlease send a new message with the port you want to proxy` } )
-                .setColor(Discord.Colors.Orange)
-            ]
-        })
-        const filter = m => m.author.id === message.author.id
-        let collected = await message.channel.awaitMessages({ filter, max: 1, time: 10000, errors: ['time'] }).catch(err => {return message.reply(`Time had expired . . .`)})
-        if(isNaN(collected?.first()?.content)) return message.reply(`:x: The Message you sent is not a number`)
-        let postchosen = parseInt(collected.first().content)
-        if(!serverdata.relationships.allocations.data.map(x => x.port).includes(postchosen)) return message.reply(`:x: The port selected isnt in the list.`)
-
-        port = postchosen
-    }else{
-        port = serverdata.relationships.allocations.data[0].port
+        port = postchosen;
+    } else {
+        port = serverdata.relationships.allocations.data[0].port;
     }
 
-    let msg = await message.channel.send(`Proxying . . .`)
+    let msg = await message.channel.send({ components: [infoMsg('Proxy', `Proxying...`)], ...V2 });
 
-    domainIP = await getDomainIP(domain)
-    if(!domainIP || domainIP !== '23.26.226.86') return msg.edit(`The domain you gave doesnt have the right ip address. the ip should be: \`23.26.226.86\` *with cloudflare proxy turned off*`)
+    domainIP = await getDomainIP(domain);
+    if (!domainIP || domainIP !== '23.26.226.86') {
+        return msg.edit({ components: [errorMsg('Invalid IP', `The domain doesn't have the right IP. It should be \`23.26.226.86\` with Cloudflare proxy turned off.`)], ...V2 });
+    }
 
-    msg.edit(`Creating LetsEncrypt certificate, this might take some time.`)
-    let proxyinfo = await proxyDomain(domain, localdomain, port)
+    msg.edit({ components: [infoMsg('SSL Certificate', `Creating Let's Encrypt certificate, this might take some time...`)], ...V2 });
+    let proxyinfo = await proxyDomain(domain, localdomain, port);
 
-    if(!proxyinfo.error){
-        msg.edit(`${success} Your domain had been proxied. Proxy id: ${proxyinfo.data.id}`)
+    if (!proxyinfo.error) {
+        msg.edit({ components: [successMsg('Proxied', `Your domain has been proxied.\nProxy ID: \`${proxyinfo.data.id}\``)], ...V2 });
 
-        let userDomains = domains.get(message.author.id) || []
-
+        let userDomains = domains.get(message.author.id) || [];
         domains.set(message.author.id, [...new Set(userDomains), {
             domain: domain.toLowerCase(),
             serverID: serverid,
         }]);
-
-    }else{
-        if(proxyinfo.message === 'Request failed with status code 500'){
-            let proxytodelete = await findProxy(domain)
-            if(!proxytodelete)return msg.edit(`There was an error proxying your domain. I could not get the ssl certificate. This error could happend if you proxyed this domain more than 5 times in a week`)
+    } else {
+        if (proxyinfo.message === 'Request failed with status code 500') {
+            let proxytodelete = await findProxy(domain);
+            if (!proxytodelete) return msg.edit({ components: [errorMsg('SSL Error', `Error getting SSL certificate. May happen if proxied >5 times/week.`)], ...V2 });
             
-            if(await deleteProxy(proxytodelete.id)){
-                msg.edit(`There was an error proxying your domain. I could not get the ssl certificate. This error could happend if you proxyed this domain more than 5 times in a week. Just to know, i deleted your proxy sience it doesnt work`)
-            }else{
-                msg.edit(`There was an error proxying your domain. I could not create a ssl certificate and i could not delete the proxy after the error *id was not found*`)
+            if (await deleteProxy(proxytodelete.id)) {
+                msg.edit({ components: [errorMsg('SSL Error', `Error getting SSL certificate. Deleted non-working proxy.`)], ...V2 });
+            } else {
+                msg.edit({ components: [errorMsg('SSL Error', `Error creating SSL and could not automatically remove proxy.`)], ...V2 });
             }
 
-        }else if (proxyinfo.message === 'Request failed with status code 400'){
-            msg.edit(`There was an error proxying your domain. I think someone already proxied this domain`)
+        } else if (proxyinfo.message === 'Request failed with status code 400') {
+            msg.edit({ components: [errorMsg('Duplicate', `Someone may have already proxied this domain.`)], ...V2 });
         } else {
-            msg.edit(`There was an error proxying your domain. Error: ${proxyinfo.message}`)
+            msg.edit({ components: [errorMsg('Error', `Error proxying domain: ${proxyinfo.message}`)], ...V2 });
         }
     }
-}
+};

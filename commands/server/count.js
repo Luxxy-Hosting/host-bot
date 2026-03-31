@@ -1,4 +1,5 @@
-const Discord = require('discord.js')
+const { ContainerBuilder, SeparatorBuilder, MessageFlags } = require('discord.js');
+const { C, V2 } = require('../../helpers/components');
 
 module.exports = async (client, message, args) => {
     const user = message.mentions.users.first() || message.author;
@@ -12,12 +13,14 @@ module.exports = async (client, message, args) => {
     }
 
     const usage = serverCount.get(user.id);
-    message.channel.send({
-        embeds: [
-            new Discord.EmbedBuilder()
-                .setTitle(`${success} ${user.username}'s Server Count`)
-                .setColor(0x677bf9)
-                .setDescription(`**${user.username}**\nGameservers: \`${usage.gameused}/${usage.gamehave}\`\nBot Servers: \`${usage.botused}/${usage.bothave}\``)
-        ]
-    });
+    const container = new ContainerBuilder()
+        .setAccentColor(C.Blurple)
+        .addTextDisplayComponents(td => td.setContent(`## 📊 ${user.username}'s Server Count`))
+        .addSeparatorComponents(sep => sep.setDivider(true))
+        .addTextDisplayComponents(td => td.setContent(
+            `**Gameservers:** \`${usage.gameused}/${usage.gamehave}\`\n` +
+            `**Bot Servers:** \`${usage.botused}/${usage.bothave}\``
+        ));
+
+    message.channel.send({ components: [container], ...V2 });
 };

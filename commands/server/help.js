@@ -1,9 +1,16 @@
-const Discord = require('discord.js');
+const { MessageFlags } = require('discord.js');
+const { infoMsg, V2 } = require('../../helpers/components');
+
 module.exports = (client, message, args) => {
-    message.channel.send({embeds:[
-        new Discord.EmbedBuilder()
-        .setTitle(`❓ | Need help?`)
-        .setColor(Discord.Colors.Red)
-        .setDescription(`\`!server count\` - shows how many server slots you have and used\n\`!server create\` - create a server\n\`!server delete\` - delete a server\n\`!server list\` - shows all your servers created\n\`!server status\` - allows you to interact with the server\n\`!server proxy\` - Proxy your server to your domain\n\`!server unproxy\` - Delete a proxy\n\`!server renew\` - Renew your expired server`)
-    ]})
-}
+    const container = infoMsg('Server Commands',
+        `\`!server count\` — Shows how many server slots you have\n` +
+        `\`!server create\` — Create a server\n` +
+        `\`!server delete\` — Delete a server\n` +
+        `\`!server list\` — Shows all your servers\n` +
+        `\`!server status\` — Interact with your server\n` +
+        `\`!server proxy\` — Proxy your server to a domain\n` +
+        `\`!server unproxy\` — Delete a proxy\n` +
+        `\`!server renew\` — Renew your expired server`
+    );
+    message.channel.send({ components: [container], ...V2 });
+};

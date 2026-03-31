@@ -1,48 +1,33 @@
+const { ContainerBuilder, MessageFlags } = require('discord.js');
 const { default: axios } = require('axios');
-const Discord = require('discord.js');
 const config = require('../../config.json');
-const moment = require('moment');
 const userData = require('../../models/userData');
+const { C, V2, errorMsg, successMsg, infoMsg } = require('../../helpers/components');
 
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
-    const user = await message.mentions.users.first()
+    const user = await message.mentions.users.first();
 
-    if (!user) return message.reply({
-        embeds: [
-            new Discord.EmbedBuilder()
-            .setTitle(`:x: | You need to mention a user`)
-            .setColor(`RED`)
-        ]
-    })
+    if (!user) return message.reply({ components: [errorMsg('Missing User', 'You need to mention a user.')], ...V2 });
+    
     const userDB = await userData.findOne({ ID: user.id });
 
     if (!userDB) {
-        message.reply(`${user.username} is not in the database`)
-        return;
+        return message.reply({ components: [errorMsg('Not found', `${user.username} is not in the database.`)], ...V2 });
     }
 
-    const memory = args[2]
+    const memory = args[2];
     
     if (!memory) {
-        message.reply(`Please specify a memory size eg \`${config.bot.prefix}partner-create-partner <@user> 4096\``)
-        return;
+        return message.reply({ components: [infoMsg('Usage', `Please specify a memory size e.g. \`${config.bot.prefix}create-partner <@user> 4096\``)], ...V2 });
     }
 
-    if (isNaN(memory)) {
-        message.reply(`Memory size must be a number`)
-    }
+    if (isNaN(memory)) return message.reply({ components: [errorMsg('Invalid', 'Memory size must be a number.')], ...V2 });
+    if (memory < 4096) return message.reply({ components: [errorMsg('Invalid', 'Memory size must be at least 4096.')], ...V2 });
+    if (memory > 16432) return message.reply({ components: [errorMsg('Invalid', 'Memory size must be less than 16432.')], ...V2 });
 
-    if (memory < 4096) {
-        message.reply(`Memory size must be at least 4096`)
-    }
-
-    if (memory > 16432) {
-        message.reply(`Memory size must be less than 16432`)
-    }
-
-    message.reply(`${user.username} is now a partner`)
-    message.reply(`Creating partner Server with ${memory} MB`).then(msg => {
+    const initContainer = infoMsg('Partner Creation', `Creating partner server for **${user.username}** with ${memory} MB...`);
+    message.reply({ components: [initContainer], ...V2 }).then(msg => {
         const data = ({
             "name": `[Partner] ${user.username}'s Server`,
             "user": userDB.consoleID,
@@ -74,7 +59,7 @@ module.exports = async (client, message, args) => {
                 "port_range": []
             },
             "start_on_completion": false
-        })
+        });
 
         axios({
             url: config.pterodactyl.host + "/api/admin/servers",
@@ -88,16 +73,37 @@ module.exports = async (client, message, args) => {
             },
             data: data,
         }).then(res => {
-            msg.edit(`${user.username}'s Partner Server has been created \n ${res.data.uuid_short} \n https://panel.luxxy.cloud/server/${res.data.uuid_short} `)
+            const srv = res.data.server || res.data;
+            const shortId = srv.uuid_short || srv.uuid?.split('-')[0];
+            
+            const successC = new ContainerBuilder()
+                .setAccentColor(C.Success)
+                .addTextDisplayComponents(td => td.setContent(`## ✅ Partner Server Created`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(
+                    `**User:** <@${user.id}>\n` +
+                    `**Server ID:** \`${shortId}\`\n` +
+                    `**Memory:** \`${memory} MB\`\n` +
+                    `**Link:** ${config.pterodactyl.host}/server/${shortId}`
+                ));
+
+            msg.edit({ components: [successC], ...V2 });
 
             // log
-            const logchannel = client.channels.cache.get('971131533131915264')
-            const embed = new Discord.EmbedBuilder()
-            .setTitle(`${user.username}'s Partner Server has been created`)
-            .setDescription(`${res.data.uuid_short} \n https://panel.luxxy.cloud/server/${res.data.uuid_short}`)
-            .setColor(Discord.Colors.DarkAqua)
-            .setTimestamp()
-            logchannel.send({ embeds: [embed] })
-        })
-    })
-}
+            const logchannel = client.channels.cache.get('971131533131915264');
+            if (logchannel) {
+                const logC = new ContainerBuilder()
+                    .setAccentColor(C.DarkGrey)
+                    .addTextDisplayComponents(td => td.setContent(`## 📋 Partner Server Created`))
+                    .addSeparatorComponents(sep => sep.setDivider(true))
+                    .addTextDisplayComponents(td => td.setContent(
+                        `**User:** <@${user.id}>\n` +
+                        `**Server ID:** \`${shortId}\`\n` +
+                        `**Memory:** \`${memory} MB\`\n` +
+                        `**Link:** ${config.pterodactyl.host}/server/${shortId}`
+                    ));
+                logchannel.send({ components: [logC], ...V2 });
+            }
+        });
+    });
+};

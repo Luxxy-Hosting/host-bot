@@ -26,17 +26,18 @@ module.exports = {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 },
-            }).then(async user => {
+            }).then(async res => {
+                const user = res.data.user || res.data;
                 userData({
                     ID: discorduser.id,
-                    consoleID: user.data.id,
-                    email: user.data.email,
-                    username: user.data.username,
+                    consoleID: user.uuid || consoleid,
+                    email: user.email,
+                    username: user.username,
                     linkTime: moment().format("HH:mm:ss"),
                     linkDate: moment().format("YYYY-MM-DD"),
                 }).save().catch(e => message.reply('no'))
                 
-                message.reply(`🍑 i have linked <@!${discorduser.id}> to the account **${user.data.username}**`)
+                message.reply(`🍑 i have linked <@!${discorduser.id}> to the account **${user.username}**`)
             }).catch(e => message.reply(`Error: ${e}`))
             
         }

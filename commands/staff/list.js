@@ -1,26 +1,17 @@
-const Discord = require('discord.js');
-const axios = require('axios');
+const { ContainerBuilder, SeparatorBuilder, MessageFlags } = require('discord.js');
 const config = require('../../config.json');
+const axios = require('axios');
 const userData = require('../../models/userData');
+const { C, V2, errorMsg } = require('../../helpers/components');
 
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.support)) return message.channel.send('You do not have the required permissions to use this command.');
-    const user = await message.mentions.users.first()
-    if (!user) return message.reply({ 
-        embeds: [
-            new Discord.EmbedBuilder()
-            .setTitle(`:x: | You need to mention a user`)
-            .setColor(Discord.Colors.Red)
-        ]
-    })
+    const user = await message.mentions.users.first();
+    if (!user) return message.reply({ components: [errorMsg('Missing User', 'You need to mention a user.')], ...V2 });
+
     const userDB = await userData.findOne({ ID: user.id });
-    if (!userDB) return message.reply({
-        embeds: [
-            new Discord.EmbedBuilder()
-            .setTitle(`:x: | ${user.username} doesn't have an account yet`)
-            .setColor(Discord.Colors.Red)
-        ]
-    })
+    if (!userDB) return message.reply({ components: [errorMsg('No Account', `${user.username} doesn't have an account yet.`)], ...V2 });
+
     axios({
         url: config.pterodactyl.host + "/api/admin/users/" + userDB.consoleID + "/servers?per_page=100",
         method: 'GET',
@@ -30,29 +21,21 @@ module.exports = async (client, message, args) => {
             'Accept': 'application/json',
         }
     }).then(async response => {
-        let responce = response.data?.servers?.data || [];
-        let id = 1
-        let id2 = 1
-        if (responce.length <= 35) {
-            message.reply({
-                embeds: [
-                    new Discord.EmbedBuilder()
-                    .setTitle(`${user.username}'s servers`)
-                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.uuid_short}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
-                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
-                    .setColor(Discord.Colors.Green)
-                ]
-            }).catch(err => {
-                message.reply({
-                    embeds: [
-                        new Discord.EmbedBuilder()
-                        .setTitle(`:x: | HOW MANY SERVERS DO U HAVE???`)
-                        .setDescription(`${err}`)
-                        .setColor(Discord.Colors.Red)
-                    ]
-                })
-            }
-            )
+        let servers = response.data?.servers?.data || [];
+        let id = 1;
+
+        if (servers.length <= 35) {
+            const container = new ContainerBuilder()
+                .setAccentColor(C.Success)
+                .addTextDisplayComponents(td => td.setContent(`## 📋 ${user.username}'s Servers`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(
+                    servers.length === 0
+                        ? 'No servers found.'
+                        : servers.map(x => `\`${id++}.\` **${x.name}** — \`${x.uuid_short}\``).join('\n')
+                ));
+
+            message.reply({ components: [container], ...V2 });
         }
-    })
-}
+    });
+};

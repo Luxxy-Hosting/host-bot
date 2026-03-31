@@ -19,7 +19,7 @@ module.exports = {
         let msg
         let start = Date.now()
         await axios({
-            url: config.pterodactyl.host+"/api/admin/nodes/" + "1" + "?include=servers,location,allocations",
+            url: config.pterodactyl.host+"/api/admin/nodes/19bd6297-0400-473d-ac4d-1ea8004156f6/servers",
             method: 'GET',
             followRedirect: true,
             maxRedirects: 5,
@@ -27,12 +27,14 @@ module.exports = {
                 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-            }
+            },
+            params: { per_page: 500 }
         }).then(async ({data}) => {
 
-            msg = await message.reply('Calculating '+data?.servers.length+' servers. . .')
+            const servers = data?.servers?.data || [];
+            msg = await message.reply('Calculating '+servers.length+' servers. . .')
 
-            let done = (await Promise.all(data?.servers.map(x => x).map(async server => {
+            let done = (await Promise.all(servers.map(async server => {
 
                 let id = server.uuid_short
                 let name = server.name
@@ -57,6 +59,6 @@ module.exports = {
 
             msg.edit(`\`\`\`\n${stringTable.create(done)}\`\`\`\ntime taken: ${ms(Date.now() - start)}`).catch(err => {message.reply(`:x: Too Long Message!`)})
 
-        }).catch(x => {msg.edit(`${x}.`)})
+        }).catch(x => {msg ? msg.edit(`${x}.`) : message.reply(`${x}.`)})
     }
 }

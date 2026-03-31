@@ -1,12 +1,13 @@
-const config = require('../../config.json')
-const Discord = require('discord.js');
+const config = require('../../config.json');
+const { ContainerBuilder, SeparatorBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 const userData = require('../../models/userData');
+const { C, V2, errorMsg } = require('../../helpers/components');
+
 module.exports = async (client, message, args) => {
-    const userDB = await userData.findOne({ ID: message.author.id })
+    const userDB = await userData.findOne({ ID: message.author.id });
     if (!userDB) {
-        message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\` to create one`);
-        return;
+        return message.reply({ components: [errorMsg('No Account', `You don't have an account. Type \`${config.bot.prefix}user new\` to create one.`)], ...V2 });
     }
 
     let owner_uuid = null;
@@ -16,12 +17,13 @@ module.exports = async (client, message, args) => {
         try {
             const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
                 headers: { 'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey, 'Accept': 'application/json' },
-                params: { 'filter[email]': userDB.email }
+                params: { search: userDB.email, per_page: 50 }
             });
-            if (uResE.data.users?.data?.length > 0) owner_uuid = uResE.data.users.data[0].uuid;
+            const match = (uResE.data.users?.data || []).find(u => u.email?.toLowerCase() === userDB.email.toLowerCase());
+            if (match) owner_uuid = match.uuid;
         } catch(e) {}
     }
-    if (!owner_uuid) return message.reply(":x: Could not find your connected account on the panel!");
+    if (!owner_uuid) return message.reply({ components: [errorMsg('Not Found', 'Could not find your account on the panel!')], ...V2 });
 
     axios({
         url: config.pterodactyl.host + "/api/admin/users/" + owner_uuid + "/servers?per_page=100",
@@ -32,40 +34,30 @@ module.exports = async (client, message, args) => {
             'Accept': 'application/json',
         }
     }).then(async response => {
-        let responce = response.data.servers?.data || [];
-        let id = 1
-        let id2 = 1
+        let servers = response.data.servers?.data || [];
 
-        if(responce.length <= 35){
-            message.reply({
-                embeds:[
-                    new Discord.EmbedBuilder()
-                    .setTitle(`${message.author.username}'s servers`)
-                    .addFields({ name: 'Server Id:', value: `\`\`\`\n${responce.map(x => `${id++}. ${x.uuid_short}`).join('\n') || 'no Servers'}\`\`\``, inline: true})
-                    .addFields({ name: 'Server Name:', value: `\`\`\`\n${responce.map(x => `${id2++}. ${x.name}`).join('\n')  || 'no Servers'}\`\`\``, inline: true })
-                    .setColor(Discord.Colors.Green)
-                ]
-            }).catch(err => {
-                message.reply({
-                    embeds:[
-                        new Discord.EmbedBuilder()
-                        .setTitle(`:x: | HOW MANY SERVERS DO U HAVE???`)
-                        .setDescription(`${err}`)
-                        .setColor(Discord.Colors.Red)
-                    ]
-                })
-            })
-        }else{
-            let id = 1
-            let servers = responce.map(x => `${id++}. ${x.uuid_short} ➜ ${x.name}`).join('\n')
+        if (servers.length <= 35) {
+            let id = 1;
+            const container = new ContainerBuilder()
+                .setAccentColor(C.Success)
+                .addTextDisplayComponents(td => td.setContent(`## 📋 ${message.author.username}'s Servers`))
+                .addSeparatorComponents(sep => sep.setDivider(true))
+                .addTextDisplayComponents(td => td.setContent(
+                    servers.length === 0
+                        ? 'No servers found.'
+                        : servers.map(x => `\`${id++}.\` **${x.name}** — \`${x.uuid_short}\``).join('\n')
+                ));
+
+            message.reply({ components: [container], ...V2 });
+        } else {
+            let id = 1;
+            let serverText = servers.map(x => `${id++}. ${x.uuid_short} ➜ ${x.name}`).join('\n');
             message.channel.send({
-                files:[
-                    {
-                        attachment: Buffer.from(servers),
-                        name: "servers.js"
-                    }
-                ]
-            })
+                files: [{
+                    attachment: Buffer.from(serverText),
+                    name: "servers.txt"
+                }]
+            });
         }
-    })
-}
+    });
+};

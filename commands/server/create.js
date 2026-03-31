@@ -1,9 +1,9 @@
 const config = require('../../config.json');
-const Discord = require('discord.js');
+const { ContainerBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, SeparatorBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 const userData = require('../../models/userData');
 const serverData = require('../../models/serverData');
-const emoji = '<:blue_arrow:964977636084416535>';
+const { C, V2, errorMsg, successMsg, loadingMsg, infoMsg, textContainer } = require('../../helpers/components');
 
 const locations = config.locations;
 
@@ -19,257 +19,250 @@ module.exports = async (client, message, args) => {
     }
 
     const userDB = await userData.findOne({ ID: user.id });
-    if (!userDB) return message.reply(`${error} You dont have an account created. type \`${config.bot.prefix}user new\``);
+    if (!userDB) return message.reply({ components: [errorMsg('No Account', `You don't have an account. Type \`${config.bot.prefix}user new\` to create one.`)], ...V2 });
 
     if (!args[1] || args[1]?.toLowerCase() === 'list') {
-        const panelButton = new Discord.ButtonBuilder().setStyle('Link').setURL('https://panel.luxxy.cloud').setLabel("Panel");
-        const row = new Discord.ActionRowBuilder().addComponents([panelButton]);
+        const panelButton = new ButtonBuilder().setStyle(ButtonStyle.Link).setURL('https://panel.luxxy.cloud').setLabel("Open Panel");
 
-        const noTypeListed = new Discord.EmbedBuilder()
-            .setColor(0x36393f)
-            .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL({ format: 'png', size: 1024, dynamic: true }) })
-            .setTitle('Types of servers you can create:')
-            .addFields(
-                { name: `${emoji} __**Discord Bots**__: `, value: `> NodeJS \n > Python \n > AIO (all in one) \n > Bun`, inline: true },
-                { name: `${emoji} __**Databases**__:`, value: `> MongoDB \n > Redis`, inline: true },
-                { name: `${emoji} __**Web**__:`, value: `> Nginx \n > Uptime-Kuma`, inline: true },
-                { name: `${emoji} __**Other**__:`, value: `> BeamMP \n > Teamspeak \n > Codeserver`, inline: true },
-                { name: `${emoji} __**Minecraft**__:`, value: `> Paper \n > Purpur \n > Bedrock \n > PocketmineMP \n > Fabric \n > Vanillamc \n > Hytale`, inline: true }
-            )
-            .setFooter({ text: `Example: ${config.bot.prefix}server create paper Luxxy is the best`, iconURL: message.guild.iconURL({ size: 1024, format: 'png', dynamic: true }) });
+        const listContainer = new ContainerBuilder()
+            .setAccentColor(C.Blurple)
+            .addTextDisplayComponents(td => td.setContent(`## 🖥️ Server Types Available`))
+            .addSeparatorComponents(sep => sep.setDivider(true))
+            .addTextDisplayComponents(td => td.setContent(
+                `**🤖 Discord Bots**\n> NodeJS • Python • AIO • Bun\n\n` +
+                `**🗄️ Databases**\n> MongoDB • Redis\n\n` +
+                `**🌐 Web**\n> Nginx • Uptime-Kuma\n\n` +
+                `**🎮 Minecraft**\n> Paper • Purpur • Bedrock • PocketmineMP • Fabric • Vanillamc • Hytale\n\n` +
+                `**📦 Other**\n> BeamMP • Teamspeak • Codeserver`
+            ))
+            .addSeparatorComponents(sep => sep.setDivider(true))
+            .addTextDisplayComponents(td => td.setContent(`-# Example: \`${config.bot.prefix}server create paper My Server Name\``))
+            .addActionRowComponents(row => row.addComponents(panelButton));
 
-        return message.channel.send({
-            content: `> ${error} What type of server you want me to create?`,
-            embeds: [noTypeListed],
-            components: [row]
-        });
+        return message.channel.send({ components: [listContainer], ...V2 });
     }
 
     let srvname = args.slice(2).join(' ');
-    let ServerData, serverType;
     let locationID = null;
 
-    const rowLocation = new Discord.ActionRowBuilder().addComponents(
-        locations.map(loc => new Discord.ButtonBuilder()
-            .setCustomId(`location_${loc.id}`)
-            .setLabel(loc.label)
-            .setStyle(Discord.ButtonStyle.Primary))
-    );
+    const locationContainer = new ContainerBuilder()
+        .setAccentColor(C.Gold)
+        .addTextDisplayComponents(td => td.setContent(`## 🌍 Choose Deployment Location`))
+        .addActionRowComponents(row =>
+            row.addComponents(...locations.map(loc =>
+                new ButtonBuilder()
+                    .setCustomId(`location_${loc.id}`)
+                    .setLabel(loc.label)
+                    .setStyle(ButtonStyle.Primary)
+            ))
+        );
 
-    const locMsg = await message.reply({ content: '> 🌍 Choose server deployment location:', components: [rowLocation] });
+    const locMsg = await message.reply({ components: [locationContainer], ...V2 });
     const filter = i => i.user.id === user.id && i.customId.startsWith('location_');
     const collector = locMsg.createMessageComponentCollector({ filter, time: 10000, max: 1 });
 
-    collector.on('collect', async i => {
-        await i.deferUpdate();
-        locationID = parseInt(i.customId.split('_')[1]);
-        collector.stop();
-    });
-
     collector.on('end', async collected => {
-        await locMsg.edit({ content: collected.size ? '✅ Location selection done.' : ':x: You did not select a location in time.', components: [] });
+        console.log("== 1. COLLECTOR ENDED ==");
+        try {
+            if (!collected.size) {
+                console.log("== TIMEOUT ==");
+                return locMsg.edit({ components: [errorMsg('Timed Out', 'No location selected. Please try again.')], ...V2 });
+            }
 
-        if (!locationID) return message.reply(':x: No location selected. Please try again.');
-        console.log(`Location selected: ${locationID}`);
-        const apiHeaders = {
-            'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        };
+            const interaction = collected.first();
+            console.log("== INTERACTION CUSTOM ID:", interaction.customId);
+            await interaction.deferUpdate().catch(() => {});
+            
+            const splitContent = interaction.customId.split('_');
+            console.log("== SPLIT:", splitContent);
+            
+            locationID = parseInt(splitContent[1]);
+            console.log("== PARSED LOCATION:", locationID);
 
-        // 1. Fetch Owner UUID
-        let owner_uuid = null;
-        if (userDB.consoleID && userDB.consoleID.length > 20) {
-            owner_uuid = userDB.consoleID;
-        } else {
-            try {
-                const uRes = await axios.get(config.pterodactyl.host + "/api/admin/users", {
-                    headers: apiHeaders,
-                    params: { 'filter[username]': userDB.username || user.username }
-                });
-                if (uRes.data.users?.data?.length > 0) {
-                    owner_uuid = uRes.data.users.data[0].uuid;
-                } else if (userDB.email) {
-                    const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+            console.log("== 2. EDITED LOCMSG ==");
+            locMsg.edit({ components: [textContainer(C.Success, '✅ Location selected.')], ...V2 }).catch(e=>console.log("EditError:",e));
+
+            if (!locationID) {
+                console.log("== FATAL: LOCATION ID IS FALSY! Proceeding with fallback 1 ==");
+                locationID = 1;
+            }
+            
+            console.log("== 3. LOCATION ID:", locationID);
+
+            const apiHeaders = {
+                'Authorization': 'Bearer ' + config.pterodactyl.adminApiKey,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            };
+
+            let owner_uuid = null;
+            if (userDB.consoleID && userDB.consoleID.length > 20) {
+                owner_uuid = userDB.consoleID;
+                console.log("== 4. FAST OWNER UUID:", owner_uuid);
+            } else {
+                console.log("== 4. SLOW OWNER UUID ==");
+                try {
+                    const uRes = await axios.get(config.pterodactyl.host + "/api/admin/users", {
                         headers: apiHeaders,
-                        params: { 'filter[email]': userDB.email }
+                        params: { search: userDB.username || user.username, per_page: 50 }
                     });
-                    if (uResE.data.users?.data?.length > 0) owner_uuid = uResE.data.users.data[0].uuid;
+                    const usernameMatch = (uRes.data.users?.data || []).find(u => u.username?.toLowerCase() === (userDB.username || user.username).toLowerCase());
+                    if (usernameMatch) {
+                        owner_uuid = usernameMatch.uuid;
+                    } else if (userDB.email) {
+                        const uResE = await axios.get(config.pterodactyl.host + "/api/admin/users", {
+                            headers: apiHeaders,
+                            params: { search: userDB.email, per_page: 50 }
+                        });
+                        const emailMatch = (uResE.data.users?.data || []).find(u => u.email?.toLowerCase() === userDB.email.toLowerCase());
+                        if (emailMatch) owner_uuid = emailMatch.uuid;
+                    }
+                } catch (err) {
+                    console.error("== UUID FETCH ERR:", err.message);
                 }
+            }
+
+            if (!owner_uuid) {
+               console.log("== OWNER UUID IS NULL ==");
+               return message.reply({ components: [errorMsg('Not Found', 'Could not find your account on the panel!')], ...V2 });
+            }
+
+            console.log("== 5. RESOLVING MODULE ==");
+            let ServerData, serverType;
+            try {
+                const creationModule = require(`../../server_creation/${args[1]?.toLowerCase()}.js`);
+                const result = creationModule(owner_uuid, srvname ? srvname : args[1], locationID);
+                ServerData = result.data;
+                serverType = result.serverType;
             } catch (err) {
-                console.error("Error fetching user UUID:", err.message);
+                console.log("== MODULE ERR:", err);
+                return message.reply({ components: [errorMsg('Unknown Type', `Could not find server type: \`${args[1]}\`\nType \`!server create list\` for more info.`)], ...V2 });
             }
-        }
-        
-        if (!owner_uuid) return message.reply(":x: Could not find your connected account on the panel!");
 
-        let ServerData, serverType;
-        try {
-            const creationModule = require(`../../server_creation/${args[1]?.toLowerCase()}.js`);
-            const result = creationModule(owner_uuid, srvname ? srvname : args[1], locationID);
-            ServerData = result.data;
-            serverType = result.serverType;
-        } catch (err) {
-            console.log(err);
-            return message.reply(`:x: I could not find any server type with the name: \`${args[1]}\`\nType \`!server create list\` for more info`);
-        }
-
-        const usage = serverCount.get(user.id);
-        if (serverType === 'gameserver' && usage.gameused >= usage.gamehave) {
-            return message.reply(`:x: You already used your \`Gameserver\` slots. Run: !server count`);
-        } else if (serverType === 'botserver' && usage.botused >= usage.bothave) {
-            return message.reply(`:x: You already used your \`Bot\` server slots. Run: !server count`);
-        }
-
-        let msg = await message.reply(`${success} Attempting to create your server, please wait...`);
-
-        // 2. Find Node for this Location
-        let node_uuid = null;
-        try {
-            const nRes = await axios.get(config.pterodactyl.host + "/api/admin/nodes", { headers: apiHeaders });
-            const locUUID = ServerData.deployment?.location_uuids?.[0] || locationID; 
-            const node = nRes.data.nodes?.data?.find(n => n.location?.uuid === locUUID || n.location?.id === locUUID); // Fallback
-            if (node) node_uuid = node.uuid;
-        } catch (err) { }
-
-        if (!node_uuid) return msg.edit("❌ Could not find an active node in this location to deploy to!");
-
-        // 3. Find Available Allocation
-        let alloc_uuid = null;
-        try {
-            const aRes = await axios.get(config.pterodactyl.host + `/api/admin/nodes/${node_uuid}/allocations/available`, { headers: apiHeaders });
-            if (aRes.data.allocations?.data && aRes.data.allocations.data.length > 0) {
-                alloc_uuid = aRes.data.allocations.data[0].uuid;
+            console.log("== 6. USAGE CHECK:", serverType);
+            const usage = serverCount.get(user.id);
+            if (serverType === 'gameserver' && (usage.gameused >= usage.gamehave || usage.used >= usage.have)) {
+                console.log("== GAMESERVER FULL ==");
+                return message.reply({ components: [errorMsg('Slots Full', 'You\'ve used all your Gameserver slots. Run `!server count`')], ...V2 });
+            } else if (serverType === 'botserver' && usage.botused >= usage.bothave) {
+                console.log("== BOTSERVER FULL ==");
+                return message.reply({ components: [errorMsg('Slots Full', 'You\'ve used all your Bot server slots. Run `!server count`')], ...V2 });
             }
-        } catch (err) { }
 
-        if (!alloc_uuid) return msg.edit("❌ The node has run out of allocations/ports!");
+            console.log("== 7. SENDING LOADING MSG ==");
+            let msg = await message.reply({ components: [loadingMsg('Creating your server...')], ...V2 });
+            console.log("== 8. LOADING MSG SENT ==");
 
-        // 4. Clean Payload & Append Allocation
-        delete ServerData.deployment;
-        ServerData.node_uuid = node_uuid;
-        ServerData.allocation_uuids = [ alloc_uuid ];
+            let node_uuid = null;
+            try {
+                const nRes = await axios.get(config.pterodactyl.host + "/api/admin/nodes", { headers: apiHeaders });
+                const locUUID = ServerData.deployment?.location_uuids?.[0] || locationID;
+                const node = nRes.data.nodes?.data?.find(n => n.location?.uuid === locUUID || n.location?.id === locUUID);
+                if (node) node_uuid = node.uuid;
+                console.log("== 9. NODE UUID:", node_uuid);
+            } catch (err) {
+                console.log("== NODE FETCH ERR:", err.message);
+            }
 
-        axios({
-            url: config.pterodactyl.host + "/api/admin/servers",
-            method: 'POST',
-            headers: apiHeaders,
-            data: ServerData,
-        }).then(async response => {
-            const serverName = srvname ? srvname : args[1];
-            const serverId = response.data.server?.uuid_short || response.data.uuid_short;
-            const serverAdminId = response.data.server?.uuid || response.data.uuid;
+            if (!node_uuid) {
+                console.log("== INIT MSG ERROR NODE ==");
+                return msg.edit({ components: [errorMsg('No Node', 'Could not find an active node in this location!')], ...V2 });
+            }
 
-            await serverData.create({
-                ownerID: user.id,
-                serverID: serverId,
-                serverAdminID: serverAdminId,
-                serverName,
-                type: serverType
-            });
-
-            const serverButton = new Discord.ButtonBuilder()
-                .setStyle('Link')
-                .setURL(`${config.pterodactyl.host}/server/${serverId}`)
-                .setLabel(serverName.length < 25 ? `[${serverName}] Server Link` : `Server Link`);
-
-            const row2 = new Discord.ActionRowBuilder()
-                .addComponents([serverButton])
-                .addComponents(
-                    new Discord.ButtonBuilder()
-                        .setCustomId('ShowSpecs')
-                        .setLabel('Show my resources')
-                        .setStyle('Success'),
-                );
-
-            msg.edit({
-                content: null,
-                embeds: [
-                    new Discord.EmbedBuilder()
-                        .setColor(Discord.Colors.Green)
-                        .setTitle(`${success} Server Created Successfully`)
-                        .setDescription(`
-                        > **Status:** \`${response.statusText}\`
-                        > **User ID:** \`${userDB.consoleID}\`
-                        > **Server ID:** \`${serverId}\`
-                        > **Server Name:** \`${serverName}\`
-                        > **Server Type:** \`${args[1].toLowerCase()}\`
-                        \n__Got issues?__ **Make a ticket** <#1164497677334085642>
-                        `)
-                ],
-                components: [row2]
-            });
-
-            const Collector = msg.createMessageComponentCollector({ filter: i => i.user.id === message.author.id, time: 300000 });
-            const disablerow2 = new Discord.ActionRowBuilder()
-                .addComponents([serverButton])
-                .addComponents(
-                    new Discord.ButtonBuilder()
-                        .setCustomId('ShowSpecs')
-                        .setLabel('Show my resources')
-                        .setStyle('Success')
-                        .setDisabled(true),
-                );
-
-            Collector.on('collect', async i => {
-                i.deferUpdate();
-                Collector.stop();
-                if (i.customId === "ShowSpecs") {
-                    msg.edit({
-                        content: null,
-                        embeds: [
-                            new Discord.EmbedBuilder()
-                                .setColor(Discord.Colors.Green)
-                                .setDescription(`
-                                > <:cpu:1183573635072524319> \`350%\`
-                                > <:ram:1183573571243610192> \`3GB\`
-                                > <:hdd:1183573739456184350> \`15GB\`
-                                \n__Got issues?__ **Make a ticket** <#1164497677334085642>
-                                `)
-                        ],
-                        components: [disablerow2]
-                    });
+            let alloc_uuid = null;
+            try {
+                const aRes = await axios.get(config.pterodactyl.host + `/api/admin/nodes/${node_uuid}/allocations/available`, { headers: apiHeaders });
+                if (aRes.data.allocations?.data && aRes.data.allocations.data.length > 0) {
+                    alloc_uuid = aRes.data.allocations.data[0].uuid;
                 }
-            });
+                console.log("== 10. ALLOC UUID:", alloc_uuid);
+            } catch (err) {
+                console.log("== ALLOC FETCH ERR:", err.message);
+            }
 
-            const logchannel = client.channels.cache.get(config.logs.createlog);
-            if (logchannel) {
-                logchannel.send({
-                    embeds: [
-                        new Discord.EmbedBuilder()
-                            .addFields(
-                                { name: `Server Created`, value: `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${serverName}\`\n**Server Type:** \`${args[1].toLowerCase()}\`` },
-                                { name: `Server ID`, value: `\`${serverId}\`` },
-                                { name: `Server Status`, value: `\`${response.statusText}\`` }
-                            )
-                            .setColor(Discord.Colors.Red)
-                            .setFooter({ text: `User ID: ${userDB.consoleID}` })
-                            .setTimestamp()
-                    ]
+            if (!alloc_uuid) {
+                 console.log("== ERROR NO PORTS ==");
+                 return msg.edit({ components: [errorMsg('No Ports', 'The node has run out of allocations/ports!')], ...V2 });
+            }
+
+            delete ServerData.deployment;
+            ServerData.node_uuid = node_uuid;
+            ServerData.allocation_uuids = [alloc_uuid];
+            ServerData.allocation_uuid = alloc_uuid;
+
+            console.log("== 11. FIRING CREATION API ==");
+            axios({
+                url: config.pterodactyl.host + "/api/admin/servers",
+                method: 'POST',
+                headers: apiHeaders,
+                data: ServerData,
+            }).then(async response => {
+                console.log("== 12. CREATE SUCCESS ==");
+                const serverName = srvname ? srvname : args[1];
+                const serverId = response.data.server?.uuid_short || response.data.uuid_short;
+                const serverAdminId = response.data.server?.uuid || response.data.uuid;
+
+                await serverData.create({
+                    ownerID: user.id,
+                    serverID: serverId,
+                    serverAdminID: serverAdminId,
+                    serverName,
+                    type: serverType
                 });
-            }
 
-            if (serverType === 'gameserver') {
-                serverCount.add(message.author.id + '.gameused', 1);
-            } else if (serverType === 'botserver') {
-                serverCount.add(message.author.id + '.botused', 1);
-            }
+                const serverButton = new ButtonBuilder()
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(`${config.pterodactyl.host}/server/${serverId}`)
+                    .setLabel(serverName.length < 25 ? `[${serverName}] Server Link` : `Server Link`);
 
-        }).catch(error => {
-            let errorMessage = `${error} Server creation failed`;
-            let errorDetails = `${error}`;
-            if (error.message.includes('400')) errorDetails = `The node had ran out of allocations/ports!`;
-            else if (error.message.includes('504')) errorDetails = `The node is currently offline or having issues`;
-            else if (error.message.includes('429')) errorDetails = `Uh oh, This shouldn't happen, Try again in a minute or two.`;
+                const specsButton = new ButtonBuilder()
+                    .setCustomId('ShowSpecs')
+                    .setLabel('Show Resources')
+                    .setStyle(ButtonStyle.Success);
 
-            msg.edit({
-                content: null,
-                embeds: [
-                    new Discord.EmbedBuilder()
-                        .setColor(Discord.Colors.Red)
-                        .addFields({ name: errorMessage, value: errorDetails })
-                ]
+                const resultContainer = new ContainerBuilder()
+                    .setAccentColor(C.Success)
+                    .addTextDisplayComponents(td => td.setContent(`## ✅ Server Created Successfully`))
+                    .addSeparatorComponents(sep => sep.setDivider(true))
+                    .addTextDisplayComponents(td => td.setContent(
+                        `**Status:** \`${response.statusText}\`\n` +
+                        `**User ID:** \`${userDB.consoleID}\`\n` +
+                        `**Server ID:** \`${serverId}\`\n` +
+                        `**Server Name:** \`${serverName}\`\n` +
+                        `**Server Type:** \`${args[1].toLowerCase()}\`\n\n` +
+                        `-# Got issues? Make a ticket in <#1164497677334085642>`
+                    ))
+                    .addActionRowComponents(row => row.addComponents(serverButton, specsButton));
+
+                msg.edit({ components: [resultContainer], ...V2 });
+
+                const logchannel = client.channels.cache.get(config.logs.createlog);
+                if (logchannel) {
+                    const logContainer = new ContainerBuilder()
+                        .setAccentColor(C.Aqua)
+                        .addTextDisplayComponents(td => td.setContent(`## 📋 Server Created`))
+                        .addSeparatorComponents(sep => sep.setDivider(true))
+                        .addTextDisplayComponents(td => td.setContent(
+                            `**User ID:** \`${userDB.consoleID}\`\n**Server Name:** \`${serverName}\`\n**Server Type:** \`${args[1].toLowerCase()}\`\n**Server ID:** \`${serverId}\`\n**Status:** \`${response.statusText}\``
+                        ));
+                    logchannel.send({ components: [logContainer], ...V2 });
+                }
+
+                if (serverType === 'gameserver') serverCount.add(message.author.id + '.gameused', 1);
+                else if (serverType === 'botserver') serverCount.add(message.author.id + '.botused', 1);
+
+            }).catch(error => {
+                console.log("== 12. CREATE FAILED:", error.message);
+                let errorDetails = `${error}`;
+                if (error.message?.includes('400')) errorDetails = `The node ran out of allocations/ports!`;
+                else if (error.message?.includes('504')) errorDetails = `The node is currently offline or having issues.`;
+                else if (error.message?.includes('429')) errorDetails = `Rate limited! Try again in a minute.`;
+
+                msg.edit({ components: [errorMsg('Creation Failed', errorDetails)], ...V2 });
             });
-        });
+        } catch (epicFail) {
+            console.error('== SUPER EPIC FAIL ==', epicFail);
+            message.channel.send("Failed in execution: " + epicFail.message);
+        }
     });
 };

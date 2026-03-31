@@ -1,22 +1,23 @@
-const Discord = require("discord.js");
-const axios = require('axios')
+const { ContainerBuilder, MessageFlags } = require("discord.js");
+const axios = require('axios');
+const { C, V2, errorMsg, successMsg, infoMsg } = require('../../helpers/components');
 
 module.exports = {
     name: "stealemoji",
     category: "Owner",
     description: "nah",
     run: async (client, message, args) => {
-        if (!message.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator)) return message.channel.send("No, You don't have permission to use this command")
+        if (!message.member.permissions.has(8n)) return message.channel.send({ components: [errorMsg('No Permission', `You don't have permission to use this command.`)], ...V2 });
 
         let emoji = args[0];
         let name = args.slice(1).join(" ");
 
         if (!emoji) {
-            return message.reply('Please provide an emoji 💀')
+            return message.reply({ components: [infoMsg('Missing Emoji', 'Please provide an emoji 💀')], ...V2 });
         }
 
         if (!name) {
-            return message.reply('Please specify emoji name')
+            return message.reply({ components: [infoMsg('Missing Name', 'Please specify emoji name')], ...V2 });
         }
 
         if (emoji.startsWith('<') && emoji.endsWith('>')) {
@@ -28,7 +29,7 @@ module.exports = {
                 else return "png"
             }).catch(err => {
                 return "png"
-            })
+            });
 
             emoji = `https://cdn.discordapp.com/emojis/${id}.${type}?quality=lossless`
         }
@@ -42,29 +43,23 @@ module.exports = {
                 else return "gif"
             }).catch(err => {
                 return "gif"
-            })
+            });
 
             emoji = `https://cdn.discordapp.com/emojis/${id}.${type}?quality=lossless`
         }
 
-        if (!emoji.startsWith("https")) {
-            return await message.reply({ content: "you can't steal this emoji" })
+        if (!emoji.startsWith("https") && !emoji.startsWith("http")) {
+            return await message.reply({ components: [errorMsg('Invalid Emoji', "You can't steal this emoji.")], ...V2 });
         }
-        if (!emoji.startsWith("http")) {
-            return await message.reply({ content: "you can't steal this emoji" })
-        }
-
 
         message.guild.emojis.create({ attachment: `${emoji}`, name: `${name}` })
         .then(emoji => {
-           const embed = new Discord.EmbedBuilder()
-           .setColor('Aqua')
-           .setDescription(`Successfully Added ${emoji}, with then name **${name}**`)
-
-           return message.reply({ embeds: [embed] })
+           message.reply({
+               components: [successMsg('Emoji Added', `Successfully added ${emoji} with the name **${name}**`)],
+               ...V2
+           });
         }).catch(err => {
-            message.reply({ content: `💀 probs no slots to fill ${err}` })
-        })
-
+            message.reply({ components: [errorMsg('Failed', `💀 Probably no slots to fill or another error:\n${err}`)], ...V2 });
+        });
     }
-}
+};

@@ -1,14 +1,14 @@
-// src/commands/status.js
 const { WebSocket } = require('ws');
 const pretty = require('prettysize');
 const format = require('format-duration');
-const Discord = require('discord.js');
+const { ContainerBuilder, SeparatorBuilder, MediaGalleryBuilder, AttachmentBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 const config = require('../../config.json');
 const userData = require('../../models/userData');
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const fs = require('fs');
 const path = require('path');
+const { C, V2, errorMsg, infoMsg, loadingMsg, textContainer } = require('../../helpers/components');
 
 const width = 600, height = 300;
 const chartCanvas = new ChartJSNodeCanvas({ width, height });
@@ -16,24 +16,16 @@ const chartCanvas = new ChartJSNodeCanvas({ width, height });
 module.exports = async (client, message, args) => {
     const userDB = await userData.findOne({ ID: message.author.id });
     if (!userDB) {
-        return message.reply(`You don't have an account created. Type \`${config.bot.prefix}user new\` to create one.`);
+        return message.reply({ components: [errorMsg('No Account', `You don't have an account. Type \`${config.bot.prefix}user new\` to create one.`)], ...V2 });
     }
 
     args = args.slice(1);
     const server = args[0]?.split('-')[0];
     if (!server) {
-        const embed = new Discord.EmbedBuilder()
-            .setColor(Discord.Colors.Green)
-            .addFields([
-                {
-                    name: '__**Server Status**__',
-                    value: `What server should I display?\nCommand Format: \`${config.bot.prefix}server status <server id>\``
-                }
-            ]);
-        return message.channel.send({ embeds: [embed] });
+        return message.channel.send({ components: [infoMsg('Server Status', `Provide a server ID:\n\`${config.bot.prefix}server status <server id>\``)], ...V2 });
     }
 
-    const msg = await message.channel.send(`Checking server \`${server}\`...`);
+    const msg = await message.channel.send({ components: [loadingMsg(`Checking server \`${server}\`...`)], ...V2 });
 
     try {
         const userResponse = await axios.get(`${config.pterodactyl.host}/api/admin/users/${userDB.consoleID}/servers?per_page=100`, {
@@ -44,8 +36,8 @@ module.exports = async (client, message, args) => {
             },
         });
 
-        const serverData = (userResponse.data?.servers?.data || []).find(s => s?.uuid_short === server);
-        if (!serverData) return msg.edit(`:x: | Server \`${server}\` not found in your list.`);
+        const serverDataFound = (userResponse.data?.servers?.data || []).find(s => s?.uuid_short === server);
+        if (!serverDataFound) return msg.edit({ components: [errorMsg('Not Found', `Server \`${server}\` not found in your list.`)], ...V2 });
 
         const serverInfoResponse = await axios.get(`${config.pterodactyl.host}/api/client/servers/${server}`, {
             headers: {
@@ -68,21 +60,21 @@ module.exports = async (client, message, args) => {
         const token = wsResp.data.token;
         const socketURL = wsResp.data.url.replace(/\\/g, '');
 
-        const embed = new Discord.EmbedBuilder()
-            .setTitle('Live Server Status')
-            .setColor(Discord.Colors.Blurple)
-            .setDescription('Fetching live metrics...')
-            .addFields([
-                { name: 'Name', value: `\`${srvname}\``, inline: true },
-                { name: 'Node', value: `\`${node}\``, inline: true },
-                { name: 'Full ID', value: `\`${uuid}\``, inline: false },
-            ]);
+        const infoContainer = new ContainerBuilder()
+            .setAccentColor(C.Blurple)
+            .addTextDisplayComponents(td => td.setContent(`## 📡 Live Server Status`))
+            .addSeparatorComponents(sep => sep.setDivider(true))
+            .addTextDisplayComponents(td => td.setContent(
+                `**Name:** \`${srvname}\`\n` +
+                `**Node:** \`${node}\`\n` +
+                `**ID:** \`${uuid}\`\n\n` +
+                `⏳ Fetching live metrics...`
+            ));
 
-        const statusMsg = await msg.edit({ content: `<@${message.author.id}>`, embeds: [embed] });
+        await msg.edit({ components: [infoContainer], ...V2 });
 
         const ws = new WebSocket(socketURL);
         const statsHistory = [];
-
         let interval, timeout;
 
         ws.on('open', () => {
@@ -91,8 +83,12 @@ module.exports = async (client, message, args) => {
             timeout = setTimeout(() => {
                 clearInterval(interval);
                 ws.close();
-                embed.setFooter({ text: 'Live session ended after 2 minutes.' });
-                statusMsg.edit({ embeds: [embed] });
+                const endContainer = new ContainerBuilder()
+                    .setAccentColor(C.DarkGrey)
+                    .addTextDisplayComponents(td => td.setContent(`## 📡 Server Status — Session Ended`))
+                    .addSeparatorComponents(sep => sep.setDivider(true))
+                    .addTextDisplayComponents(td => td.setContent(`**Name:** \`${srvname}\`\n-# Live session ended after 2 minutes.`));
+                msg.edit({ components: [endContainer], ...V2 });
             }, 2 * 60 * 1000);
         });
 
@@ -123,18 +119,27 @@ module.exports = async (client, message, args) => {
                         const imgPath = path.join(__dirname, `../../temp/status-${message.author.id}.png`);
                         fs.writeFileSync(imgPath, imgBuffer);
 
-                        embed.setImage(`attachment://status-${message.author.id}.png`);
-                        embed.setDescription(
-                            `**Status:** \`${stats.state}\`\n` +
-                            `**Uptime:** \`${format(stats.uptime)}\`\n` +
-                            `**CPU:** \`${stats.cpu_absolute.toFixed(2)}%\`\n` +
-                            `**RAM:** \`${pretty(stats.memory_bytes)}\`\n` +
-                            `**Disk:** \`${pretty(stats.disk_bytes)}\`\n` +
-                            `**Network:** ⬆️\`${pretty(stats.network_tx_bytes)}\` / ⬇️\`${pretty(stats.network_rx_bytes)}\``
+                        const stateEmoji = stats.state === 'running' ? '🟢' : stats.state === 'offline' ? '🔴' : '🟡';
+                        const liveContainer = new ContainerBuilder()
+                            .setAccentColor(stats.state === 'running' ? C.Success : C.Error)
+                            .addTextDisplayComponents(td => td.setContent(`## 📡 Live Server Status`))
+                            .addSeparatorComponents(sep => sep.setDivider(true))
+                            .addTextDisplayComponents(td => td.setContent(
+                                `**Name:** \`${srvname}\` • **Node:** \`${node}\`\n` +
+                                `${stateEmoji} **Status:** \`${stats.state}\`\n` +
+                                `⏱️ **Uptime:** \`${format(stats.uptime)}\`\n` +
+                                `🖥️ **CPU:** \`${stats.cpu_absolute.toFixed(2)}%\`\n` +
+                                `🧠 **RAM:** \`${pretty(stats.memory_bytes)}\`\n` +
+                                `💾 **Disk:** \`${pretty(stats.disk_bytes)}\`\n` +
+                                `🌐 **Network:** ⬆️\`${pretty(stats.network_tx_bytes)}\` / ⬇️\`${pretty(stats.network_rx_bytes)}\``
+                            ));
+
+                        const gallery = new MediaGalleryBuilder().addItems(
+                            item => item.setURL(`attachment://status-${message.author.id}.png`).setDescription('CPU & RAM usage chart')
                         );
 
-                        const attachment = new Discord.AttachmentBuilder(imgPath, { name: `status-${message.author.id}.png` });
-                        await statusMsg.edit({ embeds: [embed], files: [attachment] });
+                        const attachment = new AttachmentBuilder(imgPath, { name: `status-${message.author.id}.png` });
+                        await msg.edit({ components: [liveContainer, gallery], files: [attachment], ...V2 });
                     }, 5000);
                 }
             }
@@ -143,7 +148,7 @@ module.exports = async (client, message, args) => {
         ws.on('error', err => {
             clearTimeout(timeout);
             clearInterval(interval);
-            msg.edit(`:x: | WebSocket error: ${err.message}`);
+            msg.edit({ components: [errorMsg('WebSocket Error', err.message)], ...V2 });
         });
 
         ws.on('close', () => {
@@ -153,6 +158,6 @@ module.exports = async (client, message, args) => {
 
     } catch (err) {
         console.error(err);
-        msg.edit(`:x: | Error: ${err.message}`);
+        msg.edit({ components: [errorMsg('Error', err.message)], ...V2 });
     }
 };

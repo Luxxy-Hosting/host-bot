@@ -1,55 +1,25 @@
-const Discord = require('discord.js');
+const { MessageFlags } = require('discord.js');
 const config = require('../../config.json');
-const {
-  EmbedBuilder,
-  Permissions
-} = require(`discord.js`);
+const { C, V2, errorMsg, successMsg } = require('../../helpers/components');
 
 module.exports = async (client, message, args) => {
     if (!message.member.roles.cache.has(config.roleID.admin)) return message.channel.send('You do not have the required permissions to use this command.');
-    const user = message.mentions.members.filter(member=>member.guild.id==message.guild.id).first() || message.guild.members.cache.get(args[0] ? args[0] : ``) || await message.guild.members.fetch(args[0] ? args[0] : ``).catch(() => {}) || false;
-    if (!user) return message.reply({
-        embeds: [
-            new Discord.EmbedBuilder()
-            .setTitle(`:x: | You need to mention a user`)
-            .setColor(Discord.Colors.Red)
-        ]
-    })
-    if (!message.guild.members.cache.get(user.id)) return message.reply({
-        embeds: [
-            new Discord.EmbedBuilder()
-            .setTitle(`:x: | ${user.user.tag} is not in this server`)
-            .setColor(Discord.Colors.Red)
-        ]
-    })
+
+    const user = message.mentions.members.filter(member => member.guild.id == message.guild.id).first() || message.guild.members.cache.get(args[0] ? args[0] : ``) || await message.guild.members.fetch(args[0] ? args[0] : ``).catch(() => {}) || false;
+    if (!user) return message.reply({ components: [errorMsg('Missing User', 'You need to mention a user.')], ...V2 });
+    if (!message.guild.members.cache.get(user.id)) return message.reply({ components: [errorMsg('Not Found', `${user.user.tag} is not in this server.`)], ...V2 });
+
     const memberPosition = user.roles.highest.position;
     const moderationPosition = message.member.roles.highest.position;
     if (moderationPosition <= memberPosition)
-        return message.reply({embeds : [new EmbedBuilder()
-                                        .setColor(Discord.Colors.Red)
-                                        .setTitle(`:x: | I cannot kick someone, who is above/equal you`)
-                                       ]});
+        return message.reply({ components: [errorMsg('Cannot Kick', 'Cannot kick someone who is above or equal to you.')], ...V2 });
+
     let reason = args.slice(2).join(` `);
-    if (!reason) {
-        reason = `NO REASON`;
-    }
-    
+    if (!reason) reason = `No reason provided`;
+
     message.guild.members.cache.get(user.id).kick({ reason: reason }).then(e => {
-        message.channel.send({
-            embeds: [
-                new Discord.EmbedBuilder()
-                .setTitle(`:white_check_mark: | ${user.user.tag} has been kicked for: ` + reason)
-                .setColor(Discord.Colors.Green)
-            ]
-        })
+        message.channel.send({ components: [successMsg('User Kicked', `**${user.user.tag}** has been kicked.\n**Reason:** ${reason}`)], ...V2 });
     }).catch(err => {
-        message.channel.send({
-            embeds: [
-                new Discord.EmbedBuilder()
-                .setTitle(`:x: | ${user.user.tag} could not be kicked`)
-                .setDescription(`${err}`)
-                .setColor(Discord.Colors.Red)
-            ]
-        })
-    })
-}
+        message.channel.send({ components: [errorMsg('Kick Failed', `Could not kick **${user.user.tag}**\n\`${err}\``)], ...V2 });
+    });
+};
