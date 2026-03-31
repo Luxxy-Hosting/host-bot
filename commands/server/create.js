@@ -170,10 +170,13 @@ module.exports = async (client, message, args) => {
             }
 
             let alloc_uuid = null;
+            let available_allocations = [];
             try {
                 const aRes = await axios.get(config.pterodactyl.host + `/api/admin/nodes/${node_uuid}/allocations/available`, { headers: apiHeaders });
                 if (aRes.data.allocations?.data && aRes.data.allocations.data.length > 0) {
-                    alloc_uuid = aRes.data.allocations.data[0].uuid;
+                    available_allocations = aRes.data.allocations.data;
+                    const randIndex = Math.floor(Math.random() * available_allocations.length);
+                    alloc_uuid = available_allocations[randIndex].uuid;
                 }
                 console.log("== 10. ALLOC UUID:", alloc_uuid);
             } catch (err) {
@@ -187,16 +190,33 @@ module.exports = async (client, message, args) => {
 
             delete ServerData.deployment;
             ServerData.node_uuid = node_uuid;
-            ServerData.allocation_uuids = [alloc_uuid];
             ServerData.allocation_uuid = alloc_uuid;
+            ServerData.allocation_uuids = [];
 
             console.log("== 11. FIRING CREATION API ==");
-            axios({
-                url: config.pterodactyl.host + "/api/admin/servers",
-                method: 'POST',
-                headers: apiHeaders,
-                data: ServerData,
-            }).then(async response => {
+            
+            const attemptServerCreation = async (retries = 3) => {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        return await axios({
+                            url: config.pterodactyl.host + "/api/admin/servers",
+                            method: 'POST',
+                            headers: apiHeaders,
+                            data: ServerData,
+                        });
+                    } catch (error) {
+                        if (error.response && error.response.status === 409 && i < retries - 1 && available_allocations.length > 0) {
+                            console.log("== 409 CONFLICT, RETRYING WITH NEW ALLOC ==");
+                            const newRand = Math.floor(Math.random() * available_allocations.length);
+                            ServerData.allocation_uuid = available_allocations[newRand].uuid;
+                            continue;
+                        }
+                        throw error;
+                    }
+                }
+            };
+
+            attemptServerCreation().then(async response => {
                 console.log("== 12. CREATE SUCCESS ==");
                 const serverName = srvname ? srvname : args[1];
                 const serverId = response.data.server?.uuid_short || response.data.uuid_short;
